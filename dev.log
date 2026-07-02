@@ -1,0 +1,160 @@
+
+> web@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.20.10.2:3000
+✓ Ready in 732ms
+
+ GET / 200 in 1541ms (next.js: 1315ms, application-code: 226ms)
+ GET / 200 in 131ms (next.js: 25ms, application-code: 107ms)
+ GET / 200 in 145ms (next.js: 5ms, application-code: 140ms)
+ GET / 200 in 346ms (next.js: 92ms, application-code: 255ms)
+ GET / 200 in 218ms (next.js: 3ms, application-code: 215ms)
+ GET / 200 in 222ms (next.js: 3ms, application-code: 219ms)
+ GET / 200 in 186ms (next.js: 7ms, application-code: 179ms)
+ GET / 200 in 213ms (next.js: 51ms, application-code: 162ms)
+ GET / 200 in 219ms (next.js: 81ms, application-code: 138ms)
+ GET / 200 in 222ms (next.js: 27ms, application-code: 195ms)
+ GET / 200 in 114ms (next.js: 8ms, application-code: 106ms)
+ GET / 200 in 108ms (next.js: 6ms, application-code: 102ms)
+ GET / 200 in 70ms (next.js: 5ms, application-code: 65ms)
+ GET / 200 in 37ms (next.js: 3ms, application-code: 34ms)
+ GET / 200 in 48ms (next.js: 5ms, application-code: 42ms)
+ GET / 200 in 49ms (next.js: 3ms, application-code: 46ms)
+ GET / 200 in 39ms (next.js: 5ms, application-code: 34ms)
+ GET / 200 in 33ms (next.js: 3ms, application-code: 29ms)
+ GET / 200 in 54ms (next.js: 3ms, application-code: 51ms)
+ GET / 200 in 214ms (next.js: 100ms, application-code: 115ms)
+ GET / 200 in 215ms (next.js: 142ms, application-code: 73ms)
+ GET / 200 in 70ms (next.js: 5ms, application-code: 65ms)
+ GET / 200 in 34ms (next.js: 3ms, application-code: 31ms)
+ GET / 200 in 230ms (next.js: 121ms, application-code: 109ms)
+ GET / 200 in 235ms (next.js: 77ms, application-code: 158ms)
+ GET / 200 in 133ms (next.js: 5ms, application-code: 129ms)
+ GET / 200 in 61ms (next.js: 6ms, application-code: 54ms)
+ GET /admin 200 in 639ms (next.js: 503ms, application-code: 136ms)
+ GET /admin 200 in 127ms (next.js: 6ms, application-code: 121ms)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.20.10.2:3000
+✓ Ready in 658ms
+
+ GET /admin 200 in 771ms (next.js: 605ms, application-code: 166ms)
+ GET / 200 in 844ms (next.js: 256ms, application-code: 588ms)
+  Reload env: .env.local
+ GET / 200 in 172ms (next.js: 62ms, application-code: 110ms)
+ GET /admin 200 in 60ms (next.js: 16ms, application-code: 44ms)
+ GET / 200 in 318ms (next.js: 39ms, application-code: 279ms)
+ GET /admin 200 in 228ms (next.js: 15ms, application-code: 212ms)
+ GET / 200 in 232ms (next.js: 49ms, application-code: 184ms)
+ GET / 200 in 254ms (next.js: 36ms, application-code: 218ms)
+ GET / 200 in 258ms (next.js: 10ms, application-code: 248ms)
+ GET / 200 in 256ms (next.js: 66ms, application-code: 190ms)
+ GET / 200 in 256ms (next.js: 88ms, application-code: 169ms)
+ GET /admin 200 in 200ms (next.js: 39ms, application-code: 162ms)
+ GET / 200 in 210ms (next.js: 7ms, application-code: 203ms)
+ GET / 200 in 137ms (next.js: 9ms, application-code: 128ms)
+ GET / 200 in 116ms (next.js: 6ms, application-code: 110ms)
+ GET / 200 in 115ms (next.js: 33ms, application-code: 82ms)
+ GET /admin 200 in 32ms (next.js: 5ms, application-code: 27ms)
+ GET /admin 200 in 38ms (next.js: 4ms, application-code: 34ms)
+ GET /admin 200 in 50ms (next.js: 7ms, application-code: 44ms)
+ GET /admin 200 in 37ms (next.js: 3ms, application-code: 34ms)
+ GET /admin 200 in 44ms (next.js: 3ms, application-code: 40ms)
+ GET /admin 200 in 40ms (next.js: 5ms, application-code: 35ms)
+ GET /admin 200 in 49ms (next.js: 4ms, application-code: 46ms)
+ GET /admin 200 in 45ms (next.js: 4ms, application-code: 41ms)
+ GET / 200 in 260ms (next.js: 5ms, application-code: 255ms)
+ GET /admin 200 in 215ms (next.js: 5ms, application-code: 211ms)
+ GET / 200 in 290ms (next.js: 34ms, application-code: 256ms)
+ GET / 200 in 229ms (next.js: 35ms, application-code: 194ms)
+ GET / 200 in 259ms (next.js: 10ms, application-code: 249ms)
+ GET / 200 in 260ms (next.js: 89ms, application-code: 171ms)
+ GET / 200 in 263ms (next.js: 68ms, application-code: 195ms)
+ GET /admin 200 in 223ms (next.js: 42ms, application-code: 181ms)
+ GET / 200 in 229ms (next.js: 9ms, application-code: 220ms)
+ GET / 200 in 188ms (next.js: 7ms, application-code: 181ms)
+ GET / 200 in 150ms (next.js: 5ms, application-code: 145ms)
+ GET / 200 in 123ms (next.js: 45ms, application-code: 78ms)
+ GET / 200 in 126ms (next.js: 5ms, application-code: 121ms)
+ GET /admin 200 in 45ms (next.js: 6ms, application-code: 39ms)
+ GET /admin 200 in 52ms (next.js: 5ms, application-code: 47ms)
+ GET /admin 200 in 35ms (next.js: 4ms, application-code: 32ms)
+ GET /admin 200 in 31ms (next.js: 3ms, application-code: 28ms)
+ GET /admin 200 in 35ms (next.js: 2ms, application-code: 33ms)
+ GET /admin 200 in 49ms (next.js: 6ms, application-code: 44ms)
+ GET /admin 200 in 69ms (next.js: 6ms, application-code: 63ms)
+ GET /admin 200 in 33ms (next.js: 3ms, application-code: 31ms)
+ GET /admin 200 in 44ms (next.js: 3ms, application-code: 41ms)
+ GET / 200 in 225ms (next.js: 4ms, application-code: 222ms)
+ GET /admin 200 in 186ms (next.js: 3ms, application-code: 183ms)
+ GET / 200 in 244ms (next.js: 34ms, application-code: 210ms)
+ GET / 200 in 184ms (next.js: 63ms, application-code: 121ms)
+ GET / 200 in 233ms (next.js: 10ms, application-code: 223ms)
+ GET / 200 in 230ms (next.js: 87ms, application-code: 144ms)
+ GET / 200 in 244ms (next.js: 34ms, application-code: 210ms)
+ GET /admin 200 in 269ms (next.js: 4ms, application-code: 265ms)
+ GET / 200 in 305ms (next.js: 3ms, application-code: 302ms)
+ GET / 200 in 306ms (next.js: 8ms, application-code: 298ms)
+ GET / 200 in 241ms (next.js: 12ms, application-code: 230ms)
+ GET / 200 in 235ms (next.js: 76ms, application-code: 159ms)
+ GET / 200 in 238ms (next.js: 52ms, application-code: 186ms)
+ GET / 200 in 193ms (next.js: 79ms, application-code: 114ms)
+ GET /admin 200 in 71ms (next.js: 6ms, application-code: 65ms)
+ GET / 200 in 64ms (next.js: 6ms, application-code: 59ms)
+ GET /admin 200 in 29ms (next.js: 2ms, application-code: 26ms)
+ GET /admin 200 in 33ms (next.js: 5ms, application-code: 28ms)
+ GET /admin 200 in 29ms (next.js: 3ms, application-code: 26ms)
+ GET /admin 200 in 37ms (next.js: 3ms, application-code: 33ms)
+ GET /admin 200 in 58ms (next.js: 5ms, application-code: 53ms)
+ GET /admin 200 in 32ms (next.js: 5ms, application-code: 28ms)
+ GET /admin 200 in 35ms (next.js: 3ms, application-code: 32ms)
+ GET /admin 200 in 38ms (next.js: 4ms, application-code: 33ms)
+ GET /admin 200 in 38ms (next.js: 4ms, application-code: 34ms)
+ GET /admin 200 in 34ms (next.js: 3ms, application-code: 31ms)
+ GET / 200 in 221ms (next.js: 10ms, application-code: 212ms)
+⨯ Error: ENOENT: no such file or directory, open 'C:\Users\USER\Desktop\GetSetGo App\web\_reference\front-body.html'
+    at getFrontBody (app\(site)\page.tsx:9:13)
+    at HomePage (app\(site)\page.tsx:16:16)
+   7 | // verbatim and server-side so the UI is identical to the source HTML.
+   8 | function getFrontBody(): string {
+>  9 |   return fs.readFileSync(
+     |             ^
+  10 |     path.join(process.cwd(), "_reference", "front-body.html"),
+  11 |     "utf8"
+  12 |   ); {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\USER\\Desktop\\GetSetGo App\\web\\_reference\\front-body.html',
+  digest: '2900305630'
+}
+ GET / 500 in 123ms (next.js: 4ms, application-code: 119ms)
+[browser] Uncaught Error: ENOENT: no such file or directory, open 'C:\Users\USER\Desktop\GetSetGo App\web\_reference\front-body.html'
+    at getFrontBody (app\(site)\page.tsx:9:13)
+    at HomePage (app\(site)\page.tsx:16:16)
+    at resolveErrorDev (file://C:/Users/USER/Desktop/GetSetGo App/web/.next/dev/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js:1919:120)
+    at processFullStringRow (file://C:/Users/USER/Desktop/GetSetGo App/web/.next/dev/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js:2434:44)
+    at processFullBinaryRow (file://C:/Users/USER/Desktop/GetSetGo App/web/.next/dev/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js:2393:29)
+    at processBinaryChunk (file://C:/Users/USER/Desktop/GetSetGo App/web/.next/dev/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js:2502:221)
+    at progress (file://C:/Users/USER/Desktop/GetSetGo App/web/.next/dev/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js:2689:31)
+   7 | // verbatim and server-side so the UI is identical to the source HTML.
+   8 | function getFrontBody(): string {
+>  9 |   return fs.readFileSync(
+     |             ^
+  10 |     path.join(process.cwd(), "_reference", "front-body.html"),
+  11 |     "utf8"
+  12 |   );
+Error: Turbopack build failed with 1 errors:
+./app
+Error: Next.js inferred your workspace root, but it may not be correct.
+    We couldn't find the Next.js package (next/package.json) from the project directory: C:\Users\USER\Desktop\GetSetGo App\web\app
+     To fix this, set turbopack.root in your Next.js config, or ensure the Next.js package is resolvable from this directory.
+    Note: For security and performance reasons, files outside of the project directory will not be compiled.
+    See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+
+    at ignore-listed frames
+[?25h

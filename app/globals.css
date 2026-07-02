@@ -1,0 +1,5 @@
+/* Root global reset — kept intentionally minimal so the faithful
+   per-site stylesheets (front.css / admin.css) fully control appearance. */
+* {
+  box-sizing: border-box;
+}
