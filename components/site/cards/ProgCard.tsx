@@ -50,10 +50,9 @@ export function ProgCard({ program: p }: { program: Program }) {
         )}
         {/* Above the cover link (z-index) so these stay independently clickable
             and right-clickable. */}
-        <div className="prog-card-footer" style={{ position: "relative", zIndex: 2 }}>
-          <AppLink className="prog-quest-link" href={p.href} onActivate={go}>
-            <span>{p.questLabel}</span>
-            <span>›</span>
+        <div className="prog-card-footer" style={{ position: "relative", zIndex: 2, justifyContent: "flex-end" }}>
+          <AppLink className="prog-cta" href={p.href} onActivate={go}>
+            {p.questLabel}
           </AppLink>
         </div>
       </div>

@@ -204,9 +204,9 @@ const OUTCOME_EMOJI: Record<string, string> = {
   "get-certified": "🏅",
   "switch-careers": "🔄",
   "earn-more": "💰",
-  "be-financially-independent": "💸",
-  wellness: "🌿",
-  adventure: "🏕️",
+  "become-financially-independent": "💸",
+  "wellness": "🌿",
+  "adventure": "🏕️",
 };
 const DEFAULT_ARTS = ["🌍", "✈️", "🗺️", "⚡"];
 const PREP_TIERS = [

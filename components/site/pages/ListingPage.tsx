@@ -118,7 +118,7 @@ export function ListingPage() {
         <div style={{ marginBottom: "48px" }}>
           <div className="label">The experience</div>
           <h2 className="serif-h" style={{ marginBottom: "16px" }}>
-            What this quest looks like
+            What This Quest Looks Like
           </h2>
           <div className="immersive" id="l-immersive"></div>
         </div>

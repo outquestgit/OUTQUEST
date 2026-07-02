@@ -388,7 +388,7 @@ export function QuestEditPage({
                   <div className="section-card-body" style={{ gap: "18px" }}>
                     {/* IMMERSIVE NARRATIVE */}
                     <div className="field">
-                      <label>Immersive Narrative</label>
+                      <label>What This Quest Looks Like</label>
                       <div className="rte">
                         <div className="rte-toolbar">
                           <button className="rte-btn" onClick={() => fmt("bold")}>

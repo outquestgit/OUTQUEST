@@ -235,7 +235,7 @@ export function QuestListing({ data }: { data: ListingData }) {
           <div style={{ marginBottom: "48px" }}>
             <div className="label">What you gain</div>
             <h2 className="serif-h" style={{ marginBottom: "20px" }}>
-              What this OutQuest unlocks
+              What this Quest unlocks
             </h2>
             <div className="unlock-grid">
               {data.unlocks.map((u, i) => (
@@ -253,7 +253,7 @@ export function QuestListing({ data }: { data: ListingData }) {
           <div style={{ marginBottom: "48px" }}>
             <div className="label">The experience</div>
             <h2 className="serif-h" style={{ marginBottom: "16px" }}>
-              What this quest looks like
+              What This Quest Looks Like
             </h2>
             <div className="immersive" dangerouslySetInnerHTML={{ __html: data.immersive }} />
           </div>
@@ -278,7 +278,7 @@ export function QuestListing({ data }: { data: ListingData }) {
           <div style={{ marginBottom: "48px" }}>
             <div className="label">Take action</div>
             <h2 className="serif-h" style={{ marginBottom: "16px" }}>
-              Embark On This OutQuest
+              Embark On This Quest
             </h2>
             <div className="embark-list">
               {data.embark.map((e, i) => (
