@@ -199,14 +199,14 @@ const DIFF_BY_LEVEL: Record<string, string> = {
 };
 // One distinct emoji per Outcome Goal (no repeats).
 const OUTCOME_EMOJI: Record<string, string> = {
-  "learn-a-skill": "🧠",
+ "learn-a-skill": "🧠",
   "gain-experience": "💼",
   "get-certified": "🏅",
   "switch-careers": "🔄",
   "earn-more": "💰",
-  "be-financially-independent": "💸",
-  wellness: "🌿",
-  adventure: "🏕️",
+  "become-financially-independent": "💸",
+  "wellness": "🌿",
+  "adventure": "🏕️",
 };
 const DEFAULT_ARTS = ["🌍", "✈️", "🗺️", "⚡"];
 const PREP_TIERS = [
