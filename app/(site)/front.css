@@ -1331,7 +1331,7 @@ footer a:hover{color:#fff;}
   position:relative;
   overflow:hidden;
   min-height:96vh;
-  padding:92px 5% 64px!important;
+  padding:92px 5% 96px!important;
   background:#F5F2EB!important;
 }
 #hero-home.final-hero .eyebrow,
@@ -1348,6 +1348,7 @@ footer a:hover{color:#fff;}
 .hero-float-card.f4{right:10%;bottom:250px;transform:rotate(-7deg);}
 .hero-float-card.f5{left:50%;top:42px;width:118px;transform:translateX(-50%) rotate(2deg);opacity:.92;}
 .home-path-section.in-hero{background:transparent!important;padding:0!important;margin:0 auto!important;max-width:1260px!important;}
+.home-path-section.in-hero{margin-top:44px!important;}
 .home-path-section.in-hero .label{margin-bottom:20px!important;}
 .home-path-section.in-hero .home-path-head{display:flex!important;align-items:center!important;justify-content:space-between!important;margin-bottom:30px!important;}
 .home-path-section.in-hero .home-path-head h2{font-size:clamp(42px,5.2vw,72px)!important;line-height:.95!important;}
@@ -1367,7 +1368,7 @@ footer a:hover{color:#fff;}
 }
 @media(max-width:760px){
   .hero-float-card{display:none;}
-  #hero-home.final-hero{min-height:auto;padding:72px 5% 46px!important;}
+  #hero-home.final-hero{min-height:auto;padding:72px 5% 66px!important;}
   .home-path-section.in-hero .home-path-head{flex-direction:column!important;align-items:flex-start!important;}
   .home-path-section.in-hero .home-path-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;}
   .home-path-section.in-hero .home-path-card{aspect-ratio:3/3.7!important;padding:18px 16px!important;}

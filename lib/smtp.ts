@@ -16,7 +16,7 @@ export function smtpConfigured(e: AdminEmailConfig): boolean {
  */
 export async function smtpSend(
   e: AdminEmailConfig,
-  msg: { to: string[]; subject: string; html: string; replyTo?: string }
+  msg: { to: string[]; subject: string; html: string; replyTo?: string; fromName?: string }
 ): Promise<Result> {
   if (!smtpConfigured(e)) return { ok: false, error: "SMTP is not configured." };
   if (!msg.to.length) return { ok: false, error: "No recipients configured." };
@@ -31,7 +31,7 @@ export async function smtpSend(
 
   try {
     await transporter.sendMail({
-      from: e.sender,
+      from: msg.fromName ? `${msg.fromName} <${e.sender}>` : e.sender,
       to: msg.to.join(", "),
       subject: msg.subject,
       html: msg.html,

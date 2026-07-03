@@ -79,6 +79,7 @@ export async function sendLeadAlert(input: {
       .filter(Boolean);
     const useSmtp = smtpConfigured(cfg.email);
     const sender = cfg.email.sender.trim() || process.env.BREVO_SENDER || "";
+    const senderName = "OutQuest";
     // Need either a configured SMTP transport, or a Brevo key + sender fallback.
     if (!useSmtp && !sender) return;
 
@@ -98,8 +99,8 @@ export async function sendLeadAlert(input: {
       replyTo?: string
     ): Promise<unknown> =>
       useSmtp
-        ? smtpSend(cfg.email, { to, subject, html, replyTo })
-        : brevoSendTransactional({ to, subject, html, sender, senderName: brand, replyTo });
+        ? smtpSend(cfg.email, { to, subject, html, replyTo, fromName: senderName })
+        : brevoSendTransactional({ to, subject, html, sender, senderName, replyTo });
 
     // 1) Admin alert — only when recipients are configured.
     if (recipients.length) {
