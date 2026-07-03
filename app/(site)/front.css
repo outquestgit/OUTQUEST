@@ -2318,9 +2318,9 @@ nav{padding:14px 4.2%!important;}
         margin-left:0;
         margin-right:0;
         width:100%;
-        height:calc(100vh - 65px);
-        max-height:720px;
-        min-height:480px;
+        height:calc(100vh - 65px + 96px);
+        max-height:820px;
+        min-height:560px;
         text-align:left;
         background:var(--hero-yellow);
         overflow:hidden;
