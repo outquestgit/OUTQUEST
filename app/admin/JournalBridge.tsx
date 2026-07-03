@@ -5,7 +5,7 @@ import type { JournalPost } from "@/lib/journal";
 
 const EXCERPT_PH = "Short summary shown in listings and previews…";
 const FOCUS_PH = "e.g. southeast asia travel budget";
-const CANONICAL_PH = "https://OutQuest.com/journal/…";
+const CANONICAL_PH = "https://joinoutquest.com/journal/…";
 
 const esc = (s: string) =>
   String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

@@ -323,7 +323,7 @@ export function JournalEditPage() {
                       <div style={{ background: "#fff", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px", boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
                         <div style={{ fontSize: "12px", color: "#188038", marginBottom: "2px", display: "flex", alignItems: "center", gap: "4px" }}>
                           <span style={{ width: "14px", height: "14px", background: "var(--surface3)", borderRadius: "50%", display: "inline-block", verticalAlign: "middle" }}></span>
-                          outquest.com › journal ›{" "}
+                          joinoutquest.com › journal ›{" "}
                           <span id="j-serp-slug" style={{ color: "#188038" }}>your-post-slug</span>
                         </div>
                         <div id="j-serp-title" style={{ fontSize: "18px", color: "#1558d6", fontWeight: 400, marginBottom: "4px", lineHeight: 1.3, wordBreak: "break-word" }}>
@@ -392,6 +392,7 @@ export function JournalEditPage() {
                         Canonical URL <span className="opt">optional</span>
                       </label>
                       <input type="url" placeholder="https://outquest.com/journal/…" />
+                                            <input type="url" placeholder="https://joinoutquest.com/journal/…" />
                       <div className="field-hint">Leave blank — defaults to post slug URL</div>
                     </div>
 

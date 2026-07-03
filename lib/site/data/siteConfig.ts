@@ -35,7 +35,7 @@ export interface SiteConfig {
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
   general: {
     siteName: "OutQuest",
-    siteUrl: "https://outquest.com",
+    siteUrl: "https://joinoutquest.com",
     timezone: "Asia/Kuala_Lumpur",
   },
   globalCopy: {
