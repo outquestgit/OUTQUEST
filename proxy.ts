@@ -2,22 +2,18 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 /**
- * ┌──────────────────────────────────────────────────────────────────────┐
- * │  SITE ON/OFF SWITCH                                                     │
- * │                                                                        │
- * │  SITE_DISABLED = true   →  the WHOLE site is offline (503 for every     │
- * │                            page, the admin area, and all API routes).  │
- * │  SITE_DISABLED = false  →  the site is live again.                      │
- * │                                                                        │
- * │  After changing this line you must restart the dev server (or redeploy │
- * │  the live site) for it to take effect.                                 │
- * └──────────────────────────────────────────────────────────────────────┘
+ * Maintenance mode — controlled entirely by the `MAINTENANCE_MODE` env var.
+ *
+ *   MAINTENANCE_MODE=true   →  the WHOLE site is offline (HTTP 503 for every
+ *                              page, the admin area, and all API routes).
+ *   unset / anything else   →  the site is live (the default).
+ *
+ * Accepts `true`, `1`, `on`, or `yes` (case-insensitive) as "on". Set it in the
+ * environment (locally in `.env.local`, on Vercel in Project → Settings →
+ * Environment Variables) and restart/redeploy for the change to take effect.
  */
-const SITE_DISABLED = true;
-
 function maintenanceEnabled(): boolean {
-  // The `MAINTENANCE_MODE` env var can also force this on without a code edit.
-  return SITE_DISABLED || /^(1|true|on|yes)$/i.test((process.env.MAINTENANCE_MODE ?? "").trim());
+  return /^(1|true|on|yes)$/i.test((process.env.MAINTENANCE_MODE ?? "").trim());
 }
 
 /** Self-contained 503 page shown while the site is switched off. No external
