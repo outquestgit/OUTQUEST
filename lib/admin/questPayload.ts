@@ -21,6 +21,7 @@ export const MANAGED_CONTENT_KEYS: (keyof QuestContent)[] = [
   "faq",
   "companion",
   "gallery",
+  "similar",
 ];
 
 export type QuestPayload = {
@@ -119,6 +120,10 @@ function buildContent(raw: unknown): QuestContent {
 
   const gallery = arr(c.gallery).map(str).filter(Boolean);
   if (gallery.length) out.gallery = gallery;
+
+  // Manually-picked "Similar OutQuests" (quest slugs from the editor's picker).
+  const similar = arr(c.similar).map((s) => str(s).trim()).filter(Boolean);
+  if (similar.length) out.similar = similar;
 
   return out;
 }
