@@ -217,7 +217,7 @@ export function QuestEditPage({
                   </div>
                   <div className="section-card-body">
                     <div className="field-hint" style={{ marginBottom: "8px" }}>
-                      Pick quests to surface alongside this deal. Distinct from <em>Connected Quests</em> above — those power the deal&apos;s appearance inside quest pages; these show as a cross-sell widget on the deal page itself.
+                      Pick the quests to surface at the bottom of this quest page as &quot;Similar OutQuests&quot;. Only these are shown — leave empty to hide the section.
                     </div>
                     <div className="ext-search-bar">
                       <input type="text" placeholder="Search quests…" onInput={(e) => extFilterList(e.currentTarget, "d-rel-quests-list", "ext-rel-row")} />

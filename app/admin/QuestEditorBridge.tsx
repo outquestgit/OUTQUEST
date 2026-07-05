@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { extToggleRel } from "@/lib/admin/runtime";
 import type { QuestContent } from "@/lib/quests";
 
 type Term = { id: string; kind: string; name: string };
@@ -375,6 +376,31 @@ export default function QuestEditorBridge({
       }
     };
 
+    // ── Similar Quests picker (.ext-rel-row rows → content.similar slugs) ──
+    // Each row carries its quest slug in data-rel-quest and a checkbox that
+    // reflects selection; extToggleRel keeps the chip list below in sync.
+    const REL_LIST = "d-rel-quests-list";
+    const REL_CHIPS = "d-rel-quests-chips";
+    const relRows = () =>
+      Array.from(
+        document.getElementById(REL_LIST)?.querySelectorAll<HTMLElement>(".ext-rel-row") ?? []
+      );
+    const readSimilar = (): string[] =>
+      relRows()
+        .filter((row) => row.querySelector<HTMLInputElement>('input[type="checkbox"]')?.checked)
+        .map((row) => row.getAttribute("data-rel-quest") ?? "")
+        .filter(Boolean);
+    // Reconcile the picker to exactly `slugs`, reusing extToggleRel so the
+    // checkbox + chip stay in sync (and stale picks from a prior Edit clear).
+    const setSimilar = (slugs: string[]) => {
+      const wanted = new Set(slugs);
+      relRows().forEach((row) => {
+        const on = wanted.has(row.getAttribute("data-rel-quest") ?? "");
+        const cb = row.querySelector<HTMLInputElement>('input[type="checkbox"]');
+        if (cb && cb.checked !== on) extToggleRel(row, REL_CHIPS);
+      });
+    };
+
     // Build the editor-managed `content` object from the current form state.
     const readContent = (): QuestContent => {
       const content: QuestContent = {};
@@ -411,6 +437,8 @@ export default function QuestEditorBridge({
       }
 
       if (currentGallery.length) content.gallery = currentGallery;
+      const similar = readSimilar();
+      if (similar.length) content.similar = similar;
       return content;
     };
 
@@ -461,6 +489,7 @@ export default function QuestEditorBridge({
       currentGallery = c.gallery ?? [];
       pendingGalleryFiles = [];
       renderGallery();
+      setSimilar(c.similar ?? []);
 
       // Show the already-saved images in their dropzones.
       previewImg(fileByLabel("Featured Image"), q.featured_image_path);
@@ -504,6 +533,7 @@ export default function QuestEditorBridge({
       currentGallery = [];
       pendingGalleryFiles = [];
       renderGallery();
+      setSimilar([]);
       previewImg(fileByLabel("Featured Image"), null);
       previewImg(fileByLabel("OG Image"), null);
       previewImg(cardThumbInput(), null);

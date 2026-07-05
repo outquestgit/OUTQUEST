@@ -82,6 +82,9 @@ export interface QuestContent {
   companion?: { heading: string; body: string; button: string; show: boolean };
   /** Uploaded gallery image URLs. */
   gallery?: string[];
+  /** Manually-picked "Similar OutQuests" (quest slugs), shown at the bottom of
+   *  the quest page. Empty/absent → the section is hidden. */
+  similar?: string[];
   included?: string[];
   requirements?: string[];
 }

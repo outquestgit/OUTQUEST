@@ -11,9 +11,10 @@ import { useCallback, useMemo, useState } from "react";
  *   value per dimension, clicking the active pill clears it); the default is the
  *   All-Quests page's multi-select `toggleFilter`.
  *
- * A card matches when, for every active dimension, its value is in that
- * dimension's selected set (a card missing the dimension is hidden — same as the
- * runtime). Changing a filter resets to page 1.
+ * A card matches when, for every active dimension, at least one of its values
+ * (dims are space-joined slugs) is in that dimension's selected set — so a quest
+ * tagged with several outcome goals matches any of them. A card missing the
+ * dimension is hidden (same as the runtime). Changing a filter resets to page 1.
  */
 export type ActiveFilters = Record<string, Set<string>>;
 
@@ -70,7 +71,10 @@ export function useGridFilters<T>(
         Object.entries(active).every(([dim, vals]) => {
           if (vals.size === 0) return true;
           const cv = getDim(it, dim);
-          return !!cv && vals.has(cv);
+          // A card can carry multiple slugs for one dimension (space-joined —
+          // e.g. a quest with several outcome goals); it matches the dimension
+          // when ANY of its values is selected.
+          return !!cv && cv.split(/\s+/).some((v) => vals.has(v));
         })
       ),
     [items, active, getDim]
