@@ -231,11 +231,23 @@ export function QuestListing({ data }: { data: ListingData }) {
           </div>
         )}
 
+        {data.intro && (
+          <div style={{ marginBottom: "48px" }}>
+            <div className="label">Overview</div>
+            <h2 className="serif-h" style={{ marginBottom: "16px" }}>
+              About This Quest
+            </h2>
+            <p style={{ fontSize: "16px", lineHeight: 1.7, color: "var(--text2)", whiteSpace: "pre-line" }}>
+              {data.intro}
+            </p>
+          </div>
+        )}
+
         {data.unlocks.length > 0 && (
           <div style={{ marginBottom: "48px" }}>
             <div className="label">What you gain</div>
             <h2 className="serif-h" style={{ marginBottom: "20px" }}>
-              What this Quest unlocks
+              What This Quest Unlocks
             </h2>
             <div className="unlock-grid">
               {data.unlocks.map((u, i) => (
@@ -408,9 +420,13 @@ export function QuestListing({ data }: { data: ListingData }) {
                   className="qcard"
                   key={s.slug}
                   onClick={() => router.push(s.href)}
-                  style={{ background: s.gradient }}
+                  style={
+                    s.image
+                      ? { backgroundImage: `url(${s.image})`, backgroundSize: "cover", backgroundPosition: "center" }
+                      : { background: s.gradient }
+                  }
                 >
-                  <div className="qcard-art">{s.art}</div>
+                  <div className="qcard-art">{s.image ? "" : s.art}</div>
                   <div className="qcard-ov"></div>
                   <div className="qcard-badge">{s.badge}</div>
                   <div className="qcard-info">

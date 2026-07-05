@@ -46,22 +46,31 @@ export function questPath(q: QuestWithTerms): string {
  */
 export function questToFilters(q: QuestWithTerms): FrontFilters {
   const f: FrontFilters = {};
-  const ld = firstSlug(q, "life_direction");
-  if (ld) f.direction = ld;
-  const out = firstSlug(q, "outcome_goal");
-  if (out) f.outcome = out;
-  const cat = firstSlug(q, "category");
-  if (cat) f.category = cat;
-  const diff = firstSlug(q, "difficulty");
-  if (diff) f.difficulty = diff;
-  const bud = firstSlug(q, "budget");
-  if (bud) f.budgetlevel = bud;
-  const dur = firstSlug(q, "duration");
-  if (dur) f.duration = dur;
-  const del = firstSlug(q, "delivery");
-  if (del) f.delivery = del;
-  const country = firstSlug(q, "country");
-  if (country) f.location = country;
+  // Carry EVERY selected slug per dimension (space-joined), not just the first.
+  // A quest can be tagged with several outcome goals / life directions / budgets
+  // etc.; the grid filter matches when ANY of them is picked. Using only the
+  // first slug made a card invisible to all its other selected values — so
+  // clicking one of those pills returned an empty grid.
+  const join = (kind: string) => {
+    const slugs = q.terms.filter((t) => t.kind === kind).map((t) => t.slug);
+    return slugs.length ? slugs.join(" ") : undefined;
+  };
+  const direction = join("life_direction");
+  if (direction) f.direction = direction;
+  const outcome = join("outcome_goal");
+  if (outcome) f.outcome = outcome;
+  const category = join("category");
+  if (category) f.category = category;
+  const difficulty = join("difficulty");
+  if (difficulty) f.difficulty = difficulty;
+  const budgetlevel = join("budget");
+  if (budgetlevel) f.budgetlevel = budgetlevel;
+  const duration = join("duration");
+  if (duration) f.duration = duration;
+  const delivery = join("delivery");
+  if (delivery) f.delivery = delivery;
+  const location = join("country");
+  if (location) f.location = location;
   return f;
 }
 
@@ -207,6 +216,8 @@ const OUTCOME_EMOJI: Record<string, string> = {
   "become-financially-independent": "💸",
   "wellness": "🌿",
   "adventure": "🏕️",
+  "work-remotely": "💻",
+  "lifestyle-change": "✨",
 };
 const DEFAULT_ARTS = ["🌍", "✈️", "🗺️", "⚡"];
 const PREP_TIERS = [
@@ -239,6 +250,7 @@ export interface ListingData {
   stats: { icon: string; label: string; val: string }[];
   outcomePills: string[];
   unlocks: { i: string; t: string; p: string }[];
+  intro: string;
   immersive: string;
   overview: string;
   why: string;
@@ -252,7 +264,7 @@ export interface ListingData {
   }[];
   faq: { q: string; a: string }[];
   companion: { heading: string; body: string; button: string };
-  similar: { slug: string; href: string; gradient: string; art: string; badge: string; title: string; meta: string }[];
+  similar: { slug: string; href: string; image: string | null; gradient: string; art: string; badge: string; title: string; meta: string }[];
 }
 
 const COMPANION_DEFAULT = {
@@ -261,24 +273,25 @@ const COMPANION_DEFAULT = {
   button: "Send this quest to a friend",
 };
 
-/** Pick up to 3 other quests to surface as "Similar OutQuests". */
+/** The "Similar OutQuests" surfaced on a quest page are the ones an admin
+ *  manually picked (`content.similar`, quest slugs), rendered in that order.
+ *  Slugs that don't resolve to a published quest (draft/hidden/deleted) are
+ *  dropped; an empty list hides the section entirely. */
 function pickSimilar(q: QuestWithTerms, others: QuestWithTerms[]) {
-  const myTerms = new Set(q.terms.map((t) => t.id));
-  const scored = others
-    .filter((o) => o.slug !== q.slug)
-    .map((o) => ({ o, score: o.terms.filter((t) => myTerms.has(t.id)).length }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3)
-    .map(({ o }) => ({
+  const bySlug = new Map(others.map((o) => [o.slug, o]));
+  return ((q.content ?? {}).similar ?? [])
+    .map((slug) => bySlug.get(slug))
+    .filter((o): o is QuestWithTerms => !!o && o.slug !== q.slug)
+    .map((o) => ({
       slug: o.slug,
       href: questPath(o),
+      image: o.card_image_path || o.featured_image_path || null,
       gradient: o.card_gradient || o.card_color || FALLBACK_GRADIENT,
       art: o.card_icon || "🌍",
       badge: o.level || "Quest",
       title: o.title,
       meta: [o.duration, o.location_label].filter(Boolean).join(" · "),
     }));
-  return scored;
 }
 
 /** Map a DB quest into the full single-quest detail shape (front.js parity).
@@ -351,13 +364,14 @@ export function questToListing(
       // quest still shows real values instead of the generic placeholder.
       { icon: "⏱️", label: "Timeline", val: q.duration || q.timeline_label || firstName(q, "duration") || "Varies" },
       { icon: "📊", label: "Effort", val: (q.level && DIFF_BY_LEVEL[q.level]) || q.difficulty_label || firstName(q, "difficulty") || "Moderate" },
-      { icon: "💰", label: "Monthly budget", val: q.monthly_budget || q.budget_label || firstName(q, "budget") || "Varies" },
+      { icon: "💰", label: "Budget", val: q.monthly_budget || q.budget_label || firstName(q, "budget") || "Varies" },
       { icon: "📅", label: "Best time to go", val: q.best_time || "Year-round" },
     ],
     outcomePills,
     // Default a blank unlock icon to a sparkle so the card never renders an
     // empty icon slot (the editor's 🌍 is only a placeholder, not a saved value).
     unlocks: (c.unlocks ?? []).map((u) => ({ ...u, i: u.i || "✨" })),
+    intro: c.intro ?? "",
     immersive: c.immersive ?? "",
     overview: c.overview ?? "",
     why: c.why ?? "",
