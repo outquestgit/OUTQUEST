@@ -111,14 +111,12 @@ export async function SiteApp({ initialPage }: { initialPage?: string }) {
         .map(questToSlim),
     };
   });
-  // Homepage "Popular Programs": deals an admin flagged `featured` ("Feature on
-  // the homepage") OR deals in the "programs" category (Programs & Experiences),
-  // display-order, up to 6. Featured deals are listed first so the toggle visibly
-  // promotes a deal onto the homepage.
+  // Homepage "Popular Programs": only deals an admin flagged `featured` ("Feature
+  // on the homepage"), in display-order, up to 6. The featured toggle is the sole
+  // control (matching the deal editor's own description).
   const PUBLIC_VIS = ["published", "featured", "coming_soon"];
   const programs = dbDeals
-    .filter((d) => (d.featured || d.category === "programs") && PUBLIC_VIS.includes(d.visibility))
-    .sort((a, b) => Number(b.featured) - Number(a.featured))
+    .filter((d) => d.featured && PUBLIC_VIS.includes(d.visibility))
     .slice(0, 6)
     .map(dealToProgram);
 
