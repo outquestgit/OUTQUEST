@@ -1,6 +1,7 @@
 import { statSync } from "node:fs";
 import { join } from "node:path";
 import FrontBoot from "@/app/(site)/FrontBoot";
+import { PageActivator } from "@/components/site/PageActivator";
 import { Overlays } from "@/components/site/overlays/Overlays";
 import { QuizModal } from "@/components/site/overlays/QuizModal";
 import { Nav } from "@/components/site/chrome/Nav";
@@ -230,6 +231,8 @@ export async function SiteApp({ initialPage }: { initialPage?: string }) {
       />
 
       <FrontBoot initialPage={initialPage} version={frontJsVersion()} />
+      {/* Re-assert the active section after an App Router Back/Forward re-render. */}
+      <PageActivator initialPage={initialPage} />
     </>
   );
 }
