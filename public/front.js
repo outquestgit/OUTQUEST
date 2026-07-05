@@ -28,32 +28,61 @@ function _gaPageview(id){
   _gaLastPath=path;
   window.gtag('event','page_view',{page_path:path,page_title:document.title,page_location:window.location.origin+path});
 }
-// ── SPA URL sync ──────────────────────────────────────────────────────────
-// showPage() swaps sections without a full load and historically left the
-// address bar untouched, so a refresh reloaded "/" (the homepage). Mirror the
-// matching clean route (every section has one: /about, /partner, /faq, …) into
-// the address bar so a refresh stays on the current page. We use replaceState
-// (preserving Next's router state) rather than pushState so we don't add bogus
-// Back-button entries or fight the App Router's own history handling. Detail
-// views (quest/deal/blog) keep their own slug URLs, so they're skipped here.
-function _spaSyncUrl(path){
-  if(!path)return;
-  try{ if(window.location.pathname!==path) history.replaceState(history.state,'',path); }catch(e){}
+// ── SPA URL sync + history ─────────────────────────────────────────────────
+// showPage() swaps sections without a full load. Each section has a matching
+// clean route (/about, /partner, /faq, …); we mirror it into the address bar so
+// a refresh stays on the current page AND — crucially — we PUSH a history entry
+// so the browser Back button returns to the previous section. (It used to
+// replaceState, which clobbered the current entry: after arriving on the SPA
+// from a deal/quest page, Back skipped straight back to that page instead of the
+// previous in-app view.) Detail views (quest/deal/blog) keep their own slug
+// URLs, so they're never rewritten here.
+var _SPA_NO_URL=['listing','deal-dynamic','deal-hubba','blog-post'];
+// True only where the SPA sections are mounted (home/about/quests/category
+// routes). Detail routes load this same runtime but have no `.page` sections, so
+// history handling there is left entirely to Next.
+function _spaPagesPresent(){ return !!document.getElementById('page-home'); }
+// The SPA page id encoded in the current URL (?p=… deep-link wins, else the
+// first path segment; "/" → home).
+function _pageIdFromUrl(){
+  try{
+    var qp=new URLSearchParams(window.location.search).get('p');
+    if(qp) return qp;
+    var seg=(window.location.pathname||'/').replace(/^\/+|\/+$/g,'');
+    return seg||'home';
+  }catch(e){ return 'home'; }
 }
-function showPage(id){
-  // Resolve the target first; if it isn't in the DOM (e.g. a freshly-added
-  // category page not yet in a stale-cached HTML), fall back to home so we never
-  // strand the visitor on a blank screen showing only the global footer.
+// Swap the visible `.page` section WITHOUT touching history (used on first load,
+// on Back/Forward, and by React re-renders via window._activatePage).
+function _activatePage(id){
   var pg=document.getElementById('page-'+id);
   if(!pg){ pg=document.getElementById('page-home'); id='home'; }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   if(pg)pg.classList.add('active');
   document.body.style.overflow='';
   window.scrollTo({top:0,behavior:'smooth'});
-  if(['listing','deal-dynamic','deal-hubba','blog-post'].indexOf(id)<0)
-    _spaSyncUrl((!id||id==='home')?'/':'/'+id);
   _gaPageview(id);
+  return id;
 }
+// Expose so a React re-render (e.g. an App Router Back that re-mounts the SPA)
+// can re-assert the correct section without pushing a duplicate history entry.
+window._activatePage=_activatePage;
+function showPage(id){
+  var reqId=id;
+  id=_activatePage(id);
+  if(_SPA_NO_URL.indexOf(reqId)>=0) return; // detail overlay: keep its slug URL
+  var path=(id==='home')?'/':'/'+id;
+  try{
+    if(window.location.pathname!==path) history.pushState(history.state,'',path);
+  }catch(e){}
+}
+// Back/Forward within the SPA: re-activate the section for the now-current URL
+// (no push — that would fight the history stack). On detail routes (no sections)
+// do nothing and let Next own the navigation.
+window.addEventListener('popstate',function(){
+  if(!_spaPagesPresent()) return;
+  _activatePage(_pageIdFromUrl());
+});
 
 function showListing(id){
   window._currentListingId=id;
@@ -1990,18 +2019,15 @@ function _quizHasTerm(q, kind, slug){
   return list.indexOf(slug)>=0;
 }
 // `filters` is a map { category?, budget?, duration? } of the selected term slugs.
-// Pick up to `limit`, widening gracefully so results are never empty:
-//   1) quests matching ALL selected filters (AND),
-//   2) then quests matching ANY one filter,
-//   3) then any quest.
+// Return ONLY quests matching ALL selected filters (AND), up to `limit`. No
+// widening: fewer than `limit` matches shows just those, and zero matches shows
+// none (the caller renders an empty-state message) — never pad with unrelated
+// quests.
 function _quizPickQuests(quests, filters, limit){
   var kinds=Object.keys(filters).filter(function(k){return filters[k];});
+  if(!kinds.length) return [];
   var matchesAll=function(q){return kinds.every(function(k){return _quizHasTerm(q,k,filters[k]);});};
-  var matchesAny=function(q){return kinds.some(function(k){return _quizHasTerm(q,k,filters[k]);});};
-  var out=kinds.length ? quests.filter(matchesAll) : [];
-  if(kinds.length && out.length<limit) quests.filter(matchesAny).forEach(function(q){if(out.indexOf(q)<0&&out.length<limit)out.push(q);});
-  if(out.length<limit) quests.forEach(function(q){if(out.indexOf(q)<0&&out.length<limit)out.push(q);});
-  return out.slice(0,limit);
+  return quests.filter(matchesAll).slice(0,limit);
 }
 
 function showQuizResults(){
