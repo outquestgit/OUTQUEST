@@ -2262,12 +2262,12 @@ nav{overflow:visible;}
 
 /* "More from the Journal" — related cards with the main journal language,
   scaled up a bit for better readability. */
-.blog-related .journal-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:28px!important;align-items:stretch!important;}
-.blog-related .jg-card{aspect-ratio:0.88/1!important;min-height:0!important;border-radius:26px!important;box-shadow:0 14px 34px rgba(0,0,0,.09)!important;}
-.blog-related .jg-img{flex:0 0 64%!important;height:auto!important;aspect-ratio:auto!important;border-radius:26px 26px 0 0!important;}
-.blog-related .jg-img-inner{font-size:64px!important;}
-.blog-related .jg-tag{top:18px!important;left:18px!important;padding:6px 11px!important;font-size:11px!important;letter-spacing:1.7px!important;}
-.blog-related .jg-title{padding:14px 22px 24px!important;font-size:22px!important;line-height:1.08!important;}
+.blog-related .journal-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px!important;align-items:stretch!important;}
+.blog-related .jg-card{aspect-ratio:0.82/1!important;min-height:560px!important;border-radius:28px!important;box-shadow:0 16px 38px rgba(0,0,0,.1)!important;}
+.blog-related .jg-img{flex:0 0 70%!important;height:auto!important;aspect-ratio:auto!important;border-radius:28px 28px 0 0!important;}
+.blog-related .jg-img-inner{font-size:72px!important;}
+.blog-related .jg-tag{top:20px!important;left:20px!important;padding:7px 12px!important;font-size:12px!important;letter-spacing:1.7px!important;}
+.blog-related .jg-title{padding:16px 24px 28px!important;font-size:24px!important;line-height:1.1!important;}
 @media(max-width:760px){
   .blog-related .journal-grid{grid-template-columns:1fr!important;}
 }
