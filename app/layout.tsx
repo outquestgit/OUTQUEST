@@ -37,16 +37,9 @@ export async function generateMetadata(): Promise<Metadata> {
   // fallback. An admin-uploaded favicon (nav branding), when present, is the
   // single authoritative icon and overrides the defaults.
   const favicon = settings?.nav.brand?.faviconUrl?.trim();
-  meta.icons = favicon
-    ? { icon: favicon, shortcut: favicon, apple: favicon }
-    : {
-        icon: [
-          { url: "/icon.svg", type: "image/svg+xml", sizes: "any" },
-          { url: "/favicon.ico", sizes: "16x16 32x32" },
-        ],
-        shortcut: "/favicon.ico",
-        apple: "/icon.svg",
-      };
+  if (favicon) {
+    meta.icons = { icon: favicon, shortcut: favicon, apple: favicon };
+  }
   return meta;
 }
 
