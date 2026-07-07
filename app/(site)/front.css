@@ -2260,14 +2260,14 @@ nav{overflow:visible;}
   .jg-title,.jcard-body h3{font-size:26px!important;}
 }
 
-/* "More from the Journal" — smaller related cards that match the main journal
-  card language while fitting the article column. */
-.blog-related .journal-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:22px!important;align-items:stretch!important;}
-.blog-related .jg-card{aspect-ratio:0.96/1!important;min-height:0!important;border-radius:24px!important;box-shadow:0 12px 30px rgba(0,0,0,.08)!important;}
-.blog-related .jg-img{flex:0 0 58%!important;height:auto!important;aspect-ratio:auto!important;border-radius:24px 24px 0 0!important;}
-.blog-related .jg-img-inner{font-size:58px!important;}
-.blog-related .jg-tag{top:16px!important;left:16px!important;padding:5px 10px!important;font-size:10px!important;letter-spacing:1.6px!important;}
-.blog-related .jg-title{padding:12px 20px 22px!important;font-size:20px!important;line-height:1.1!important;}
+/* "More from the Journal" — related cards with the main journal language,
+  scaled up a bit for better readability. */
+.blog-related .journal-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:28px!important;align-items:stretch!important;}
+.blog-related .jg-card{aspect-ratio:0.88/1!important;min-height:0!important;border-radius:26px!important;box-shadow:0 14px 34px rgba(0,0,0,.09)!important;}
+.blog-related .jg-img{flex:0 0 64%!important;height:auto!important;aspect-ratio:auto!important;border-radius:26px 26px 0 0!important;}
+.blog-related .jg-img-inner{font-size:64px!important;}
+.blog-related .jg-tag{top:18px!important;left:18px!important;padding:6px 11px!important;font-size:11px!important;letter-spacing:1.7px!important;}
+.blog-related .jg-title{padding:14px 22px 24px!important;font-size:22px!important;line-height:1.08!important;}
 @media(max-width:760px){
   .blog-related .journal-grid{grid-template-columns:1fr!important;}
 }
