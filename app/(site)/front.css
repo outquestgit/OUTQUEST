@@ -2199,6 +2199,7 @@ nav{overflow:visible;}
 .jg-card > .jg-title{
   padding-left:30px!important;
   padding-right:30px!important;
+  padding-top:16px!important;
   background:#F7F7F5!important;
 }
 .jg-tag,
@@ -2234,6 +2235,8 @@ nav{overflow:visible;}
 }
 .jg-card:hover .jg-title,
 .jcard:hover .jcard-body h3{color:#161412!important;}
+/* Slight breathing room above the blog-card title. */
+.jcard-body h3{margin-top:6px!important;}
 .jcard-body{
   flex:1!important;
   padding:28px 30px 40px!important;

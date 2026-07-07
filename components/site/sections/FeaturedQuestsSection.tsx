@@ -18,7 +18,10 @@ export function FeaturedQuestsSection({ quests }: { quests: Quest[] }) {
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          // The heading is hidden globally (`.popular-section .serif-h`), so a
+          // `space-between` row would leave the lone button on the left. Pin the
+          // button to the right regardless of whether the heading renders.
+          justifyContent: "flex-end",
           marginBottom: 0,
           flexWrap: "wrap",
           gap: "12px",

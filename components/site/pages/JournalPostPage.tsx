@@ -45,8 +45,6 @@ export function JournalPostPage({ post }: { post: BlogPostData }) {
           <span>{post.author}</span>
           <div className="blog-meta-dot"></div>
           <span>{post.date}</span>
-          <div className="blog-meta-dot"></div>
-          <span>{post.readTime}</span>
         </div>
         <div className="blog-body" dangerouslySetInnerHTML={{ __html: post.body }} />
         {post.related.length > 0 && (

@@ -1224,8 +1224,6 @@ function openBlogPost(postId){
       <span>${post.author}</span>
       <div class="blog-meta-dot"></div>
       <span>${post.date}</span>
-      <div class="blog-meta-dot"></div>
-      <span>${post.readTime}</span>
     </div>
     <div class="blog-body">${post.body}</div>
     ${questBtnHTML}
