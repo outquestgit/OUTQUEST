@@ -30,12 +30,23 @@ export async function generateMetadata(): Promise<Metadata> {
       /* ignore a malformed siteUrl — relative URLs just won't be resolved */
     }
   }
-  // Admin-uploaded favicon (nav branding) overrides the default. Set explicitly
-  // so it's the single authoritative <link rel="icon"> — the static default now
-  // lives in /public (served at /favicon.ico) so Next doesn't emit a competing
-  // file-based icon link that would win over the upload.
-  const favicon = settings?.nav.brand?.faviconUrl;
-  meta.icons = { icon: favicon || "/favicon.ico" };
+  // Favicon. Search engines (Google) need a crawlable, square icon that's at
+  // least 48px — the old 16/32px favicon.ico alone was below that bar, so it was
+  // often dropped from search results. We now lead with a scalable SVG
+  // (sizes="any", never rejected on size) and keep favicon.ico as the legacy
+  // fallback. An admin-uploaded favicon (nav branding), when present, is the
+  // single authoritative icon and overrides the defaults.
+  const favicon = settings?.nav.brand?.faviconUrl?.trim();
+  meta.icons = favicon
+    ? { icon: favicon, shortcut: favicon, apple: favicon }
+    : {
+        icon: [
+          { url: "/icon.svg", type: "image/svg+xml", sizes: "any" },
+          { url: "/favicon.ico", sizes: "16x16 32x32" },
+        ],
+        shortcut: "/favicon.ico",
+        apple: "/icon.svg",
+      };
   return meta;
 }
 
