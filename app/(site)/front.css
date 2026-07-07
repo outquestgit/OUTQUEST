@@ -2260,14 +2260,15 @@ nav{overflow:visible;}
   .jg-title,.jcard-body h3{font-size:26px!important;}
 }
 
-/* "More from the Journal" — cards sized for the 720px article column.
-   Two-up, content-height (no aspect-ratio) so they never overlap. */
-.blog-related .journal-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:24px!important;align-items:start!important;}
-.blog-related .jg-card{aspect-ratio:auto!important;min-height:0!important;border-radius:22px!important;}
-.blog-related .jg-img{flex:0 0 auto!important;height:200px!important;aspect-ratio:auto!important;border-radius:22px 22px 0 0!important;}
-.blog-related .jg-img-inner{font-size:64px!important;}
-.blog-related .jg-tag{font-size:12px!important;letter-spacing:2px!important;padding:22px 26px 0!important;margin:0 0 10px!important;}
-.blog-related .jg-title{font-size:22px!important;line-height:1.25!important;padding:0 26px 28px!important;}
+/* "More from the Journal" — bigger, content-height cards for the 720px article
+   column. Two-up, equal-height (align-items:stretch), with the category tag
+   centered inside the gray body box above a centered title. */
+.blog-related .journal-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:30px!important;align-items:stretch!important;}
+.blog-related .jg-card{aspect-ratio:auto!important;min-height:0!important;border-radius:26px!important;}
+.blog-related .jg-img{flex:0 0 auto!important;height:260px!important;aspect-ratio:auto!important;border-radius:26px 26px 0 0!important;}
+.blog-related .jg-img-inner{font-size:82px!important;}
+.blog-related .jg-tag{flex:0 0 auto!important;background:#F7F7F5!important;text-align:center!important;font-size:12px!important;letter-spacing:2.5px!important;padding:28px 28px 0!important;margin:0!important;}
+.blog-related .jg-title{flex:1 1 auto!important;background:#F7F7F5!important;text-align:center!important;font-size:26px!important;line-height:1.22!important;padding:14px 30px 36px!important;}
 @media(max-width:760px){
   .blog-related .journal-grid{grid-template-columns:1fr!important;}
 }
