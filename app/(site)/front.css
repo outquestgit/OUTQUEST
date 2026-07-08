@@ -2273,16 +2273,25 @@ nav{overflow:visible;}
   .jg-title,.jcard-body h3{font-size:26px!important;}
 }
 
-/* "More from the Journal" — related cards with the main journal language,
-  scaled up a bit for better readability. */
-.blog-related .journal-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px!important;align-items:stretch!important;}
-.blog-related .jg-card{aspect-ratio:0.82/1!important;min-height:560px!important;border-radius:28px!important;box-shadow:0 16px 38px rgba(0,0,0,.1)!important;}
-.blog-related .jg-img{flex:0 0 70%!important;height:auto!important;aspect-ratio:auto!important;border-radius:28px 28px 0 0!important;}
-.blog-related .jg-img-inner{font-size:72px!important;}
-.blog-related .jg-tag{top:20px!important;left:20px!important;padding:7px 12px!important;font-size:12px!important;letter-spacing:1.7px!important;}
-.blog-related .jg-title{padding:16px 24px 28px!important;font-size:24px!important;line-height:1.1!important;}
-@media(max-width:760px){
-  .blog-related .journal-grid{grid-template-columns:1fr!important;}
+/* "More from the Journal" deliberately has NO card overrides: the related cards
+   are the journal-index cards, so they inherit `.journal-grid` / `.jg-card` above
+   verbatim. The old overrides pinned `min-height:560px`, which combined with
+   `aspect-ratio` made each card derive its *width* from that height (560 × 0.82 =
+   459px) rather than stretching to the grid column — cards overflowed and
+   overlapped their neighbour, clipping its title. Don't reintroduce a min-height.
+
+   The section breaks out of `.blog-post-wrap`'s 720px article measure: at that
+   width three identical cards shrink to ~170px and clip their titles. The negative
+   `50% - 50vw` margins pull it back to the viewport edges (safe — `html,body` set
+   `overflow-x:hidden`), and the inner `.journal-grid` re-centres at its own
+   max-width, so the cards land at exactly the journal page's size. */
+.blog-related{
+  width:auto;
+  max-width:none;
+  margin-left:calc(50% - 50vw);
+  margin-right:calc(50% - 50vw);
+  padding-left:20px;
+  padding-right:20px;
 }
 
 /* FINAL WHO USES US PAPER TAB TUNING — keep the pull tab visible */

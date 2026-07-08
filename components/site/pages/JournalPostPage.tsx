@@ -65,7 +65,9 @@ export function JournalPostPage({ post }: { post: BlogPostData }) {
         {post.related.length > 0 && (
           <div className="blog-related">
             <h3>More from the Journal</h3>
-            <div className="journal-grid" style={{ gridTemplateColumns: "repeat(3,1fr)" }}>
+            {/* No inline columns / no `.blog-related` overrides: these are the
+                journal-index cards, styled entirely by `.journal-grid` + `.jg-card`. */}
+            <div className="journal-grid">
               {post.related.map((r) => (
                 <div
                   className="jg-card"
