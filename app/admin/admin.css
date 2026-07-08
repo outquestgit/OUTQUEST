@@ -97,7 +97,9 @@ body{font-family:var(--sans);background:var(--cream);color:var(--ink);font-size:
 .page{display:none}
 .page.active{display:block;animation:panelIn .22s cubic-bezier(.4,0,.2,1) both}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* Ends on `transform:none`, not `translateY(0)` — `both` keeps the last frame
+   applied, and a lingering transform makes descendant sticky/fixed unreliable. */
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
 /* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
@@ -785,6 +787,13 @@ hr{border:0;border-top:var(--border-thin);margin:20px 0}
 .rte-toolbar .rte-sep{width:1px;height:18px;background:var(--border);margin:0 4px;flex-shrink:0}
 .rte-area{min-height:320px;padding:14px 16px;outline:none;font-family:var(--sans);font-size:14px;line-height:1.7;color:var(--ink);border-radius:0 0 var(--r) var(--r)}
 .rte-area:empty::before{content:attr(data-placeholder);color:var(--muted);pointer-events:none}
+.rte-area img{max-width:100%;height:auto}
+/* `position:sticky` above is inert while any ancestor clips it, and
+   `.section-card` does (`overflow:hidden`, for its rounded corners). Un-clip
+   the card that holds an editor, then round the tab bar that had been relying
+   on the card to clip its top corners. Scroll container is `#content`. */
+.section-card:has(.rte-toolbar){overflow:visible}
+.section-card:has(.rte-toolbar)>.tabs:first-child{border-radius:var(--r-lg) var(--r-lg) 0 0}
 
 /* ── SCHEDULE POST CARD ── */
 .sched-card{background:#fff;border:var(--border-thin);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-top:0}

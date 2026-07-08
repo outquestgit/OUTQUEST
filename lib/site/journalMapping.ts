@@ -28,7 +28,7 @@ export interface BlogPostData {
   heroIcon: string;
   featuredImage: string | null;
   body: string;
-  related: { id: string; tag: string; title: string; bg: string; icon: string }[];
+  related: { id: string; tag: string; title: string; bg: string; icon: string; image: string | null }[];
 }
 
 /** Exact publish date for the blog post ("April 15, 2026"), formatted server-side
@@ -96,6 +96,7 @@ export function postToBlogData(p: JournalPost, all: JournalPost[]): BlogPostData
     title: r.title,
     bg: grad(r),
     icon: icon(r),
+    image: r.featured_image_path,
   });
   let relatedPosts = (p.related ?? [])
     .map((slug) => bySlug.get(slug))

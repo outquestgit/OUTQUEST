@@ -12,6 +12,15 @@ import type { BlogPostData } from "@/lib/site/journalMapping";
  */
 export function JournalPostPage({ post }: { post: BlogPostData }) {
   const router = useRouter();
+  const artStyle = (gradient: string, image?: string | null) =>
+    image
+      ? {
+          backgroundImage: `url(${image})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }
+      : { background: gradient };
+
   // A real uploaded featured image paints the hero (cover); else gradient + emoji.
   const heroStyle = post.featuredImage
     ? {
@@ -59,8 +68,8 @@ export function JournalPostPage({ post }: { post: BlogPostData }) {
                   onClick={() => router.push(`/journal/${r.id}`)}
                 >
                   <div className="jg-img">
-                    <div className="jg-img-inner" style={{ background: r.bg }}>
-                      {r.icon}
+                    <div className="jg-img-inner" style={artStyle(r.bg, r.image)}>
+                      {r.image ? "" : r.icon}
                     </div>
                   </div>
                   <div className="jg-tag">{r.tag}</div>

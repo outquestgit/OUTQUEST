@@ -102,8 +102,11 @@ declare global {
     insertLink(): void;
     openLinkModal(areaId: string): void;
     closeLinkModal(): void;
+    insertRteImage(areaId: string): void;
     handleRteImage(el: HTMLElement, areaId: string): void;
     handleRteKeydown(e: KeyboardEvent): void;
+    rteSaveSelection(areaId: string): void;
+    rteRestoreSelection(areaId: string): void;
 
     // Leads
     closeLead(): void;
@@ -237,8 +240,13 @@ export const legalLink = (areaId: string) => call("legalLink", areaId);
 export const insertLink = () => call("insertLink");
 export const openLinkModal = (areaId: string) => call("openLinkModal", areaId);
 export const closeLinkModal = () => call("closeLinkModal");
+export const insertRteImage = (areaId: string) => call("insertRteImage", areaId);
 export const handleRteImage = (el: HTMLElement, areaId: string) => call("handleRteImage", el, areaId);
 export const handleRteKeydown = (e: KeyboardEvent) => call("handleRteKeydown", e);
+/** Snapshot / restore the editor caret around anything that steals focus
+ *  (native colour picker, file dialog) — otherwise inserts land at the top. */
+export const rteSaveSelection = (areaId: string) => call("rteSaveSelection", areaId);
+export const rteRestoreSelection = (areaId: string) => call("rteRestoreSelection", areaId);
 
 // Leads
 export const closeLead = () => call("closeLead");
