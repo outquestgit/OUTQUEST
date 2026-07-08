@@ -626,8 +626,7 @@ export function DealsEditPage() {
                       <label>
                         Canonical URL <span className="opt">optional</span>
                       </label>
-                      <input type="url" id="d-canonical" placeholder="https://outquest.com/deals/…" onInput={() => syncDealSerp()} />
-                                            <input type="url" id="d-canonical" placeholder="https://joinoutquest.com/deals/…" onInput={() => syncDealSerp()} />
+                      <input type="url" id="d-canonical" placeholder="https://joinoutquest.com/deals/…" onInput={() => syncDealSerp()} />
                       <div className="field-hint">Leave blank — canonical defaults to the deal&apos;s slug URL</div>
                     </div>
 
