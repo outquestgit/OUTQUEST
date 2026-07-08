@@ -198,6 +198,24 @@ textarea{resize:vertical;min-height:90px}
 .rte-area h3{font-size:1.2em;font-weight:700;font-family:'Syne',sans-serif;margin:.4em 0 .3em}
 .rte-area blockquote{border-left:3px solid var(--accent);padding-left:14px;color:var(--muted2);font-style:italic;margin:.5em 0}
 .rte-area ul,.rte-area ol{padding-left:22px;margin:.3em 0}
+.rte-area b,.rte-area strong{font-weight:700}
+/* The journal editor previews .blog-body (front.css), where headings are 400-weight
+   serif and only <strong> is bold. Mirror that: a heading the author never marked up
+   must not render bold, or the Bold button has no visible effect inside one — and no
+   intrinsic weight to remove. Sizes stay editor-native; the serif families differ. */
+#journal-body h1,#journal-body h2,#journal-body h3,
+#journal-body h4,#journal-body h5,#journal-body h6{font-family:var(--serif);font-weight:400}
+/* Applied for the duration of an execCommand('bold'|'italic') call only — see
+   rteWithNeutralBlock() in public/admin.js. Strips the *block's* own weight/slant
+   so the command reads the inline markup instead of concluding "already bold" and
+   running its remove path. The b/em rules keep inline formatting detectable while
+   the block is neutralized, so un-bolding still works. */
+.rte-neutral-bold h1,.rte-neutral-bold h2,.rte-neutral-bold h3,
+.rte-neutral-bold h4,.rte-neutral-bold h5,.rte-neutral-bold h6,
+.rte-neutral-bold th,.rte-neutral-bold dt{font-weight:400!important}
+.rte-neutral-bold b,.rte-neutral-bold strong{font-weight:700!important}
+.rte-neutral-italic blockquote,.rte-neutral-italic address{font-style:normal!important}
+.rte-neutral-italic em,.rte-neutral-italic i{font-style:italic!important}
 /* LINK MODAL */
 .link-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center}
 .link-modal-overlay.open{display:flex}
