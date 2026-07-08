@@ -4,6 +4,8 @@ import { useState } from "react";
 import type { FaqPageConfig } from "@/lib/siteSettings";
 import { PcmsSectionCard } from "./shared";
 import { Inp, RowCard, AddBtn, RemoveBtn, upd, rm } from "./fields";
+import { PageSeoData } from "@/lib/types";
+import { SeoPanel } from "./SeoPanel";
 
 type Cat = FaqPageConfig["categories"][number];
 
@@ -12,10 +14,17 @@ type Cat = FaqPageConfig["categories"][number];
  * the categorised Q&A accordions (add/remove categories and questions), and the
  * "still have a question" box. Saves to `site_settings.pages.faq`.
  */
-export function FaqEditorPage({ faq }: { faq: FaqPageConfig }) {
+export function FaqEditorPage({
+  faq,
+  fullPageSeo,
+}: {
+  faq: FaqPageConfig;
+  fullPageSeo: Record<string, PageSeoData>;
+}) {
   const [cfg, setCfg] = useState<FaqPageConfig>(faq);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [seoData, setSeoData] = useState<PageSeoData>(fullPageSeo?.["faq"] || {});
 
   const patch = <K extends keyof FaqPageConfig>(k: K, p: Partial<FaqPageConfig[K]>) =>
     setCfg((c) => ({ ...c, [k]: { ...c[k], ...p } }));
@@ -28,7 +37,10 @@ export function FaqEditorPage({ faq }: { faq: FaqPageConfig }) {
       const res = await fetch("/api/admin/site-settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pages: { faq: cfg } }),
+        body: JSON.stringify({
+          pages: { faq: cfg },
+          page_seo: { ...fullPageSeo, faq: seoData },
+        }),
       });
       if (res.ok) {
         setSaved(true);
@@ -129,6 +141,14 @@ export function FaqEditorPage({ faq }: { faq: FaqPageConfig }) {
           </div>
           <AddBtn label="Add Category" onClick={() => setCats([...categories, { icon: "", title: "", items: [{ q: "", a: "" }] }])} />
         </PcmsSectionCard>
+
+        {/* SEO */}
+        <SeoPanel
+          data={seoData}
+          pagePath="/faq"
+          order={4}
+          onChange={(patch) => setSeoData((prev) => ({ ...prev, ...patch }))}
+        />
 
         {/* STILL BOX */}
         <PcmsSectionCard icon="💬" name="Still Have a Question (CTA)" order={3}>

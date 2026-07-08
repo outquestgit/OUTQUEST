@@ -39,6 +39,7 @@ import { DEFAULT_SEO_DEFAULTS } from "./site/data/seoDefaults";
 import type { SeoDefaults } from "./site/data/seoDefaults";
 import { DEFAULT_SITE_CONFIG } from "./site/data/siteConfig";
 import type { SiteConfig } from "./site/data/siteConfig";
+import { PageSeoData } from "./types";
 
 /** Cache tag — admin saves call `revalidateTag(SITE_SETTINGS_TAG, { expire: 0 })` for immediate refresh. */
 export const SITE_SETTINGS_TAG = "site-settings";
@@ -121,6 +122,7 @@ type Row = {
   quiz: unknown;
   seo: unknown;
   settings: unknown;
+  page_seo: unknown;
 };
 
 /** Merge stored public site config (General + Global Copy) over the built-ins. */
@@ -205,12 +207,12 @@ function normalizeQuiz(row: Row | null): QuizConfig {
   };
   const questions: QuizBuilderQuestion[] = Array.isArray(q.questions)
     ? (q.questions as Partial<QuizBuilderQuestion>[])
-        .map((qq) => ({
-          text: txt(qq?.text),
-          show: flag(qq?.show, true),
-          options: (Array.isArray(qq?.options) ? qq!.options : []).map(opt),
-        }))
-        .filter((qq) => qq.text || qq.options.length)
+      .map((qq) => ({
+        text: txt(qq?.text),
+        show: flag(qq?.show, true),
+        options: (Array.isArray(qq?.options) ? qq!.options : []).map(opt),
+      }))
+      .filter((qq) => qq.text || qq.options.length)
     : D.questions;
 
   return {
@@ -412,6 +414,8 @@ function normalize(row: Row | null): SiteSettings {
       newsletter: { ...DEFAULT_NEWSLETTER, ...footer?.newsletter },
       style: { ...DEFAULT_FOOTER_STYLE, ...footer?.style },
     },
+    // Add the 'as Record<string, PageSeoData>' type assertion
+    page_seo: (row?.page_seo || {}) as Record<string, PageSeoData>,
     homepage: normalizeHomepage(row),
     pages: normalizePages(row),
     quiz: normalizeQuiz(row),
@@ -423,7 +427,7 @@ function normalize(row: Row | null): SiteSettings {
 // Optional columns (quiz, seo) may not exist yet if their migration hasn't run.
 // Try the fullest select, then progressively drop optional columns so the rest
 // of the settings keep working and the missing sections resolve to defaults.
-const COLS_FULL = "nav, footer, homepage, pages, quiz, seo, settings";
+const COLS_FULL = "nav, footer, homepage, pages, quiz, seo, settings, page_seo";
 const COLS_NO_SETTINGS = "nav, footer, homepage, pages, quiz, seo";
 const COLS_NO_SEO = "nav, footer, homepage, pages, quiz";
 const COLS_LEGACY = "nav, footer, homepage, pages";

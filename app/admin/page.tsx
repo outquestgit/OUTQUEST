@@ -32,6 +32,7 @@ import {
   DEFAULT_QUIZ,
   DEFAULT_SEO_DEFAULTS,
   DEFAULT_SITE_CONFIG,
+  getSiteSettings,
 } from "@/lib/siteSettings";
 import { getAdminConfig, DEFAULT_ADMIN_CONFIG } from "@/lib/adminConfig";
 import JournalBridge from "./JournalBridge";
@@ -516,6 +517,8 @@ export default async function AdminPage({
     featured_image_path: d.featured_image_path,
     card_image_path: d.card_image_path,
     og_image_url: d.og_image_url,
+    canonical_url: d.canonical_url,
+    noindex: d.noindex,
     questSlugs: d.questSlugs,
   }));
 
@@ -579,9 +582,11 @@ export default async function AdminPage({
     category: (taxonomy.category ?? []).filter((t) => t.active).map((t) => ({ slug: t.slug, name: t.name })),
     outcome: (taxonomy.outcome_goal ?? []).filter((t) => t.active).map((t) => ({ slug: t.slug, name: t.name })),
   };
+  const pageSeo = siteSettings?.page_seo ?? {};
+
   convert(
     "page-pcms-homepage",
-    <HomepagePage homepage={siteSettings?.homepage ?? DEFAULT_HOMEPAGE} reelTax={reelTax} />
+    <HomepagePage homepage={siteSettings?.homepage ?? DEFAULT_HOMEPAGE} reelTax={reelTax} fullPageSeo={pageSeo} />
   );
   // Quests / Explore: hero only (filters + grid are dynamic).
   convert(
@@ -596,20 +601,21 @@ export default async function AdminPage({
     "page-pcms-journal",
     <PageHeroEditor pageId="page-pcms-journal" title="Journal" path="/journal" pageKey="journal" hero={siteSettings?.pages.journal ?? DEFAULT_JOURNAL_PAGE} />
   );
+
   // About: full multi-section editor.
-  convert("page-pcms-about", <AboutEditorPage about={siteSettings?.pages.about ?? DEFAULT_ABOUT} />);
+  convert("page-pcms-about", <AboutEditorPage about={siteSettings?.pages.about ?? DEFAULT_ABOUT} fullPageSeo={pageSeo} />);
   // Partners: full multi-section editor.
-  convert("page-pcms-partners", <PartnerEditorPage partner={siteSettings?.pages.partner ?? DEFAULT_PARTNER} />);
-  convert("page-pcms-faq", <FaqEditorPage faq={siteSettings?.pages.faq ?? DEFAULT_FAQ} />);
+  convert("page-pcms-partners", <PartnerEditorPage partner={siteSettings?.pages.partner ?? DEFAULT_PARTNER} fullPageSeo={pageSeo} />);
+  convert("page-pcms-faq", <FaqEditorPage faq={siteSettings?.pages.faq ?? DEFAULT_FAQ} fullPageSeo={pageSeo} />);
   convert(
     "page-pcms-privacy",
-    <LegalContentEditor pageId="page-pcms-privacy" title="Privacy" path="/privacy" pageKey="privacy" config={siteSettings?.pages.privacy ?? DEFAULT_PRIVACY} />
+    <LegalContentEditor pageId="page-pcms-privacy" title="Privacy" path="/privacy" pageKey="privacy" config={siteSettings?.pages.privacy ?? DEFAULT_PRIVACY} fullPageSeo={pageSeo} />
   );
   convert(
     "page-pcms-terms",
-    <LegalContentEditor pageId="page-pcms-terms" title="Terms" path="/terms" pageKey="terms" config={siteSettings?.pages.terms ?? DEFAULT_TERMS} />
+    <LegalContentEditor pageId="page-pcms-terms" title="Terms" path="/terms" pageKey="terms" config={siteSettings?.pages.terms ?? DEFAULT_TERMS} fullPageSeo={pageSeo} />
   );
-  convert("page-pcms-contact", <ContactEditorPage contact={siteSettings?.pages.contact ?? DEFAULT_CONTACT} />);
+  convert("page-pcms-contact", <ContactEditorPage contact={siteSettings?.pages.contact ?? DEFAULT_CONTACT} fullPageSeo={pageSeo} />);
   // Quiz Builder: seeded from the saved config. Result paths link to any
   // page-generating term (Category / Life Direction); answer options filter the
   // quest results by a Category, Budget, or Duration term.
