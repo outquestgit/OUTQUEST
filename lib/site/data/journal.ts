@@ -8,6 +8,12 @@ export interface JournalGridCard {
   title: string;
   /** Uploaded featured image (paints the card instead of gradient+emoji). */
   image?: string | null;
+  /** Canonical post URL (`/journal/{slug}`), set only for DB-backed posts. When
+   *  present the card routes there — a real navigation, so Back returns to the
+   *  listing. The SPA's `openBlogPost` overlay pushes no history entry, which
+   *  strands Back on whatever preceded the journal page. Static seed cards have
+   *  no route and keep the overlay. */
+  href?: string | null;
 }
 
 export const journalGrid: JournalGridCard[] = [

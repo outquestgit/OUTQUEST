@@ -264,7 +264,7 @@ function legalExec(editorId, cmd){
   var el = document.getElementById(editorId);
   if(!el) return;
   el.focus();
-  document.execCommand(cmd, false, null);
+  rteWithNeutralBlock(cmd, el, function(){ document.execCommand(cmd, false, null); });
 }
 function legalHeading(editorId, tag){
   var el = document.getElementById(editorId);
@@ -725,8 +725,32 @@ function rteSafeUrl(raw){
   return 'https://'+url;
 }
 
+/** The nearest editable surface holding the caret. */
+function _rteActiveArea(el){
+  if(el) return el;
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount) return null;
+  let n=sel.getRangeAt(0).commonAncestorContainer;
+  if(n.nodeType!==1) n=n.parentNode;
+  return n&&n.closest?n.closest('.rte-area,[contenteditable="true"]'):null;
+}
+
+/** execCommand/queryCommandState read bold + italic off the *computed* style, so
+ *  inside an <h1> (weight 800) or a <blockquote> (italic) they see the format as
+ *  already on and run the remove path — the button looks dead, or worse, wraps the
+ *  selection in font-weight:normal. Blank the block's own weight/slant for the
+ *  duration of the call so the command judges the inline markup (<b>, <em>) alone.
+ *  Paired with .rte-neutral-* in admin.css. Returns whatever `fn` returns. */
+function rteWithNeutralBlock(cmd,el,fn){
+  const cls=cmd==='bold'?'rte-neutral-bold':cmd==='italic'?'rte-neutral-italic':'';
+  const area=cls?_rteActiveArea(el):null;
+  if(area) area.classList.add(cls);
+  try{ return fn(); }
+  finally{ if(area) area.classList.remove(cls); }
+}
+
 function rteCmd(cmd,val){
-  document.execCommand(cmd,false,val||null);
+  rteWithNeutralBlock(cmd,null,()=>document.execCommand(cmd,false,val||null));
 }
 function applyBlockFormat(tag,editorId){
   const editor=document.getElementById(editorId);if(!editor)return;
@@ -1550,7 +1574,10 @@ document.querySelectorAll('#page-deals-list tbody tr').forEach(tr => {
     ['bold','italic','underline','strikeThrough',
      'insertUnorderedList','insertOrderedList'].forEach(function(cmd) {
       try {
-        const on = document.queryCommandState(cmd);
+        // Neutralized too, or every heading would light the B button up.
+        const on = rteWithNeutralBlock(cmd, activeArea, function() {
+          return document.queryCommandState(cmd);
+        });
         const id = {
           'bold':'rfb-b','italic':'rfb-i','underline':'rfb-u',
           'strikeThrough':'rfb-s','insertUnorderedList':'rfb-ul',
@@ -1565,7 +1592,9 @@ document.querySelectorAll('#page-deals-list tbody tr').forEach(tr => {
   /* ── Public command dispatcher ── */
   window.rteFloatCmd = function(cmd, val) {
     restoreSelection();
-    document.execCommand(cmd, false, val || null);
+    rteWithNeutralBlock(cmd, activeArea, function() {
+      document.execCommand(cmd, false, val || null);
+    });
     updateActiveStates();
     if (activeArea) activeArea.focus();
   };

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { showPage } from "@/lib/site/runtime";
 import type { BlogPostData } from "@/lib/site/journalMapping";
 
 /**
@@ -32,15 +33,20 @@ export function JournalPostPage({ post }: { post: BlogPostData }) {
 
   return (
     <>
+      {/* Route via showPage(), as QuestListing does. A router.push("/?p=journal")
+          soft-navigates to the `/` route, whose SiteApp mounts with no
+          `initialPage` — PageActivator then re-asserts "home" and the `?p=` query
+          is never read (FrontBoot only reads it on script load). showPage() sees
+          `#page-journal` is absent on this standalone route and deep-links properly. */}
       <nav className="bc-nav">
-        <span onClick={() => router.push("/")}>Home</span>
+        <span onClick={() => showPage("home")}>Home</span>
         <span className="bc-sep">›</span>
-        <span onClick={() => router.push("/?p=journal")}>Journal</span>
+        <span onClick={() => showPage("journal")}>Journal</span>
         <span className="bc-sep">›</span>
         <span className="bc-current">{post.title || "Article"}</span>
       </nav>
       <div className="blog-back-bar">
-        <button className="blog-back-btn" onClick={() => router.push("/?p=journal")}>
+        <button className="blog-back-btn" onClick={() => showPage("journal")}>
           Back to Journal
         </button>
       </div>

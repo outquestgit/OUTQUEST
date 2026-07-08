@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import type { JournalCard as JournalCardData } from "@/lib/site/data/home";
 import { openBlogPost } from "@/lib/site/runtime";
 
@@ -10,10 +11,13 @@ import { openBlogPost } from "@/lib/site/runtime";
  * from the Journal index grid card (`.jg-card`), which stays separate.
  */
 export function JournalCard({ card }: { card: JournalCardData }) {
+  const router = useRouter();
   return (
     <div
       className="jcard"
-      onClick={() => openBlogPost(card.post)}
+      // DB posts route to their real page (leaves a history entry, so Back returns
+      // here); static seed cards have no route and keep the SPA overlay.
+      onClick={() => (card.href ? router.push(card.href) : openBlogPost(card.post))}
       style={{ cursor: "pointer" }}
     >
       <div
