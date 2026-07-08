@@ -779,7 +779,12 @@ hr{border:0;border-top:var(--border-thin);margin:20px 0}
 
 
 /* ── STICKY RTE TOOLBAR ── */
-.rte{border:var(--border-thin);border-radius:var(--r);overflow:visible;background:#fff;position:relative}
+/* `overflow:clip` — not `hidden` — is what makes the sticky toolbar below work.
+   Both clip the paint, but `hidden` also makes the element a scroll container,
+   which becomes the sticky element's scrollport and pins it in place forever.
+   `clip` creates no scroll container, so the toolbar sticks to `#content` while
+   long content (a `pre` line, a pasted URL) still can't escape the rounded box. */
+.rte{border:var(--border-thin);border-radius:var(--r);overflow:clip;background:#fff;position:relative}
 .rte-toolbar{background:var(--cream-2);border-bottom:1px solid var(--border);border-radius:var(--r) var(--r) 0 0;position:sticky;top:0;z-index:40;flex-wrap:wrap;display:flex;align-items:center;gap:1px;padding:6px 8px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
 .rte-toolbar .rte-btn{padding:6px 8px;border-radius:6px;cursor:pointer;border:none;background:transparent;color:var(--ink);font-size:13px;font-family:var(--sans);font-weight:600;display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;transition:background .12s,color .12s;line-height:1;white-space:nowrap}
 .rte-toolbar .rte-btn:hover{background:var(--cream);color:var(--black)}
@@ -788,12 +793,15 @@ hr{border:0;border-top:var(--border-thin);margin:20px 0}
 .rte-area{min-height:320px;padding:14px 16px;outline:none;font-family:var(--sans);font-size:14px;line-height:1.7;color:var(--ink);border-radius:0 0 var(--r) var(--r)}
 .rte-area:empty::before{content:attr(data-placeholder);color:var(--muted);pointer-events:none}
 .rte-area img{max-width:100%;height:auto}
-/* `position:sticky` above is inert while any ancestor clips it, and
-   `.section-card` does (`overflow:hidden`, for its rounded corners). Un-clip
-   the card that holds an editor, then round the tab bar that had been relying
-   on the card to clip its top corners. Scroll container is `#content`. */
-.section-card:has(.rte-toolbar){overflow:visible}
-.section-card:has(.rte-toolbar)>.tabs:first-child{border-radius:var(--r-lg) var(--r-lg) 0 0}
+/* Nothing the author types may run past the editor's edge. Chrome's UA sheet
+   sets `overflow-wrap:break-word` on [contenteditable]; Firefox does not — so a
+   pasted URL wraps in Chrome and spills in Firefox. Be explicit. `pre` keeps
+   `white-space:pre` by default and never wraps at all, in any browser. */
+.rte-area{overflow-wrap:break-word}
+.rte-area pre{white-space:pre-wrap;overflow-x:auto;max-width:100%}
+/* Same `hidden` → `clip` swap as `.rte` above: the card wrapping the editor must
+   clip (rounded corners) without becoming the sticky toolbar's scrollport. */
+.section-card:has(.rte-toolbar){overflow:clip}
 
 /* ── SCHEDULE POST CARD ── */
 .sched-card{background:#fff;border:var(--border-thin);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-top:0}
