@@ -598,10 +598,11 @@ export default async function AdminPage({
     <PageHeroEditor pageId="page-pcms-journal" title="Journal" path="/journal" pageKey="journal" hero={siteSettings?.pages.journal ?? DEFAULT_JOURNAL_PAGE} />
   );
 
-  const settings = await getSiteSettings(); // however you currently fetch settings
+  // const settings = await getSiteSettings(); // however you currently fetch settings
+  const pageSeo = siteSettings?.page_seo ?? {} 
   // About: full multi-section editor.
   convert("page-pcms-about", <AboutEditorPage about={siteSettings?.pages.about ?? DEFAULT_ABOUT}
-    fullPageSeo={settings.page_seo || {}}
+    fullPageSeo={pageSeo}
   />);
   // Partners: full multi-section editor.
   convert("page-pcms-partners", <PartnerEditorPage partner={siteSettings?.pages.partner ?? DEFAULT_PARTNER} />);
