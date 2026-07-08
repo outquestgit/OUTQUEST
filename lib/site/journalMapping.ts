@@ -14,6 +14,8 @@ export interface JournalFeatured {
   gradient: string;
   emoji: string;
   image: string | null;
+  /** Canonical post URL — see `JournalGridCard.href`. */
+  href?: string | null;
 }
 
 /** A fully-resolved blog post for the SPA reader + the SSR /journal/[slug] page. */
@@ -57,6 +59,7 @@ export function postToGridCard(p: JournalPost): JournalGridCard {
     date: p.date_label ?? "",
     title: p.title,
     image: p.featured_image_path,
+    href: `/journal/${p.slug}`,
   };
 }
 
@@ -71,6 +74,7 @@ export function postToHomeCard(p: JournalPost): JournalCard {
     title: p.title,
     excerpt: p.excerpt ?? "",
     image: p.featured_image_path,
+    href: `/journal/${p.slug}`,
   };
 }
 
@@ -84,6 +88,7 @@ export function postToFeatured(p: JournalPost): JournalFeatured {
     gradient: heroGrad(p),
     emoji: icon(p),
     image: p.featured_image_path,
+    href: `/journal/${p.slug}`,
   };
 }
 

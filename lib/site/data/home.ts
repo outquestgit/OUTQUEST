@@ -156,6 +156,9 @@ export interface JournalCard {
   excerpt: string;
   /** Uploaded featured image (paints the card instead of gradient+emoji). */
   image?: string | null;
+  /** Canonical post URL (`/journal/{slug}`), set only for DB-backed posts — see
+   *  `JournalGridCard.href`. Static seed cards have no route and keep the overlay. */
+  href?: string | null;
 }
 
 export const journalCards: JournalCard[] = [
