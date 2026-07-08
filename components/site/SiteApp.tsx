@@ -183,8 +183,14 @@ export async function SiteApp({ initialPage }: { initialPage?: string }) {
       <DealHubbaPage />
       <AboutPage about={settings.pages.about} />
       <ContactPage contact={settings.pages.contact} />
-      <PrivacyPage privacy={settings.pages.privacy} />
-      <TosPage terms={settings.pages.terms} />
+      {/* Legal pages are the one exception to "every section is always mounted".
+          Nothing swaps to them client-side — no `showPage('privacy'|'tos')` exists
+          anywhere in front.js or the components — so they're only ever reached by a
+          real navigation to /privacy or /tos. Mounting them everywhere put ~11KB of
+          policy text into the crawlable body of every route on the site. `showPage`
+          routes to them when they aren't mounted (see lib/site/runtime.ts). */}
+      {initialPage === "privacy" && <PrivacyPage privacy={settings.pages.privacy} />}
+      {initialPage === "tos" && <TosPage terms={settings.pages.terms} />}
       <FaqPage faq={settings.pages.faq} />
 
       <SiteEnd footer={settings.footer} />
