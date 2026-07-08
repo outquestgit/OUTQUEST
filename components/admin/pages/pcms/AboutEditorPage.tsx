@@ -4,8 +4,6 @@ import { useState } from "react";
 import type { AboutConfig } from "@/lib/siteSettings";
 import { PcmsSectionCard } from "./shared";
 import { Inp, ImageField, RowCard, AddBtn, RemoveBtn, upd, rm } from "./fields";
-import { PageSeoData } from "@/lib/types";
-import { SeoPanel } from "./SeoPanel";
 
 /**
  * Pages-CMS → About. Every section's copy and card collections are editable;
@@ -13,20 +11,10 @@ import { SeoPanel } from "./SeoPanel";
  * preserved in state and round-trip on save but aren't shown here. One save()
  * persists the whole About config to `site_settings.pages.about`.
  */
-export function AboutEditorPage({
-  about,
-  fullPageSeo
-}: {
-  about: AboutConfig;
-  fullPageSeo: Record<string, PageSeoData>
-}) {
+export function AboutEditorPage({ about }: { about: AboutConfig }) {
   const [cfg, setCfg] = useState<AboutConfig>(about);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-
-  const [seoData, setSeoData] = useState<PageSeoData>(
-    fullPageSeo?.['about'] || {}
-  );
 
   const patch = <K extends keyof AboutConfig>(k: K, p: Partial<AboutConfig[K]>) =>
     setCfg((c) => ({ ...c, [k]: { ...c[k], ...p } }));
@@ -38,14 +26,7 @@ export function AboutEditorPage({
       const res = await fetch("/api/admin/site-settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          pages: { about: cfg },
-          // Merge the updated 'about' SEO data into the rest of the page_seo object
-          page_seo: {
-            ...fullPageSeo,
-            about: seoData
-          }
-        }),
+        body: JSON.stringify({ pages: { about: cfg } }),
       });
       if (res.ok) {
         setSaved(true);
@@ -245,14 +226,6 @@ export function AboutEditorPage({
           </div>
           <AddBtn label="Add Item" onClick={() => patch("why", { items: [...why.items, { badge: "", title: "", desc: "" }] })} />
         </PcmsSectionCard>
-
-        {/* SEO */}
-        <SeoPanel
-          data={seoData}
-          pagePath="/about"
-          order={8}
-          onChange={(patch) => setSeoData((prev) => ({ ...prev, ...patch }))}
-        />
 
         {/* SOFT CTA */}
         <PcmsSectionCard icon="🎯" name="Soft CTA" order={7}>

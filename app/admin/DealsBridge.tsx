@@ -45,8 +45,6 @@ export type EditDeal = {
   featured_image_path: string | null;
   card_image_path: string | null;
   og_image_url: string | null;
-  canonical_url: string | null;
-  noindex: boolean;
   questSlugs: string[];
 };
 
@@ -507,8 +505,6 @@ export default function DealsBridge({ deals, quests }: { deals: EditDeal[]; ques
       setVal("d-cta-btn-text", d.cta_button_label ?? "");
       setVal("d-seo-title", d.seo_title ?? "");
       setVal("d-meta-desc", d.meta_description ?? "");
-      setVal("d-canonical", d.canonical_url ?? "");
-      setChecked("d-index-toggle", !d.noindex);
       setVal("d-display-order", String(d.display_order ?? 1));
       setStatusToggle(["published", "featured", "coming_soon"].includes(d.visibility));
       previewImg(fileByLabel("Featured Image"), d.featured_image_path);
@@ -523,7 +519,7 @@ export default function DealsBridge({ deals, quests }: { deals: EditDeal[]; ques
     };
     const clearEditor = () => {
       ["d-title", "d-slug", "d-card-icon", "d-card-color", "d-book-url", "d-affiliate-url",
-        "d-price-from", "d-offer-label", "d-offer-price", "d-outcome-text", "d-cta-heading", "d-cta-subtext", "d-cta-btn-text", "d-seo-title", "d-meta-desc", "d-canonical",
+        "d-price-from", "d-offer-label", "d-offer-price", "d-outcome-text", "d-cta-heading", "d-cta-subtext", "d-cta-btn-text", "d-seo-title", "d-meta-desc",
       ].forEach((id) => setVal(id, ""));
       setVal("d-btn-text", "Book Now");
       setVal("d-display-order", "1");
@@ -626,8 +622,6 @@ export default function DealsBridge({ deals, quests }: { deals: EditDeal[]; ques
         featured: isChecked("d-featured"),
         seo_title: val("d-seo-title"),
         meta_description: val("d-meta-desc"),
-        canonical_url: val("d-canonical") || null,
-        noindex: !isChecked("d-index-toggle"),
         display_order: val("d-display-order"),
         questIds: [...selected],
       };

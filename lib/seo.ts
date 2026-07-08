@@ -34,8 +34,6 @@ export function buildMetadata(
     image?: string | null;
     noindex?: boolean;
     nofollow?: boolean;
-    /** OpenGraph type — defaults to "website". Use "article" for blog posts. */
-    ogType?: "website" | "article";
   },
   /** Site-wide SEO defaults (Settings → SEO Defaults). */
   defaults?: SeoDefaults
@@ -67,7 +65,7 @@ export function buildMetadata(
       title,
       description,
       url,
-      type: fallback.ogType ?? "website",
+      type: "website",
       images: ogImage ? [{ url: ogImage }] : undefined,
     },
     twitter: {

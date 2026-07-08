@@ -5,8 +5,6 @@ import type { ContactConfig } from "@/lib/siteSettings";
 import type { ContactLinkType } from "@/lib/site/data/contact";
 import { PcmsSectionCard } from "./shared";
 import { Inp, RowCard, AddBtn, RemoveBtn, upd, rm } from "./fields";
-import { PageSeoData } from "@/lib/types";
-import { SeoPanel } from "./SeoPanel";
 
 /**
  * Pages-CMS → Contact. Editable: hero copy, the enquiry cards (icon / title /
@@ -14,17 +12,10 @@ import { SeoPanel } from "./SeoPanel";
  * message. The form's submit wiring stays in the component. Saves to
  * `site_settings.pages.contact`.
  */
-export function ContactEditorPage({
-  contact,
-  fullPageSeo,
-}: {
-  contact: ContactConfig;
-  fullPageSeo: Record<string, PageSeoData>;
-}) {
+export function ContactEditorPage({ contact }: { contact: ContactConfig }) {
   const [cfg, setCfg] = useState<ContactConfig>(contact);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [seoData, setSeoData] = useState<PageSeoData>(fullPageSeo?.["contact"] || {});
 
   const patch = <K extends keyof ContactConfig>(k: K, p: Partial<ContactConfig[K]>) =>
     setCfg((c) => ({ ...c, [k]: { ...c[k], ...p } }));
@@ -37,10 +28,7 @@ export function ContactEditorPage({
       const res = await fetch("/api/admin/site-settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          pages: { contact: cfg },
-          page_seo: { ...fullPageSeo, contact: seoData },
-        }),
+        body: JSON.stringify({ pages: { contact: cfg } }),
       });
       if (res.ok) {
         setSaved(true);
@@ -162,14 +150,6 @@ export function ContactEditorPage({
             <Inp label="Success Body (use {name} for the sender's first name)" value={form.successBody} onChange={(v) => patch("form", { successBody: v })} area />
           </div>
         </PcmsSectionCard>
-
-        {/* SEO */}
-        <SeoPanel
-          data={seoData}
-          pagePath="/contact"
-          order={4}
-          onChange={(patch) => setSeoData((prev) => ({ ...prev, ...patch }))}
-        />
       </div>
 
       <div className="pcms-page-save-bar">

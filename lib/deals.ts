@@ -87,8 +87,6 @@ export interface Deal {
   seo_title: string | null;
   meta_description: string | null;
   og_image_url: string | null;
-  canonical_url: string | null;
-  noindex: boolean;
   visibility: string;
   display_order: number;
   updated_at: string;
