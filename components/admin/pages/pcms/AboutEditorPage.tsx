@@ -5,6 +5,7 @@ import type { AboutConfig } from "@/lib/siteSettings";
 import { PcmsSectionCard } from "./shared";
 import { Inp, ImageField, RowCard, AddBtn, RemoveBtn, upd, rm } from "./fields";
 import { PageSeoData } from "@/lib/types";
+import { SeoPanel } from "./SeoPanel";
 
 /**
  * Pages-CMS → About. Every section's copy and card collections are editable;
@@ -244,6 +245,14 @@ export function AboutEditorPage({
           </div>
           <AddBtn label="Add Item" onClick={() => patch("why", { items: [...why.items, { badge: "", title: "", desc: "" }] })} />
         </PcmsSectionCard>
+
+        {/* SEO */}
+        <SeoPanel
+          data={seoData}
+          pagePath="/about"
+          order={8}
+          onChange={(patch) => setSeoData((prev) => ({ ...prev, ...patch }))}
+        />
 
         {/* SOFT CTA */}
         <PcmsSectionCard icon="🎯" name="Soft CTA" order={7}>
