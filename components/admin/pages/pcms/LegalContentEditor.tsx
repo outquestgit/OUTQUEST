@@ -5,8 +5,6 @@ import type { LegalPageConfig } from "@/lib/siteSettings";
 import { PcmsSectionCard } from "./shared";
 import { RichText } from "./RichText";
 import { Inp } from "./fields";
-import { PageSeoData } from "@/lib/types";
-import { SeoPanel } from "./SeoPanel";
 
 /**
  * Editor for the legal pages (Privacy, Terms) — matches the reference admin's
@@ -20,19 +18,16 @@ export function LegalContentEditor({
   path,
   pageKey,
   config,
-  fullPageSeo,
 }: {
   pageId: string;
   title: string;
   path: string;
   pageKey: "privacy" | "terms";
   config: LegalPageConfig;
-  fullPageSeo: Record<string, PageSeoData>;
 }) {
   const [cfg, setCfg] = useState<LegalPageConfig>(config);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [seoData, setSeoData] = useState<PageSeoData>(fullPageSeo?.[pageKey] || {});
 
   const patch = <K extends keyof LegalPageConfig>(k: K, p: Partial<LegalPageConfig[K]>) =>
     setCfg((c) => ({ ...c, [k]: { ...(c[k] as object), ...p } }));
@@ -45,10 +40,7 @@ export function LegalContentEditor({
       const res = await fetch("/api/admin/site-settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          pages: { [pageKey]: cfg },
-          page_seo: { ...fullPageSeo, [pageKey]: seoData },
-        }),
+        body: JSON.stringify({ pages: { [pageKey]: cfg } }),
       });
       if (res.ok) {
         setSaved(true);
@@ -104,14 +96,6 @@ export function LegalContentEditor({
           </div>
           <RichText value={cfg.body} onChange={(v) => set("body", v)} minHeight={440} />
         </PcmsSectionCard>
-
-        {/* SEO */}
-        <SeoPanel
-          data={seoData}
-          pagePath={path}
-          order={4}
-          onChange={(patch) => setSeoData((prev) => ({ ...prev, ...patch }))}
-        />
 
         {/* Contact box */}
         <PcmsSectionCard icon="💬" name="Contact Box" order={3}>

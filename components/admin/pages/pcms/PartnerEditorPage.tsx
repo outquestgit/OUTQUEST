@@ -4,8 +4,6 @@ import { useState } from "react";
 import type { PartnerConfig } from "@/lib/siteSettings";
 import { PcmsSectionCard } from "./shared";
 import { Inp, RowCard, AddBtn, RemoveBtn, upd, rm, updStr } from "./fields";
-import { PageSeoData } from "@/lib/types";
-import { SeoPanel } from "./SeoPanel";
 
 /** Editable list of single strings (pills / offering options). */
 function StringList({ items, onChange, addLabel, placeholder }: { items: string[]; onChange: (l: string[]) => void; addLabel: string; placeholder?: string }) {
@@ -30,17 +28,10 @@ function StringList({ items, onChange, addLabel, placeholder }: { items: string[
  * Decorative illustrations and the form's submit wiring stay in the component.
  * One save() persists to `site_settings.pages.partner`.
  */
-export function PartnerEditorPage({
-  partner,
-  fullPageSeo,
-}: {
-  partner: PartnerConfig;
-  fullPageSeo: Record<string, PageSeoData>;
-}) {
+export function PartnerEditorPage({ partner }: { partner: PartnerConfig }) {
   const [cfg, setCfg] = useState<PartnerConfig>(partner);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [seoData, setSeoData] = useState<PageSeoData>(fullPageSeo?.["partner"] || {});
 
   const patch = <K extends keyof PartnerConfig>(k: K, p: Partial<PartnerConfig[K]>) =>
     setCfg((c) => ({ ...c, [k]: { ...c[k], ...p } }));
@@ -52,10 +43,7 @@ export function PartnerEditorPage({
       const res = await fetch("/api/admin/site-settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          pages: { partner: cfg },
-          page_seo: { ...fullPageSeo, partner: seoData },
-        }),
+        body: JSON.stringify({ pages: { partner: cfg } }),
       });
       if (res.ok) {
         setSaved(true);
@@ -237,14 +225,6 @@ export function PartnerEditorPage({
             <Inp label="Success Body" value={form.successBody} onChange={(v) => patch("form", { successBody: v })} area />
           </div>
         </PcmsSectionCard>
-
-        {/* SEO */}
-        <SeoPanel
-          data={seoData}
-          pagePath="/partner"
-          order={7}
-          onChange={(patch) => setSeoData((prev) => ({ ...prev, ...patch }))}
-        />
       </div>
 
       <div className="pcms-page-save-bar">

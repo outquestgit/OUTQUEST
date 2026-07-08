@@ -4,8 +4,6 @@ import { useState } from "react";
 import type { HomepageConfig, HeroCard, ReelCard } from "@/lib/siteSettings";
 import { PcmsSectionCard } from "./shared";
 import { Inp, ImageField, RowCard, AddBtn, RemoveBtn, upd, rm } from "./fields";
-import { PageSeoData } from "@/lib/types";
-import { SeoPanel } from "./SeoPanel";
 
 const CPS = ["cp1", "cp2", "cp3", "cp4", "cp5", "cp6", "cp7", "cp8", "cp9"];
 const ACTION_TYPES = ["destination", "category", "page"] as const;
@@ -37,16 +35,13 @@ export interface ReelTax {
 export function HomepagePage({
   homepage,
   reelTax = { destination: [], category: [], outcome: [] },
-  fullPageSeo = {},
 }: {
   homepage: HomepageConfig;
   reelTax?: ReelTax;
-  fullPageSeo?: Record<string, PageSeoData>;
 }) {
   const [cfg, setCfg] = useState<HomepageConfig>(homepage);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [seoData, setSeoData] = useState<PageSeoData>(fullPageSeo?.["homepage"] || {});
 
   // Section-scoped immutable updaters.
   const patch = <K extends keyof HomepageConfig>(k: K, p: Partial<HomepageConfig[K]>) =>
@@ -59,10 +54,7 @@ export function HomepagePage({
       const res = await fetch("/api/admin/site-settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          homepage: cfg,
-          page_seo: { ...fullPageSeo, homepage: seoData },
-        }),
+        body: JSON.stringify({ homepage: cfg }),
       });
       if (res.ok) {
         setSaved(true);
@@ -385,14 +377,6 @@ export function HomepagePage({
             <Inp label="Button Label" value={cfg.journal.buttonLabel} onChange={(v) => patch("journal", { buttonLabel: v })} />
           </div>
         </PcmsSectionCard>
-
-        {/* SEO */}
-        <SeoPanel
-          data={seoData}
-          pagePath="/"
-          order={99}
-          onChange={(patch) => setSeoData((prev) => ({ ...prev, ...patch }))}
-        />
       </div>
 
       <div className="pcms-page-save-bar">

@@ -25,8 +25,6 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       description: deal.short_desc ?? undefined,
       path: `/deals/${deal.slug}`,
       image: deal.featured_image_path || deal.card_image_path,
-      canonical: deal.canonical_url,
-      noindex: deal.noindex,
     },
     settings.seo
   );

@@ -733,7 +733,6 @@ export async function PUT(req: Request) {
   if (body.quiz !== undefined) payload.quiz = cleanQuiz(body.quiz);
   if (body.seo !== undefined) payload.seo = cleanSeo(body.seo);
   if (body.settings !== undefined) payload.settings = cleanSiteConfig(body.settings);
-  if (body.page_seo !== undefined) payload.page_seo = body.page_seo;
   if (body.pages !== undefined) {
     // Merge into existing pages so a single-page save can't blank the others.
     const { data } = await sb.from("site_settings").select("pages").eq("id", 1).maybeSingle();
