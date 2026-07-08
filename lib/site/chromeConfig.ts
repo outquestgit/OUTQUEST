@@ -8,6 +8,7 @@
 
 // The full homepage CMS model lives in ./data/homepage (it references the
 // section content types); imported type-only here to avoid a runtime cycle.
+import { PageSeoData } from "../types";
 import type { HomepageConfig } from "./data/homepage";
 export type { HomepageConfig };
 
@@ -166,6 +167,7 @@ export interface SiteSettings {
   general: import("./data/siteConfig").SiteGeneral;
   /** Front-end modal/drawer copy (Settings → Global Copy). */
   globalCopy: import("./data/siteConfig").GlobalCopy;
+  page_seo?: Record<string, PageSeoData>;
 }
 
 /**

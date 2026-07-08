@@ -32,6 +32,7 @@ import {
   DEFAULT_QUIZ,
   DEFAULT_SEO_DEFAULTS,
   DEFAULT_SITE_CONFIG,
+  getSiteSettings,
 } from "@/lib/siteSettings";
 import { getAdminConfig, DEFAULT_ADMIN_CONFIG } from "@/lib/adminConfig";
 import JournalBridge from "./JournalBridge";
@@ -596,8 +597,12 @@ export default async function AdminPage({
     "page-pcms-journal",
     <PageHeroEditor pageId="page-pcms-journal" title="Journal" path="/journal" pageKey="journal" hero={siteSettings?.pages.journal ?? DEFAULT_JOURNAL_PAGE} />
   );
+
+  const settings = await getSiteSettings(); // however you currently fetch settings
   // About: full multi-section editor.
-  convert("page-pcms-about", <AboutEditorPage about={siteSettings?.pages.about ?? DEFAULT_ABOUT} />);
+  convert("page-pcms-about", <AboutEditorPage about={siteSettings?.pages.about ?? DEFAULT_ABOUT}
+    fullPageSeo={settings.page_seo || {}}
+  />);
   // Partners: full multi-section editor.
   convert("page-pcms-partners", <PartnerEditorPage partner={siteSettings?.pages.partner ?? DEFAULT_PARTNER} />);
   convert("page-pcms-faq", <FaqEditorPage faq={siteSettings?.pages.faq ?? DEFAULT_FAQ} />);

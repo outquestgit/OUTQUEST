@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { AboutConfig } from "@/lib/siteSettings";
 import { PcmsSectionCard } from "./shared";
 import { Inp, ImageField, RowCard, AddBtn, RemoveBtn, upd, rm } from "./fields";
+import { PageSeoData } from "@/lib/types";
 
 /**
  * Pages-CMS → About. Every section's copy and card collections are editable;
@@ -11,10 +12,20 @@ import { Inp, ImageField, RowCard, AddBtn, RemoveBtn, upd, rm } from "./fields";
  * preserved in state and round-trip on save but aren't shown here. One save()
  * persists the whole About config to `site_settings.pages.about`.
  */
-export function AboutEditorPage({ about }: { about: AboutConfig }) {
+export function AboutEditorPage({
+  about,
+  fullPageSeo
+}: {
+  about: AboutConfig;
+  fullPageSeo: Record<string, PageSeoData>
+}) {
   const [cfg, setCfg] = useState<AboutConfig>(about);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  const [seoData, setSeoData] = useState<PageSeoData>(
+    fullPageSeo?.['about'] || {}
+  );
 
   const patch = <K extends keyof AboutConfig>(k: K, p: Partial<AboutConfig[K]>) =>
     setCfg((c) => ({ ...c, [k]: { ...c[k], ...p } }));
@@ -26,7 +37,14 @@ export function AboutEditorPage({ about }: { about: AboutConfig }) {
       const res = await fetch("/api/admin/site-settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pages: { about: cfg } }),
+        body: JSON.stringify({
+          pages: { about: cfg },
+          // Merge the updated 'about' SEO data into the rest of the page_seo object
+          page_seo: {
+            ...fullPageSeo,
+            about: seoData
+          }
+        }),
       });
       if (res.ok) {
         setSaved(true);
