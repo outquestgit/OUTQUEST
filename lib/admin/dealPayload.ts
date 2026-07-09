@@ -112,6 +112,8 @@ export type DealPayload = {
   featured: boolean;
   seo_title: string | null;
   meta_description: string | null;
+  canonical_url: string | null;
+  noindex: boolean;
   visibility: "published" | "draft";
   display_order: number;
   // Optional — set only when present so they're preserved on update.
@@ -187,6 +189,8 @@ export function buildDealPayload(
     featured: !!body.featured,
     seo_title: clean(body.seo_title),
     meta_description: clean(body.meta_description),
+    canonical_url: clean(body.canonical_url),
+    noindex: body.noindex === true || body.noindex === "true",
     visibility: body.status === "published" ? "published" : "draft",
     display_order: Number.isFinite(Number(body.display_order))
       ? Math.trunc(Number(body.display_order))

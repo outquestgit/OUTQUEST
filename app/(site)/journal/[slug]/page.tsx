@@ -29,6 +29,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       image: post.featured_image_path,
       noindex: post.noindex,
       nofollow: post.nofollow,
+      ogType: "article",
     },
     settings.seo
   );
