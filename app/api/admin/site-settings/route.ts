@@ -758,5 +758,15 @@ export async function PUT(req: Request) {
   // being served stale-while-revalidate. Settings drive the whole `(site)` tree
   // (nav/footer + every page), so revalidate the layout, not a single path.
   revalidatePath("/", "layout");
+  
+  try {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://joinoutquest.com";
+    await fetch(`${siteUrl}/api/indexnow`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ urls: [`${siteUrl}/`] }),
+    });
+  } catch { /* non-critical, never block the save */ }
+
   return NextResponse.json({ ok: true });
 }
