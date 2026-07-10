@@ -235,6 +235,11 @@ export function DealsEditPage() {
                         <div className="img-upload-hint">JPG, PNG or WEBP · max 5MB</div>
                       </div>
                     </div>
+                    <div className="field">
+                      <label>Image Alt Text <span className="opt">optional — used by screen readers and search engines</span></label>
+                      <input id="d-image-alt" type="text" placeholder="e.g. Hubba co-working space in Bangkok" maxLength={200} />
+                      <div className="field-hint">Describe the image in 10–15 words. Defaults to the deal title if left blank.</div>
+                    </div>
                   </div>
                 </div>
 

@@ -520,6 +520,7 @@ export default async function AdminPage({
     canonical_url: d.canonical_url,
     noindex: d.noindex,
     questSlugs: d.questSlugs,
+    image_alt: d.image_alt,
   }));
 
   const dealQuestOptions: DealQuestOpt[] = quests.map((q) => {
