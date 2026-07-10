@@ -3,6 +3,8 @@ import "./globals.css";
 import { getSiteSettings } from "@/lib/siteSettings";
 import { DEFAULT_SEO_DEFAULTS } from "@/lib/site/data/seoDefaults";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { ClarityProvider } from "@/components/ClarityProvider";
+
 
 // Async so the admin-managed favicon (nav branding) can be wired into <head>.
 // Falls back to whatever file-based icon exists when no favicon is uploaded.
@@ -54,6 +56,7 @@ export default function RootLayout({
     <html lang="en" data-scroll-behavior="smooth">
       <body>{children}</body>
       <GoogleAnalytics />
+      <ClarityProvider />
     </html>
   );
 }
