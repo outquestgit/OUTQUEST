@@ -28,7 +28,7 @@ export function ProgCard({ program: p }: { program: Program }) {
       <div className="prog-card-banner">
         {p.image ? (
           // eslint-disable-next-line @next/next/no-img-element -- admin-uploaded URL; sized by CSS (.prog-card-banner img)
-          <img src={p.image} alt={p.title} />
+          <img src={p.image} alt={p.imageAlt || p.title} loading="lazy" decoding="async" />
         ) : (
           <div className="prog-card-banner-fallback" style={{ background: p.gradient }}>
             {p.art}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import type { SeoFields } from "./types";
+import type { PageSeoData, SeoFields } from "./types";
 import type { SeoDefaults } from "./site/data/seoDefaults";
 
 const SITE_URL =
@@ -24,7 +24,7 @@ function absoluteImageUrl(u?: string | null): string | undefined {
  * featured/card image (`fallback.image`), made absolute.
  */
 export function buildMetadata(
-  seo: Partial<SeoFields>,
+  seo: Partial<SeoFields> & { og_title?: string; og_description?: string },
   fallback: {
     title: string;
     description?: string;
@@ -64,8 +64,8 @@ export function buildMetadata(
         ? { index: !noindex, follow: !fallback.nofollow }
         : undefined,
     openGraph: {
-      title,
-      description,
+      title: seo.og_title?.trim() || title,  // use og_title if set, else seo_title
+      description: seo.og_description?.trim() || description,
       url,
       type: fallback.ogType ?? "website",
       images: ogImage ? [{ url: ogImage }] : undefined,
