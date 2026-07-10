@@ -10,6 +10,7 @@ import { Nav } from "@/components/site/chrome/Nav";
 import { MobileMenu } from "@/components/site/chrome/MobileMenu";
 import { SiteEnd } from "@/components/site/chrome/SiteEnd";
 import { DealDetail } from "@/components/site/pages/DealDetail";
+import { buildDealSchema, schemaScript } from "@/lib/seo/schema";
 
 type Params = Promise<{ slug: string }>;
 
@@ -42,8 +43,22 @@ export default async function DealDetailRoute({ params }: { params: Params }) {
   const [deal, settings] = await Promise.all([getDealBySlug(slug), getSiteSettings()]);
   if (!deal) notFound();
 
+  const schema = buildDealSchema({
+    name: deal.title,
+    description: deal.short_desc,
+    image: deal.featured_image_path ?? deal.card_image_path,
+    slug: deal.slug,
+    price: null,           // adjust if Deal has a price field
+    available: !deal.noindex,
+  });
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: schemaScript(schema) }}
+      />
+
       <Overlays />
       <Nav nav={settings.nav} />
       <MobileMenu nav={settings.nav} />
