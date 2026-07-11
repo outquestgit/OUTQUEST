@@ -7,7 +7,7 @@ import { questCategorySlug } from "@/lib/site/questMapping";
 
 export const revalidate = 3600; // re-generate every 1 hour
 
-const FALLBACK_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const FALLBACK_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
 
 /** Public, always-present routes (SPA sections + editorial index pages). */
 const STATIC_PATHS = [
