@@ -3,6 +3,7 @@ import { revalidateTag, revalidatePath } from "next/cache";
 import { requireAdminApi } from "@/lib/auth";
 import { JOURNAL_TAG } from "@/lib/journal";
 import { buildJournalPayload } from "@/lib/admin/journalPayload";
+import { pingIndexNow } from "@/lib/indexnow";
 
 /** Update a journal post. */
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -29,6 +30,13 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   revalidateTag(JOURNAL_TAG, { expire: 0 });
+
+  // Ping Bing IndexNow so published journal posts get crawled immediately.
+  if (payload.visibility === "published") {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
+    pingIndexNow(`${siteUrl}/journal/${slug}`);
+  }
+
   // Invalidate the front route + client router cache too, so edits show on a
   // normal refresh (tag revalidation alone is served stale-while-revalidate).
   revalidatePath("/", "layout");

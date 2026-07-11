@@ -11,6 +11,7 @@ import { Nav } from "@/components/site/chrome/Nav";
 import { MobileMenu } from "@/components/site/chrome/MobileMenu";
 import { SiteEnd } from "@/components/site/chrome/SiteEnd";
 import { JournalPostPage } from "@/components/site/pages/JournalPostPage";
+import { buildArticleSchema, schemaScript } from "@/lib/seo/schema";
 
 type Params = Promise<{ slug: string }>;
 
@@ -51,8 +52,21 @@ export default async function JournalPostRoute({ params }: { params: Params }) {
 
   const data = postToBlogData(post, all);
 
+  const schema = buildArticleSchema({
+    headline: post.title,
+    description: post.excerpt ?? post.meta_description,
+    image: post.featured_image_path,
+    slug: post.slug,
+    datePublished: post.published_at,   // ISO string from Supabase
+    dateModified: post.updated_at,
+  });
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: schemaScript(schema) }}
+      />
       <Overlays />
       <Nav nav={settings.nav} />
       <MobileMenu nav={settings.nav} />

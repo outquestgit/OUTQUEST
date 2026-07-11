@@ -12,6 +12,7 @@ import { Nav } from "@/components/site/chrome/Nav";
 import { MobileMenu } from "@/components/site/chrome/MobileMenu";
 import { SiteEnd } from "@/components/site/chrome/SiteEnd";
 import { QuestListing } from "@/components/site/pages/QuestListing";
+import { buildCourseSchema, schemaScript } from "@/lib/seo/schema";
 
 type Params = Promise<{ slug: string }>;
 
@@ -55,8 +56,20 @@ export default async function QuestDetailRoute({ params }: { params: Params }) {
   const deals = await getDealsForQuest(quest.id);
   const data = questToListing(quest, all, deals);
 
+  const schema = buildCourseSchema({
+    name: quest.title,
+    description: quest.meta_description ?? quest.tagline,  // tagline as fallback
+    slug: quest.slug,
+    image: quest.featured_image_path ?? quest.card_image_path,  // featured first, fallback to card
+  });
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: schemaScript(schema) }}
+      />
+
       {/* Full site chrome so the standalone route matches the SPA shell. The
           runtime's showPage() deep-links back into the app via /?p=… here. */}
       <Overlays />
