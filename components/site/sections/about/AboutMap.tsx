@@ -1,4 +1,4 @@
-import { aboutMapImage } from "@/lib/site/data/aboutMapImage";
+import Image from "next/image";
 import type { AboutConfig } from "@/lib/site/data/about";
 
 /** About world map — positioned persona cards + location dots over the map image. */
@@ -7,8 +7,17 @@ export function AboutMap({ map }: { map: AboutConfig["map"] }) {
     <section className="wif-section">
       <div className="wif-heading">{map.heading}</div>
       <div className="wif-map-wrap">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={aboutMapImage} className="wif-map-img" alt="World map" aria-hidden="true" />
+        <Image
+          src="/about-map.webp"
+          className="wif-map-img"
+          alt=""
+          aria-hidden="true"
+          fill
+          sizes="100vw"
+          quality={82}
+          priority={false}
+          loading="lazy"
+        />
 
         {map.cards.map((c) => (
           <div className="wif-card" style={{ left: c.left, top: c.top, background: c.bg, color: c.color }} key={c.name}>
