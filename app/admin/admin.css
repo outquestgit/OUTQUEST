@@ -97,7 +97,9 @@ body{font-family:var(--sans);background:var(--cream);color:var(--ink);font-size:
 .page{display:none}
 .page.active{display:block;animation:panelIn .22s cubic-bezier(.4,0,.2,1) both}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* Ends on `transform:none`, not `translateY(0)` — `both` keeps the last frame
+   applied, and a lingering transform makes descendant sticky/fixed unreliable. */
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
 /* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
@@ -196,6 +198,24 @@ textarea{resize:vertical;min-height:90px}
 .rte-area h3{font-size:1.2em;font-weight:700;font-family:'Syne',sans-serif;margin:.4em 0 .3em}
 .rte-area blockquote{border-left:3px solid var(--accent);padding-left:14px;color:var(--muted2);font-style:italic;margin:.5em 0}
 .rte-area ul,.rte-area ol{padding-left:22px;margin:.3em 0}
+.rte-area b,.rte-area strong{font-weight:700}
+/* The journal editor previews .blog-body (front.css), where headings are 400-weight
+   serif and only <strong> is bold. Mirror that: a heading the author never marked up
+   must not render bold, or the Bold button has no visible effect inside one — and no
+   intrinsic weight to remove. Sizes stay editor-native; the serif families differ. */
+#journal-body h1,#journal-body h2,#journal-body h3,
+#journal-body h4,#journal-body h5,#journal-body h6{font-family:var(--serif);font-weight:400}
+/* Applied for the duration of an execCommand('bold'|'italic') call only — see
+   rteWithNeutralBlock() in public/admin.js. Strips the *block's* own weight/slant
+   so the command reads the inline markup instead of concluding "already bold" and
+   running its remove path. The b/em rules keep inline formatting detectable while
+   the block is neutralized, so un-bolding still works. */
+.rte-neutral-bold h1,.rte-neutral-bold h2,.rte-neutral-bold h3,
+.rte-neutral-bold h4,.rte-neutral-bold h5,.rte-neutral-bold h6,
+.rte-neutral-bold th,.rte-neutral-bold dt{font-weight:400!important}
+.rte-neutral-bold b,.rte-neutral-bold strong{font-weight:700!important}
+.rte-neutral-italic blockquote,.rte-neutral-italic address{font-style:normal!important}
+.rte-neutral-italic em,.rte-neutral-italic i{font-style:italic!important}
 /* LINK MODAL */
 .link-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center}
 .link-modal-overlay.open{display:flex}
@@ -777,7 +797,12 @@ hr{border:0;border-top:var(--border-thin);margin:20px 0}
 
 
 /* ── STICKY RTE TOOLBAR ── */
-.rte{border:var(--border-thin);border-radius:var(--r);overflow:visible;background:#fff;position:relative}
+/* `overflow:clip` — not `hidden` — is what makes the sticky toolbar below work.
+   Both clip the paint, but `hidden` also makes the element a scroll container,
+   which becomes the sticky element's scrollport and pins it in place forever.
+   `clip` creates no scroll container, so the toolbar sticks to `#content` while
+   long content (a `pre` line, a pasted URL) still can't escape the rounded box. */
+.rte{border:var(--border-thin);border-radius:var(--r);overflow:clip;background:#fff;position:relative}
 .rte-toolbar{background:var(--cream-2);border-bottom:1px solid var(--border);border-radius:var(--r) var(--r) 0 0;position:sticky;top:0;z-index:40;flex-wrap:wrap;display:flex;align-items:center;gap:1px;padding:6px 8px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
 .rte-toolbar .rte-btn{padding:6px 8px;border-radius:6px;cursor:pointer;border:none;background:transparent;color:var(--ink);font-size:13px;font-family:var(--sans);font-weight:600;display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;transition:background .12s,color .12s;line-height:1;white-space:nowrap}
 .rte-toolbar .rte-btn:hover{background:var(--cream);color:var(--black)}
@@ -785,6 +810,16 @@ hr{border:0;border-top:var(--border-thin);margin:20px 0}
 .rte-toolbar .rte-sep{width:1px;height:18px;background:var(--border);margin:0 4px;flex-shrink:0}
 .rte-area{min-height:320px;padding:14px 16px;outline:none;font-family:var(--sans);font-size:14px;line-height:1.7;color:var(--ink);border-radius:0 0 var(--r) var(--r)}
 .rte-area:empty::before{content:attr(data-placeholder);color:var(--muted);pointer-events:none}
+.rte-area img{max-width:100%;height:auto}
+/* Nothing the author types may run past the editor's edge. Chrome's UA sheet
+   sets `overflow-wrap:break-word` on [contenteditable]; Firefox does not — so a
+   pasted URL wraps in Chrome and spills in Firefox. Be explicit. `pre` keeps
+   `white-space:pre` by default and never wraps at all, in any browser. */
+.rte-area{overflow-wrap:break-word}
+.rte-area pre{white-space:pre-wrap;overflow-x:auto;max-width:100%}
+/* Same `hidden` → `clip` swap as `.rte` above: the card wrapping the editor must
+   clip (rounded corners) without becoming the sticky toolbar's scrollport. */
+.section-card:has(.rte-toolbar){overflow:clip}
 
 /* ── SCHEDULE POST CARD ── */
 .sched-card{background:#fff;border:var(--border-thin);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-top:0}

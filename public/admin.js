@@ -264,7 +264,7 @@ function legalExec(editorId, cmd){
   var el = document.getElementById(editorId);
   if(!el) return;
   el.focus();
-  document.execCommand(cmd, false, null);
+  rteWithNeutralBlock(cmd, el, function(){ document.execCommand(cmd, false, null); });
 }
 function legalHeading(editorId, tag){
   var el = document.getElementById(editorId);
@@ -651,8 +651,106 @@ function syncJournalSerp(){
 }
 
 /* ── RICH TEXT EDITOR ── */
+/* The link modal and the image file-picker both move focus out of the
+   contenteditable, which throws away the caret. `editor.focus()` afterwards
+   puts it back at offset 0 — which is why anything inserted through a dialog
+   used to land at the very top of the post. So: snapshot the range *before*
+   focus leaves, restore it before inserting. Toolbar buttons additionally
+   cancel their mousedown (see JournalEditPage) so they never take focus. */
+let _rteEditorId='';
+let _rteRange=null;
+
+function _rteEditor(editorId){return document.getElementById(editorId||_rteEditorId);}
+
+/** Snapshot the caret/selection — but only when it really sits inside `editor`. */
+function rteSaveSelection(editorId){
+  if(editorId) _rteEditorId=editorId;
+  _rteRange=null;
+  const editor=_rteEditor(editorId);
+  const sel=window.getSelection();
+  if(!editor||!sel||!sel.rangeCount) return null;
+  const r=sel.getRangeAt(0);
+  if(!editor.contains(r.commonAncestorContainer)) return null;
+  _rteRange=r.cloneRange();
+  return _rteRange;
+}
+
+/** Put the caret back where it was. With nothing saved, falls back to the end
+ *  of the editor — appending beats silently prepending. Returns the live range. */
+function rteRestoreSelection(editorId){
+  const editor=_rteEditor(editorId);
+  if(!editor) return null;
+  editor.focus();
+  const sel=window.getSelection();
+  if(!sel) return null;
+  sel.removeAllRanges();
+  if(_rteRange&&editor.contains(_rteRange.commonAncestorContainer)){
+    sel.addRange(_rteRange);
+  }else{
+    const end=document.createRange();
+    end.selectNodeContents(editor);
+    end.collapse(false);
+    sel.addRange(end);
+  }
+  return sel.rangeCount?sel.getRangeAt(0):null;
+}
+
+/** Drop `node` at the caret (replacing any selection) and park the caret after it. */
+function rteInsertNode(editor,range,node){
+  range.deleteContents();
+  range.insertNode(node);
+  const after=document.createRange();
+  after.setStartAfter(node);
+  after.collapse(true);
+  const sel=window.getSelection();
+  if(sel){sel.removeAllRanges();sel.addRange(after);}
+  _rteRange=after.cloneRange();
+  editor.dispatchEvent(new Event('input',{bubbles:true}));
+}
+
+/** Normalizes what the author typed into an href, or '' if it isn't linkable.
+ *  Bare hosts get https://; `javascript:` / `data:` and friends are rejected. */
+function rteSafeUrl(raw){
+  const url=String(raw||'').trim();
+  if(!url) return '';
+  if(url[0]==='#'||url[0]==='/') return url;
+  const scheme=(url.match(/^([a-z][a-z0-9+.-]*):/i)||[])[1];
+  if(scheme){
+    const s=scheme.toLowerCase();
+    if(s==='http'||s==='https'||s==='mailto'||s==='tel') return url;
+    // A dot means it's a host with a port ("example.com:8080/x"), not a scheme —
+    // fall through and prefix it. Anything else (javascript:, data:, …) is out.
+    if(s.indexOf('.')===-1) return '';
+  }
+  return 'https://'+url;
+}
+
+/** The nearest editable surface holding the caret. */
+function _rteActiveArea(el){
+  if(el) return el;
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount) return null;
+  let n=sel.getRangeAt(0).commonAncestorContainer;
+  if(n.nodeType!==1) n=n.parentNode;
+  return n&&n.closest?n.closest('.rte-area,[contenteditable="true"]'):null;
+}
+
+/** execCommand/queryCommandState read bold + italic off the *computed* style, so
+ *  inside an <h1> (weight 800) or a <blockquote> (italic) they see the format as
+ *  already on and run the remove path — the button looks dead, or worse, wraps the
+ *  selection in font-weight:normal. Blank the block's own weight/slant for the
+ *  duration of the call so the command judges the inline markup (<b>, <em>) alone.
+ *  Paired with .rte-neutral-* in admin.css. Returns whatever `fn` returns. */
+function rteWithNeutralBlock(cmd,el,fn){
+  const cls=cmd==='bold'?'rte-neutral-bold':cmd==='italic'?'rte-neutral-italic':'';
+  const area=cls?_rteActiveArea(el):null;
+  if(area) area.classList.add(cls);
+  try{ return fn(); }
+  finally{ if(area) area.classList.remove(cls); }
+}
+
 function rteCmd(cmd,val){
-  document.execCommand(cmd,false,val||null);
+  rteWithNeutralBlock(cmd,null,()=>document.execCommand(cmd,false,val||null));
 }
 function applyBlockFormat(tag,editorId){
   const editor=document.getElementById(editorId);if(!editor)return;
@@ -664,52 +762,91 @@ function handleRteKeydown(e){
   if(e.key==='Tab'){e.preventDefault();document.execCommand('insertHTML',false,'&nbsp;&nbsp;&nbsp;&nbsp;');}
 }
 // Link modal
-let _linkEditorId='';
 function openLinkModal(editorId){
-  _linkEditorId=editorId;
+  rteSaveSelection(editorId);
   const overlay=document.getElementById('link-modal-overlay');
-  if(overlay) overlay.classList.add('open');
-  // Pre-fill with selected text
-  const sel=window.getSelection();
   const textInput=document.getElementById('link-text-input');
-  if(textInput&&sel&&sel.toString()) textInput.value=sel.toString();
-  document.getElementById('link-url-input').value='';
+  const urlInput=document.getElementById('link-url-input');
+  if(textInput) textInput.value=_rteRange?_rteRange.toString():'';
+  if(urlInput) urlInput.value='';
+  if(overlay) overlay.classList.add('open');
+  if(urlInput) setTimeout(()=>urlInput.focus(),0);
 }
-function closeLinkModal(){document.getElementById('link-modal-overlay').classList.remove('open');}
+function closeLinkModal(){
+  const overlay=document.getElementById('link-modal-overlay');
+  if(overlay) overlay.classList.remove('open');
+}
 function insertLink(){
-  const url=document.getElementById('link-url-input').value.trim();
-  const text=document.getElementById('link-text-input').value.trim();
-  const newTab=document.getElementById('link-new-tab').checked;
-  if(!url) return;
-  const editor=document.getElementById(_linkEditorId);
-  if(editor) editor.focus();
-  const sel=window.getSelection();
-  const hasSelection=sel&&sel.toString().length>0;
-  if(hasSelection){
-    document.execCommand('createLink',false,url);
-    // apply target
-    const links=editor?editor.querySelectorAll('a'):[];
-    links.forEach(a=>{if(a.href===url||a.getAttribute('href')===url){if(newTab)a.target='_blank';}});
-  } else {
-    const displayText=text||url;
-    const target=newTab?' target="_blank"':'';
-    document.execCommand('insertHTML',false,`<a href="${url}"${target}>${displayText}</a>`);
+  const urlEl=document.getElementById('link-url-input');
+  const textEl=document.getElementById('link-text-input');
+  const newTabEl=document.getElementById('link-new-tab');
+  const url=rteSafeUrl(urlEl?urlEl.value:'');
+  const text=(textEl?textEl.value:'').trim();
+  const newTab=!!(newTabEl&&newTabEl.checked);
+  if(!url){showToast('Enter a valid URL — e.g. https://example.com');return;}
+  const editor=_rteEditor();
+  if(!editor){closeLinkModal();return;}
+
+  const range=rteRestoreSelection();
+  if(!range){closeLinkModal();return;}
+
+  const a=document.createElement('a');
+  a.setAttribute('href',url);
+  if(newTab){a.target='_blank';a.rel='noopener noreferrer';}
+
+  const selected=range.toString();
+  if(selected&&(!text||text===selected)){
+    a.appendChild(range.extractContents()); // wrap the selection, keeping its formatting
+  }else{
+    a.textContent=text||selected||url;
   }
+  rteInsertNode(editor,range,a);
+  _rteRange=null;
   closeLinkModal();
 }
 function insertRteImage(editorId){
-  document.getElementById('rte-img-input').click();
+  rteSaveSelection(editorId);
+  const input=document.getElementById('rte-img-input');
+  if(input) input.click();
+}
+/** Uploads to the shared image bucket so the post body stores a URL rather than
+ *  a multi-megabyte data: string. Resolves null when the upload fails. */
+function rteUploadImage(file){
+  const fd=new FormData();
+  fd.append('file',file);
+  return fetch('/api/admin/quests/upload',{method:'POST',body:fd})
+    .then(res=>res.json().catch(()=>({})).then(data=>(res.ok&&data.url)?data.url:null))
+    .catch(()=>null);
 }
 function handleRteImage(input,editorId){
-  const file=input.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    const editor=document.getElementById(editorId);if(!editor)return;
-    editor.focus();
-    document.execCommand('insertHTML',false,`<img src="${e.target.result}" style="max-width:100%;border-radius:8px;margin:8px 0" alt=""/>`);
-  };
-  reader.readAsDataURL(file);
-  input.value='';
+  const file=input.files&&input.files[0];
+  input.value='';                       // so picking the same file twice re-fires change
+  if(!file) return;
+  if(file.size>5*1024*1024){showToast('Image must be 5MB or smaller.');return;}
+  const editor=_rteEditor(editorId);
+  if(!editor) return;
+
+  const asDataUrl=()=>new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=e=>resolve(e.target.result);
+    reader.onerror=()=>resolve(null);
+    reader.readAsDataURL(file);
+  });
+
+  showToast('Uploading image…');
+  rteUploadImage(file)
+    .then(url=>url||asDataUrl())
+    .then(src=>{
+      if(!src){showToast('Could not add that image.');return;}
+      const range=rteRestoreSelection(editorId);
+      if(!range) return;
+      const img=document.createElement('img');
+      img.src=src;
+      img.alt='';
+      img.setAttribute('style','max-width:100%;height:auto;border-radius:8px;margin:8px 0');
+      rteInsertNode(editor,range,img);
+      showToast('Image added');
+    });
 }
 
 /* ── DEAL CATEGORY SELECTOR ── */
@@ -1437,7 +1574,10 @@ document.querySelectorAll('#page-deals-list tbody tr').forEach(tr => {
     ['bold','italic','underline','strikeThrough',
      'insertUnorderedList','insertOrderedList'].forEach(function(cmd) {
       try {
-        const on = document.queryCommandState(cmd);
+        // Neutralized too, or every heading would light the B button up.
+        const on = rteWithNeutralBlock(cmd, activeArea, function() {
+          return document.queryCommandState(cmd);
+        });
         const id = {
           'bold':'rfb-b','italic':'rfb-i','underline':'rfb-u',
           'strikeThrough':'rfb-s','insertUnorderedList':'rfb-ul',
@@ -1452,7 +1592,9 @@ document.querySelectorAll('#page-deals-list tbody tr').forEach(tr => {
   /* ── Public command dispatcher ── */
   window.rteFloatCmd = function(cmd, val) {
     restoreSelection();
-    document.execCommand(cmd, false, val || null);
+    rteWithNeutralBlock(cmd, activeArea, function() {
+      document.execCommand(cmd, false, val || null);
+    });
     updateActiveStates();
     if (activeArea) activeArea.focus();
   };

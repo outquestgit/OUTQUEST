@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { Program } from "@/lib/site/questMapping";
 import { AppLink } from "@/components/site/ui/AppLink";
@@ -27,8 +28,14 @@ export function ProgCard({ program: p }: { program: Program }) {
       {p.featured && <div className="prog-card-featured">★ Featured</div>}
       <div className="prog-card-banner">
         {p.image ? (
-          // eslint-disable-next-line @next/next/no-img-element -- admin-uploaded URL; sized by CSS (.prog-card-banner img)
-          <img src={p.image} alt={p.title} />
+          <Image
+            src={p.image}
+            alt={p.title}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+            style={{ objectFit: "cover" }}
+            loading="lazy"
+          />
         ) : (
           <div className="prog-card-banner-fallback" style={{ background: p.gradient }}>
             {p.art}

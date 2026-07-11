@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { showPage } from "@/lib/site/runtime";
 import type { BlogPostData } from "@/lib/site/journalMapping";
 
 /**
@@ -12,6 +13,15 @@ import type { BlogPostData } from "@/lib/site/journalMapping";
  */
 export function JournalPostPage({ post }: { post: BlogPostData }) {
   const router = useRouter();
+  const artStyle = (gradient: string, image?: string | null) =>
+    image
+      ? {
+          backgroundImage: `url(${image})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }
+      : { background: gradient };
+
   // A real uploaded featured image paints the hero (cover); else gradient + emoji.
   const heroStyle = post.featuredImage
     ? {
@@ -23,15 +33,20 @@ export function JournalPostPage({ post }: { post: BlogPostData }) {
 
   return (
     <>
+      {/* Route via showPage(), as QuestListing does. A router.push("/?p=journal")
+          soft-navigates to the `/` route, whose SiteApp mounts with no
+          `initialPage` — PageActivator then re-asserts "home" and the `?p=` query
+          is never read (FrontBoot only reads it on script load). showPage() sees
+          `#page-journal` is absent on this standalone route and deep-links properly. */}
       <nav className="bc-nav">
-        <span onClick={() => router.push("/")}>Home</span>
+        <span onClick={() => showPage("home")}>Home</span>
         <span className="bc-sep">›</span>
-        <span onClick={() => router.push("/?p=journal")}>Journal</span>
+        <span onClick={() => showPage("journal")}>Journal</span>
         <span className="bc-sep">›</span>
         <span className="bc-current">{post.title || "Article"}</span>
       </nav>
       <div className="blog-back-bar">
-        <button className="blog-back-btn" onClick={() => router.push("/?p=journal")}>
+        <button className="blog-back-btn" onClick={() => showPage("journal")}>
           Back to Journal
         </button>
       </div>
@@ -50,7 +65,9 @@ export function JournalPostPage({ post }: { post: BlogPostData }) {
         {post.related.length > 0 && (
           <div className="blog-related">
             <h3>More from the Journal</h3>
-            <div className="journal-grid" style={{ gridTemplateColumns: "repeat(3,1fr)" }}>
+            {/* No inline columns / no `.blog-related` overrides: these are the
+                journal-index cards, styled entirely by `.journal-grid` + `.jg-card`. */}
+            <div className="journal-grid">
               {post.related.map((r) => (
                 <div
                   className="jg-card"
@@ -59,8 +76,8 @@ export function JournalPostPage({ post }: { post: BlogPostData }) {
                   onClick={() => router.push(`/journal/${r.id}`)}
                 >
                   <div className="jg-img">
-                    <div className="jg-img-inner" style={{ background: r.bg }}>
-                      {r.icon}
+                    <div className="jg-img-inner" style={artStyle(r.bg, r.image)}>
+                      {r.image ? "" : r.icon}
                     </div>
                   </div>
                   <div className="jg-tag">{r.tag}</div>

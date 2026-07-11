@@ -14,6 +14,8 @@ export interface JournalFeatured {
   gradient: string;
   emoji: string;
   image: string | null;
+  /** Canonical post URL — see `JournalGridCard.href`. */
+  href?: string | null;
 }
 
 /** A fully-resolved blog post for the SPA reader + the SSR /journal/[slug] page. */
@@ -28,7 +30,7 @@ export interface BlogPostData {
   heroIcon: string;
   featuredImage: string | null;
   body: string;
-  related: { id: string; tag: string; title: string; bg: string; icon: string }[];
+  related: { id: string; tag: string; title: string; bg: string; icon: string; image: string | null }[];
 }
 
 /** Exact publish date for the blog post ("April 15, 2026"), formatted server-side
@@ -57,6 +59,7 @@ export function postToGridCard(p: JournalPost): JournalGridCard {
     date: p.date_label ?? "",
     title: p.title,
     image: p.featured_image_path,
+    href: `/journal/${p.slug}`,
   };
 }
 
@@ -71,6 +74,7 @@ export function postToHomeCard(p: JournalPost): JournalCard {
     title: p.title,
     excerpt: p.excerpt ?? "",
     image: p.featured_image_path,
+    href: `/journal/${p.slug}`,
   };
 }
 
@@ -84,29 +88,38 @@ export function postToFeatured(p: JournalPost): JournalFeatured {
     gradient: heroGrad(p),
     emoji: icon(p),
     image: p.featured_image_path,
+    href: `/journal/${p.slug}`,
   };
 }
 
 /** DB post → the full reader payload, resolving `related` slugs into cards. */
 export function postToBlogData(p: JournalPost, all: JournalPost[]): BlogPostData {
   const bySlug = new Map(all.map((x) => [x.slug, x]));
-  const related = (p.related ?? [])
+  const toCard = (r: JournalPost) => ({
+    id: r.slug,
+    tag: r.category ?? "",
+    title: r.title,
+    bg: grad(r),
+    icon: icon(r),
+    image: r.featured_image_path,
+  });
+  let relatedPosts = (p.related ?? [])
     .map((slug) => bySlug.get(slug))
-    .filter((r): r is JournalPost => !!r)
-    .map((r) => ({
-      id: r.slug,
-      tag: r.category ?? "",
-      title: r.title,
-      bg: grad(r),
-      icon: icon(r),
-    }));
+    .filter((r): r is JournalPost => !!r);
+  // No explicit picks → fall back to other posts sharing this post's category.
+  if (relatedPosts.length === 0 && p.category) {
+    relatedPosts = all
+      .filter((r) => r.slug !== p.slug && r.category === p.category)
+      .slice(0, 3);
+  }
+  const related = relatedPosts.map(toCard);
   return {
     slug: p.slug,
     tag: p.category ?? "",
     title: p.title,
     date: exactDate(p),
     readTime: p.read_time ?? "",
-    author: p.author ?? "",
+    author: p.author ?? "OutQuest Team",
     heroBg: heroGrad(p),
     heroIcon: icon(p),
     featuredImage: p.featured_image_path,

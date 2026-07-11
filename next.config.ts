@@ -1,6 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "joinoutquest.com" }],
+        destination: "https://www.joinoutquest.com/:path*",
+        permanent: true, // 301
+      },
+    ];
+  },
   images: {
     // Prefer modern formats per spec (AVIF first, WebP fallback).
     formats: ["image/avif", "image/webp"],

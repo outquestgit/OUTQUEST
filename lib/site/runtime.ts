@@ -115,13 +115,27 @@ function call<K extends keyof Window>(
   if (typeof fn === "function") fn(...(args as unknown[]));
 }
 
+/**
+ * Detail/overlay sections are driven by front.js on top of whatever SPA route is
+ * loaded; they own no route of their own, so they can only be reached by
+ * deep-linking into the app. Mirrors `_SPA_NO_URL` in public/front.js.
+ */
+const SPA_OVERLAYS = new Set(["listing", "deal-dynamic", "deal-hubba", "blog-post"]);
+
 // Navigation. On a standalone route (e.g. /quests/[slug]) the SPA's `.page`
-// elements aren't in the DOM, so a plain showPage() would be a no-op. In that
-// case we deep-link back into the single-page app via `?p=` (handled by
-// FrontBoot on load); on the SPA itself it toggles the page in place as before.
+// elements aren't in the DOM, so a plain showPage() would be a no-op. Neither are
+// the legal sections, which now mount only on /privacy and /tos. Every non-overlay
+// section has a matching clean route (front.js maps ids to paths the same way:
+// home → "/", else "/{id}"), so navigate there. `?p=` is kept for the overlays,
+// which have no route to navigate to — and it would land on home for the legal
+// pages anyway, since "/" no longer mounts them.
 export const showPage = (id: string) => {
   if (typeof document !== "undefined" && !document.getElementById(`page-${id}`)) {
-    window.location.href = `/?p=${encodeURIComponent(id)}`;
+    window.location.href = SPA_OVERLAYS.has(id)
+      ? `/?p=${encodeURIComponent(id)}`
+      : id === "home"
+        ? "/"
+        : `/${encodeURIComponent(id)}`;
     return;
   }
   call("showPage", id);

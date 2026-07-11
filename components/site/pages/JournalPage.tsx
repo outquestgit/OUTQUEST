@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Page } from "../Page";
 import { Breadcrumb } from "../cards/Breadcrumb";
 import { Pagination } from "../cards/Pagination";
@@ -37,6 +38,17 @@ export function JournalPage({
   grid?: JournalGridCard[];
   hero?: JournalPageConfig;
 }) {
+  const router = useRouter();
+  /**
+   * DB posts have a real `/journal/{slug}` route: navigate, so the click leaves a
+   * history entry and Back returns here. `openBlogPost` only swaps the in-DOM
+   * `blog-post` section (it's in front.js's `_SPA_NO_URL`) and pushes nothing, so
+   * Back skipped the listing entirely and landed on whatever preceded it — home.
+   * Static seed cards have no route, so they keep the overlay.
+   */
+  const open = (card: { post: string; href?: string | null }) =>
+    card.href ? router.push(card.href) : openBlogPost(card.post);
+
   const PER_PAGE = 12;
   const [page, setPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(grid.length / PER_PAGE));
@@ -71,15 +83,15 @@ export function JournalPage({
         <div className="journal-featured">
           <div className="jf-left">
             <div className="jf-tag">{featured.tag}</div>
-            <div className="jf-title" onClick={() => openBlogPost(featured.post)}>
+            <div className="jf-title" onClick={() => open(featured)}>
               {featured.title}
             </div>
             <p className="jf-desc">{featured.desc}</p>
-            <span className="jf-readmore" onClick={() => openBlogPost(featured.post)}>
+            <span className="jf-readmore" onClick={() => open(featured)}>
               Read more
             </span>
           </div>
-          <div className="jf-img" onClick={() => openBlogPost(featured.post)}>
+          <div className="jf-img" onClick={() => open(featured)}>
             <div className="jf-img-inner" style={artStyle(featured.gradient, featured.image)}>
               {featured.image ? "" : featured.emoji}
             </div>
@@ -90,7 +102,7 @@ export function JournalPage({
         <div className="journal-section-title">Top Articles</div>
         <div className="journal-grid">
           {pageItems.map((card) => (
-            <div className="jg-card" key={card.post} onClick={() => openBlogPost(card.post)}>
+            <div className="jg-card" key={card.post} onClick={() => open(card)}>
               <div className="jg-img">
                 <div className="jg-img-inner" style={artStyle(card.gradient, card.image)}>
                   {card.image ? "" : card.emoji}

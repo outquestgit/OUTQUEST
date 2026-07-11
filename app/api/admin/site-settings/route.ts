@@ -632,36 +632,36 @@ function cleanQuiz(v: unknown): QuizConfig {
 
   const questions: QuizBuilderQuestion[] = Array.isArray(q.questions)
     ? (q.questions as Partial<QuizBuilderQuestion>[])
-        .map((qq) => ({
-          text: str(qq?.text),
-          show: qq?.show !== false,
-          options: (Array.isArray(qq?.options) ? qq!.options : ([] as Partial<QuizBuilderOption>[]))
-            .map((o) => {
-              // Single taxonomy filter (kind + term); migrate the legacy
-              // categorySlug/budgetSlug two-filter fields onto it.
-              const rawKind = str(o?.filterKind);
-              let filterKind: QuizFilterKind =
-                rawKind === "category" || rawKind === "budget" || rawKind === "duration" ? rawKind : "";
-              let filterSlug = filterKind ? str(o?.filterSlug) : "";
-              if (!filterSlug && str(o?.categorySlug)) {
-                filterKind = "category";
-                filterSlug = str(o?.categorySlug);
-              } else if (!filterSlug && str(o?.budgetSlug)) {
-                filterKind = "budget";
-                filterSlug = str(o?.budgetSlug);
-              }
-              if (!filterSlug) filterKind = ""; // a kind with no term is not a filter
-              return {
-                icon: str(o?.icon),
-                label: str(o?.label),
-                subtext: str(o?.subtext),
-                filterKind,
-                filterSlug,
-              };
-            })
-            .filter((o) => o.label || o.icon),
-        }))
-        .filter((qq) => qq.text || qq.options.length)
+      .map((qq) => ({
+        text: str(qq?.text),
+        show: qq?.show !== false,
+        options: (Array.isArray(qq?.options) ? qq!.options : ([] as Partial<QuizBuilderOption>[]))
+          .map((o) => {
+            // Single taxonomy filter (kind + term); migrate the legacy
+            // categorySlug/budgetSlug two-filter fields onto it.
+            const rawKind = str(o?.filterKind);
+            let filterKind: QuizFilterKind =
+              rawKind === "category" || rawKind === "budget" || rawKind === "duration" ? rawKind : "";
+            let filterSlug = filterKind ? str(o?.filterSlug) : "";
+            if (!filterSlug && str(o?.categorySlug)) {
+              filterKind = "category";
+              filterSlug = str(o?.categorySlug);
+            } else if (!filterSlug && str(o?.budgetSlug)) {
+              filterKind = "budget";
+              filterSlug = str(o?.budgetSlug);
+            }
+            if (!filterSlug) filterKind = ""; // a kind with no term is not a filter
+            return {
+              icon: str(o?.icon),
+              label: str(o?.label),
+              subtext: str(o?.subtext),
+              filterKind,
+              filterSlug,
+            };
+          })
+          .filter((o) => o.label || o.icon),
+      }))
+      .filter((qq) => qq.text || qq.options.length)
     : D.questions;
 
   return {
@@ -733,7 +733,15 @@ export async function PUT(req: Request) {
   if (body.quiz !== undefined) payload.quiz = cleanQuiz(body.quiz);
   if (body.seo !== undefined) payload.seo = cleanSeo(body.seo);
   if (body.settings !== undefined) payload.settings = cleanSiteConfig(body.settings);
-  if (body.page_seo !== undefined) payload.page_seo = body.page_seo;
+
+  if (body.page_seo !== undefined) {
+    // Merge into existing page_seo so saving one page never wipes others.
+    const { data: seoRow } = await sb.from("site_settings").select("page_seo").eq("id", 1).maybeSingle();
+    const existingPageSeo = ((seoRow as { page_seo?: unknown } | null)?.page_seo ?? {}) as Record<string, unknown>;
+    payload.page_seo = { ...existingPageSeo, ...body.page_seo };
+  }
+
+
   if (body.pages !== undefined) {
     // Merge into existing pages so a single-page save can't blank the others.
     const { data } = await sb.from("site_settings").select("pages").eq("id", 1).maybeSingle();
@@ -750,5 +758,15 @@ export async function PUT(req: Request) {
   // being served stale-while-revalidate. Settings drive the whole `(site)` tree
   // (nav/footer + every page), so revalidate the layout, not a single path.
   revalidatePath("/", "layout");
+  
+  try {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://joinoutquest.com";
+    await fetch(`${siteUrl}/api/indexnow`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ urls: [`${siteUrl}/`] }),
+    });
+  } catch { /* non-critical, never block the save */ }
+
   return NextResponse.json({ ok: true });
 }

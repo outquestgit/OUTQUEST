@@ -7,8 +7,11 @@ import {
   rteCmd,
   applyBlockFormat,
   openLinkModal,
+  insertRteImage,
   handleRteImage,
   handleRteKeydown,
+  rteSaveSelection,
+  rteRestoreSelection,
   updateJournalSeo,
   updateJournalSeoDesc,
   setStatus,
@@ -102,7 +105,14 @@ export function JournalEditPage() {
                 <div className="field">
                   <label>🔥 Body Content</label>
                   <div className="rte" id="journal-rte">
-                    <div className="rte-toolbar" id="journal-rte-toolbar">
+                    {/* Cancelling mousedown keeps focus (and the caret) in the
+                        editor, so every command below applies to the selection
+                        the author actually made. Clicks still fire. */}
+                    <div
+                      className="rte-toolbar"
+                      id="journal-rte-toolbar"
+                      onMouseDown={(e) => e.preventDefault()}
+                    >
                       {/* Text style */}
                       <button className="rte-btn" id="rfb-b" title="Bold (Ctrl+B)" onClick={() => rteCmd("bold")}>
                         <b>B</b>
@@ -239,6 +249,13 @@ export function JournalEditPage() {
                           <line x1="1" y1="13" x2="3" y2="11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                         </svg>
                       </button>
+                      <button className="rte-btn" title="Insert image" onClick={() => insertRteImage("journal-body")}>
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                          <rect x="1" y="2.5" width="12" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+                          <circle cx="4.75" cy="5.75" r="1" fill="currentColor" />
+                          <path d="M1.5 10.5l3-3 2.5 2.5 2-2 3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
                       <button className="rte-btn" title="Horizontal rule" onClick={() => rteCmd("insertHorizontalRule")} style={{ fontSize: "13px", fontWeight: 700 }}>
                         —
                       </button>
@@ -249,7 +266,11 @@ export function JournalEditPage() {
                       <button
                         className="rte-btn"
                         title="Text color"
-                        onClick={() => document.getElementById("rte-color-pick")?.click()}
+                        onClick={() => {
+                          // The native colour dialog drops the selection; save it first.
+                          rteSaveSelection("journal-body");
+                          document.getElementById("rte-color-pick")?.click();
+                        }}
                         style={{ fontSize: "13px", fontWeight: 700, position: "relative" }}
                       >
                         A
@@ -258,7 +279,11 @@ export function JournalEditPage() {
                           id="rte-color-pick"
                           type="color"
                           style={{ position: "absolute", opacity: 0, width: "1px", height: "1px", pointerEvents: "none" }}
-                          onChange={(e) => rteCmd("foreColor", e.currentTarget.value)}
+                          onChange={(e) => {
+                            const color = e.currentTarget.value;
+                            rteRestoreSelection("journal-body");
+                            rteCmd("foreColor", color);
+                          }}
                         />
                       </button>
                       <div className="rte-sep"></div>

@@ -12,7 +12,7 @@ import { buildMetadata } from "@/lib/seo";
  */
 
 export type StaticPageKey =
-  | "home"
+  | "homepage"
   | "about"
   | "faq"
   | "contact"
@@ -30,7 +30,7 @@ export type StaticPageKey =
 
 /** Route path for each key (used as the canonical URL in buildMetadata). */
 const PATHS: Record<StaticPageKey, string> = {
-  home: "/",
+  homepage: "/",
   about: "/about",
   faq: "/faq",
   contact: "/contact",
@@ -108,7 +108,7 @@ export async function staticPageMetadata(key: StaticPageKey): Promise<Metadata> 
   let heroDescription: string | undefined;
 
   switch (key) {
-    case "home":
+    case "homepage":
       heroTitle = siteName;
       heroDescription = clean(settings?.homepage.hero.tagline);
       break;
