@@ -1,5 +1,6 @@
 "use client";
 
+import { getImageProps } from "next/image";
 import { SectionHeader } from "../ui/SectionHeader";
 import type { HomepageConfig } from "@/lib/site/data/homepage";
 import type { ReelCard } from "@/lib/site/data/homepage";
@@ -30,26 +31,34 @@ export function ReelSection({ reel, bg }: { reel: HomepageConfig["destination"];
     <section className="sec" style={{ background: bg }}>
       <SectionHeader title={reel.title} actionLabel={reel.buttonLabel} onAction={() => showPage("quests")} />
       <div className="dest-reel-grid">
-        {reel.cards.map((card, i) => (
-          <div className="dest-reel-card" key={`${card.title}-${i}`} onClick={() => reelClick(card.action)}>
-            <div
-              className="dest-reel-img"
-              style={
-                card.image
-                  ? { backgroundImage: `url(${card.image})`, backgroundSize: "cover", backgroundPosition: "center" }
-                  : { background: card.gradient }
-              }
-            >
-              {!card.image && <span>{card.emoji}</span>}
-              <div className="dest-reel-ov"></div>
-              <div className="dest-reel-label">
-                <div className="dest-reel-tag">{card.tag}</div>
-                <div className="dest-reel-title">{card.title}</div>
-                <div className="dest-reel-count">{card.count}</div>
+        {reel.cards.map((card, i) => {
+          // Resolve optimised src per card (AVIF/WebP via /_next/image Accept header).
+          // Reel cards are full-bleed; use a square-ish hint that fits the CSS grid track.
+          const imgSrc = card.image
+            ? getImageProps({ src: card.image, width: 400, height: 300, quality: 80, alt: "" }).props.src
+            : undefined;
+
+          return (
+            <div className="dest-reel-card" key={`${card.title}-${i}`} onClick={() => reelClick(card.action)}>
+              <div
+                className="dest-reel-img"
+                style={
+                  imgSrc
+                    ? { backgroundImage: `url(${imgSrc})`, backgroundSize: "cover", backgroundPosition: "center" }
+                    : { background: card.gradient }
+                }
+              >
+                {!imgSrc && <span>{card.emoji}</span>}
+                <div className="dest-reel-ov"></div>
+                <div className="dest-reel-label">
+                  <div className="dest-reel-tag">{card.tag}</div>
+                  <div className="dest-reel-title">{card.title}</div>
+                  <div className="dest-reel-count">{card.count}</div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

@@ -1,3 +1,4 @@
+import { getImageProps } from "next/image";
 import { multiline } from "../../ui/multiline";
 import type { AboutConfig } from "@/lib/site/data/about";
 
@@ -25,21 +26,28 @@ export function AboutStory({ whatWeDo }: { whatWeDo: AboutConfig["whatWeDo"] }) 
         ))}
       </div>
       <div className="about-split-pol-wrap" style={{ position: "relative", height: "420px" }}>
-        {whatWeDo.polaroids.map((p) => (
-          <div className={`wbt3-pol ${p.cls}`} key={p.cls}>
-            <div
-              className="wbt3-pol-img"
-              style={
-                p.image
-                  ? { backgroundImage: `url(${p.image})`, backgroundSize: "cover", backgroundPosition: "center" }
-                  : undefined
-              }
-            >
-              {p.image ? "" : p.emoji}
+        {whatWeDo.polaroids.map((p) => {
+          // Resolve optimised src once per polaroid (AVIF/WebP served by /_next/image).
+          const imgSrc = p.image
+            ? getImageProps({ src: p.image, width: 400, height: 400, quality: 80, alt: "" }).props.src
+            : undefined;
+
+          return (
+            <div className={`wbt3-pol ${p.cls}`} key={p.cls}>
+              <div
+                className="wbt3-pol-img"
+                style={
+                  imgSrc
+                    ? { backgroundImage: `url(${imgSrc})`, backgroundSize: "cover", backgroundPosition: "center" }
+                    : undefined
+                }
+              >
+                {imgSrc ? "" : p.emoji}
+              </div>
+              <div className="wbt3-pol-cap">{p.caption}</div>
             </div>
-            <div className="wbt3-pol-cap">{p.caption}</div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

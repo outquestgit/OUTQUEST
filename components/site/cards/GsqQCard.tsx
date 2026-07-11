@@ -14,43 +14,21 @@ export interface GsqCard {
   image?: string;
 }
 
-/**
- * Converts a Supabase image URL into an `image-set()` CSS value so the browser
- * can pick AVIF or WebP automatically — same optimisation pipeline as <Image />,
- * but compatible with CSS background-image layouts.
- */
-function buildImageSet(src: string): string {
-  const { props: avif } = getImageProps({
-    src,
-    width: 320,
-    height: 128,
-    quality: 80,
-    alt: "",
-  });
-
-  // Next.js encodes the format in the `_next/image` URL via the `f` param.
-  // We request AVIF first; the optimizer serves WebP if AVIF isn't supported.
-  const avifUrl = avif.src.includes("?")
-    ? avif.src + "&fm=avif"
-    : avif.src;
-  const webpUrl = avif.src.includes("?")
-    ? avif.src + "&fm=webp"
-    : avif.src;
-
-  return `image-set(url("${avifUrl}") type("image/avif"), url("${webpUrl}") type("image/webp"), url("${src}") type("image/jpeg"))`;
-}
-
 export function GsqQCard({ card }: { card: GsqCard }) {
+  // Resolve optimised src via /_next/image (serves AVIF/WebP via Accept header).
+  // GsqQCard media: small hero card, width 400 height 300 per previous analysis.
+  const imgSrc = card.image
+    ? getImageProps({ src: card.image, width: 400, height: 300, quality: 80, alt: "" }).props.src
+    : undefined;
+
   return (
     <div className={`gsq-qcard ${card.cp}`} onClick={() => showPage(card.page)}>
-      {card.image ? (
+      {imgSrc ? (
         <div
           className="gsq-qcard-media"
           role="img"
           aria-label={card.title}
-          style={{
-            backgroundImage: buildImageSet(card.image),
-          }}
+          style={{ backgroundImage: `url(${imgSrc})` }}
         />
       ) : (
         <span className="gsq-qcard-icon">{card.icon}</span>

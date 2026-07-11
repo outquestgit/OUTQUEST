@@ -1,5 +1,6 @@
 "use client";
 
+import { getImageProps } from "next/image";
 import { useRouter } from "next/navigation";
 import { useMyQuests } from "@/components/site/state/MyQuestsProvider";
 import { useOverlay } from "@/components/site/state/OverlayProvider";
@@ -53,9 +54,17 @@ export function QCard({ quest, save = false }: { quest: Quest; save?: boolean })
   const saved = isSaved(quest.listing);
   const f = quest.filters;
   const href = quest.href ?? `/quests/${quest.listing}`;
-  const bg = quest.image
-    ? { backgroundImage: `url(${quest.image})`, backgroundSize: "cover", backgroundPosition: "center" }
+
+  // Resolve optimised src via /_next/image (serves AVIF/WebP via Accept header).
+  // QCard is full-bleed with aspect-ratio 2/3 — use fill behaviour dimensions.
+  const imgSrc = quest.image
+    ? getImageProps({ src: quest.image, width: 400, height: 600, quality: 80, alt: "" }).props.src
+    : undefined;
+
+  const bg = imgSrc
+    ? { backgroundImage: `url(${imgSrc})`, backgroundSize: "cover", backgroundPosition: "center" }
     : { background: quest.gradient };
+
   return (
     <div
       className="qcard"

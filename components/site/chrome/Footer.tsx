@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import Image from "next/image";
 import type { FooterConfig } from "@/lib/site/chromeConfig";
 import { DEFAULT_FOOTER, DEFAULT_FOOTER_STYLE } from "@/lib/site/chromeConfig";
 import { navigateTo, internalHref } from "@/lib/site/runtime";
@@ -60,11 +61,12 @@ export function Footer({ footer = DEFAULT_FOOTER }: { footer?: FooterConfig }) {
       <div className="ft-top" style={topStyle}>
         <div>
           {footer.logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element -- admin-supplied URL
-            <img
+            <Image
               className="ft-logo"
               src={footer.logoUrl}
               alt={`${footer.wordmark1}${footer.wordmark2}`}
+              width={160}
+              height={40}
               style={{ maxHeight: "40px", width: "auto" }}
             />
           ) : (

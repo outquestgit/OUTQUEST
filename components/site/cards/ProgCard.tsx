@@ -32,7 +32,7 @@ export function ProgCard({ program: p }: { program: Program }) {
             src={p.image}
             alt={p.title}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+            sizes="(max-width:600px) 100vw, (max-width:1000px) 50vw, 33vw"
             style={{ objectFit: "cover" }}
             loading="lazy"
           />
