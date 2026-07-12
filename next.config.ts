@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         has: [{ type: "host", value: "joinoutquest.com" }],
         destination: "https://www.joinoutquest.com/:path*",
-        statusCode: 301,
+        permanent: true,
       },
     ];
   },

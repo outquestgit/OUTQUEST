@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getActiveCategoryTerms } from "@/lib/quests";
+import { getActiveCategoryTerms, getPublishedQuests } from "@/lib/quests";
 import { getSiteSettings } from "@/lib/siteSettings";
 import { SiteApp } from "@/components/site/SiteApp";
+import { buildItemListSchema, buildBreadcrumbSchema, schemaScript } from "@/lib/seo/schema";
+import { questCategorySlug, questPath } from "@/lib/site/questMapping";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
 
 type Params = Promise<{ category: string }>;
 
@@ -33,7 +37,51 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
  */
 export default async function CategoryRoute({ params }: { params: Params }) {
   const { category } = await params;
-  const term = await findCategory(category);
+  const [term, allQuests, settings] = await Promise.all([
+    findCategory(category),
+    getPublishedQuests(),
+    getSiteSettings(),
+  ]);
   if (!term) notFound();
-  return <SiteApp initialPage={category} />;
+
+  // Quests that belong to this category
+  const categoryQuests = allQuests.filter((q) => questCategorySlug(q) === category);
+
+  // Category display label (e.g. "work-abroad" → "Work Abroad")
+  const categoryLabel = category
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+
+  // Use CMS hero title if available, fallback to term name
+  const hero = settings.pages.categories[term.slug];
+  const listName = hero?.title || term.name;
+
+  const itemListSchema = buildItemListSchema(
+    listName,
+    categoryQuests.map((q, i) => ({
+      name: q.title,
+      url: `${SITE_URL}${questPath(q)}`,
+      position: i + 1,
+    }))
+  );
+
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", url: `${SITE_URL}/` },
+    { name: categoryLabel },
+  ]);
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: schemaScript(itemListSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: schemaScript(breadcrumbSchema) }}
+      />
+      <SiteApp initialPage={category} />
+    </>
+  );
 }
