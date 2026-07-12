@@ -35,7 +35,7 @@ export function ReelSection({ reel, bg }: { reel: HomepageConfig["destination"];
           // Resolve optimised src per card (AVIF/WebP via /_next/image Accept header).
           // Reel cards are full-bleed; use a square-ish hint that fits the CSS grid track.
           const imgSrc = card.image
-            ? getImageProps({ src: card.image, width: 400, height: 300, quality: 80, alt: "" }).props.src
+            ? getImageProps({ src: card.image, width: 400, height: 300, quality: 65, alt: "" }).props.src
             : undefined;
 
           return (

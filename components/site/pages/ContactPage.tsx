@@ -61,8 +61,13 @@ function CardLink({ card }: { card: ContactCard }) {
     );
   }
   if (card.linkType === "page") {
+    // href keeps the link crawlable; preventDefault keeps the SPA behaviour.
     return (
-      <a onClick={() => showPage(card.linkValue)} style={{ ...linkStyle, cursor: "pointer" }}>
+      <a
+        href={`/${card.linkValue}`}
+        onClick={(e) => { e.preventDefault(); showPage(card.linkValue); }}
+        style={{ ...linkStyle, cursor: "pointer" }}
+      >
         {card.linkLabel}
       </a>
     );
