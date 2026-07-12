@@ -170,6 +170,36 @@ export function buildFaqPageSchema(items: FaqItem[]) {
   };
 }
 
+// ─── Category listing pages: ItemList ────────────────────────────────────────
+
+interface ItemListEntry {
+  name: string;
+  url: string;
+  position: number;
+}
+
+/**
+ * Builds an ItemList schema for category/listing pages.
+ *
+ * Usage:
+ *   buildItemListSchema("Work Abroad", [
+ *     { name: "Work a ski season in Japan", url: "https://www.joinoutquest.com/work-abroad/japan-ski-season", position: 1 },
+ *   ])
+ */
+export function buildItemListSchema(name: string, items: ItemListEntry[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name,
+    itemListElement: items.map((item) => ({
+      "@type": "ListItem",
+      position: item.position,
+      name: item.name,
+      url: item.url,
+    })),
+  };
+}
+
 // ─── Utility ─────────────────────────────────────────────────────────────────
 
 export function schemaScript(data: object) {
