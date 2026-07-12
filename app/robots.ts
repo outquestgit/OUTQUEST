@@ -16,7 +16,10 @@ const FALLBACK_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutque
  */
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const settings = await getSiteSettings().catch(() => null);
-  const base = (settings?.general.siteUrl?.trim() || FALLBACK_URL).replace(/\/+$/, "");
+
+  const raw = settings?.general.siteUrl?.trim() || FALLBACK_URL;
+  const base = raw.replace(/^https?:\/\/(?!www\.)/, "$&www.").replace(/\/+$/, "");
+  
   const noindex = settings?.seo.noindex ?? false;
 
   if (noindex) {
