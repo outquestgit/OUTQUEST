@@ -12,7 +12,7 @@ import { Nav } from "@/components/site/chrome/Nav";
 import { MobileMenu } from "@/components/site/chrome/MobileMenu";
 import { SiteEnd } from "@/components/site/chrome/SiteEnd";
 import { QuestListing } from "@/components/site/pages/QuestListing";
-import { buildCourseSchema, schemaScript } from "@/lib/seo/schema";
+import { buildCourseSchema, buildBreadcrumbSchema, schemaScript } from "@/lib/seo/schema";
 
 type Params = Promise<{ slug: string }>;
 
@@ -56,22 +56,31 @@ export default async function QuestDetailRoute({ params }: { params: Params }) {
   const deals = await getDealsForQuest(quest.id);
   const data = questToListing(quest, all, deals);
 
-  const schema = buildCourseSchema({
+  const courseSchema = buildCourseSchema({
     name: quest.title,
-    description: quest.meta_description ?? quest.tagline,  // tagline as fallback
+    description: quest.meta_description ?? quest.tagline,
     slug: quest.slug,
-    image: quest.featured_image_path ?? quest.card_image_path,  // featured first, fallback to card
+    image: quest.featured_image_path ?? quest.card_image_path,
   });
+
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Quests", url: "/quests" },
+    { name: quest.title, url: `/quests/${quest.slug}` },
+  ]);
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: schemaScript(schema) }}
+        dangerouslySetInnerHTML={{ __html: schemaScript(courseSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: schemaScript(breadcrumbSchema) }}
       />
 
-      {/* Full site chrome so the standalone route matches the SPA shell. The
-          runtime's showPage() deep-links back into the app via /?p=… here. */}
+      {/* Full site chrome so the standalone route matches the SPA shell. */}
       <Overlays />
       <Nav nav={settings.nav} />
       <MobileMenu nav={settings.nav} />

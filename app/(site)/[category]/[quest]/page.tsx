@@ -12,6 +12,9 @@ import { Nav } from "@/components/site/chrome/Nav";
 import { MobileMenu } from "@/components/site/chrome/MobileMenu";
 import { SiteEnd } from "@/components/site/chrome/SiteEnd";
 import { QuestListing } from "@/components/site/pages/QuestListing";
+import { buildCourseSchema, buildBreadcrumbSchema, schemaScript } from "@/lib/seo/schema";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
 
 type Params = Promise<{ category: string; quest: string }>;
 
@@ -49,15 +52,36 @@ export default async function QuestInCategoryRoute({ params }: { params: Params 
   if (!q) notFound();
 
   const canonical = questCategorySlug(q);
-  if (!canonical) redirect(`/quests/${q.slug}`); // uncategorized → flat URL
-  if (category !== canonical) redirect(`/${canonical}/${q.slug}`); // enforce canonical
+  if (!canonical) redirect(`/quests/${q.slug}`);
+  if (category !== canonical) redirect(`/${canonical}/${q.slug}`);
 
   const deals = await getDealsForQuest(q.id);
   const data = questToListing(q, all, deals);
 
+  // Capitalise first letter of category for display (e.g. "work-abroad" → "Work Abroad")
+  const categoryLabel = canonical
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+
+  const courseSchema = buildCourseSchema({
+    name: q.title,
+    description: q.meta_description ?? q.tagline,
+    slug: q.slug,
+    image: q.featured_image_path ?? q.card_image_path,
+  });
+
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home",        url: `${SITE_URL}/` },
+    { name: categoryLabel, url: `${SITE_URL}/${canonical}` },
+    { name: q.title },
+  ]);
+
   return (
     <>
-      {/* Full site chrome so the standalone route matches the SPA shell. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaScript(courseSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaScript(breadcrumbSchema) }} />
+
       <Overlays />
       <Nav nav={settings.nav} />
       <MobileMenu nav={settings.nav} />

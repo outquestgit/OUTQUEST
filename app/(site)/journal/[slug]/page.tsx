@@ -11,11 +11,12 @@ import { Nav } from "@/components/site/chrome/Nav";
 import { MobileMenu } from "@/components/site/chrome/MobileMenu";
 import { SiteEnd } from "@/components/site/chrome/SiteEnd";
 import { JournalPostPage } from "@/components/site/pages/JournalPostPage";
-import { buildArticleSchema, schemaScript } from "@/lib/seo/schema";
+import { buildArticleSchema, buildBreadcrumbSchema, schemaScript } from "@/lib/seo/schema";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
 
 type Params = Promise<{ slug: string }>;
 
-/** Fully-dynamic per-post metadata from the admin-controlled SEO fields. */
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
   const [post, settings] = await Promise.all([getJournalPostBySlug(slug), getSiteSettings()]);
@@ -36,11 +37,6 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   );
 }
 
-/**
- * Server-rendered single journal post — the crawlable, SEO-canonical surface,
- * rendered from the database into the SPA blog reader's exact markup, wrapped in
- * the full site chrome so it matches the app.
- */
 export default async function JournalPostRoute({ params }: { params: Params }) {
   const { slug } = await params;
   const [post, all, settings] = await Promise.all([
@@ -52,21 +48,26 @@ export default async function JournalPostRoute({ params }: { params: Params }) {
 
   const data = postToBlogData(post, all);
 
-  const schema = buildArticleSchema({
+  const articleSchema = buildArticleSchema({
     headline: post.title,
     description: post.excerpt ?? post.meta_description,
     image: post.featured_image_path,
     slug: post.slug,
-    datePublished: post.published_at,   // ISO string from Supabase
+    datePublished: post.published_at,
     dateModified: post.updated_at,
   });
 
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home",    url: `${SITE_URL}/` },
+    { name: "Journal", url: `${SITE_URL}/journal` },
+    { name: post.title },
+  ]);
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: schemaScript(schema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaScript(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaScript(breadcrumbSchema) }} />
+
       <Overlays />
       <Nav nav={settings.nav} />
       <MobileMenu nav={settings.nav} />
