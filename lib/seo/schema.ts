@@ -1,18 +1,15 @@
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
 const ORG_NAME = "OutQuest";
-const LOGO_URL = `${SITE_URL}/logo.png`; // adjust path if different
+const LOGO_URL = `${SITE_URL}/logo.png`;
 
-// ─── Shared org reference (reused across schemas) ────────────────────────────
+// ─── Shared org reference ────────────────────────────────────────────────────
 
 export const orgRef = {
   "@type": "Organization",
   "@id": `${SITE_URL}/#organization`,
   name: ORG_NAME,
   url: SITE_URL,
-  logo: {
-    "@type": "ImageObject",
-    url: LOGO_URL,
-  },
+  logo: { "@type": "ImageObject", url: LOGO_URL },
 } as const;
 
 // ─── Homepage: WebSite + Organization ────────────────────────────────────────
@@ -29,15 +26,43 @@ export function buildHomepageSchema() {
         publisher: { "@id": `${SITE_URL}/#organization` },
         potentialAction: {
           "@type": "SearchAction",
-          target: {
-            "@type": "EntryPoint",
-            urlTemplate: `${SITE_URL}/deals?q={search_term_string}`,
-          },
+          target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/deals?q={search_term_string}` },
           "query-input": "required name=search_term_string",
         },
       },
       orgRef,
     ],
+  };
+}
+
+// ─── BreadcrumbList ───────────────────────────────────────────────────────────
+
+interface BreadcrumbItem {
+  name: string;
+  /** Absolute URL. Omit for the last (current) item — Google ignores it anyway. */
+  url?: string;
+}
+
+/**
+ * Builds a BreadcrumbList schema from an ordered array of crumbs.
+ *
+ * Usage:
+ *   buildBreadcrumbSchema([
+ *     { name: "Home",   url: "https://www.joinoutquest.com/" },
+ *     { name: "Quests", url: "https://www.joinoutquest.com/quests" },
+ *     { name: "Japan Ski Season" },   // current page — no url
+ *   ])
+ */
+export function buildBreadcrumbSchema(crumbs: BreadcrumbItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: crumbs.map((crumb, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: crumb.name,
+      ...(crumb.url ? { item: crumb.url } : {}),
+    })),
   };
 }
 
@@ -48,8 +73,8 @@ interface DealSchemaInput {
   description?: string | null;
   image?: string | null;
   slug: string;
-  price?: number | null;       // numeric price; null = free
-  currency?: string;           // default "USD"
+  price?: number | null;
+  currency?: string;
   available?: boolean;
 }
 
@@ -60,12 +85,7 @@ export function buildDealSchema(deal: DealSchemaInput) {
     "@type": "Product",
     name: deal.name,
     ...(deal.description && { description: deal.description }),
-    ...(deal.image && {
-      image: {
-        "@type": "ImageObject",
-        url: deal.image,
-      },
-    }),
+    ...(deal.image && { image: { "@type": "ImageObject", url: deal.image } }),
     url,
     brand: { "@id": `${SITE_URL}/#organization` },
     offers: {
@@ -87,8 +107,8 @@ interface ArticleSchemaInput {
   description?: string | null;
   image?: string | null;
   slug: string;
-  datePublished?: string | null;  // ISO 8601
-  dateModified?: string | null;   // ISO 8601
+  datePublished?: string | null;
+  dateModified?: string | null;
 }
 
 export function buildArticleSchema(post: ArticleSchemaInput) {
@@ -99,20 +119,12 @@ export function buildArticleSchema(post: ArticleSchemaInput) {
     headline: post.headline,
     ...(post.description && { description: post.description }),
     url,
-    ...(post.image && {
-      image: {
-        "@type": "ImageObject",
-        url: post.image,
-      },
-    }),
+    ...(post.image && { image: { "@type": "ImageObject", url: post.image } }),
     ...(post.datePublished && { datePublished: post.datePublished }),
     ...(post.dateModified && { dateModified: post.dateModified }),
     author: { "@id": `${SITE_URL}/#organization` },
     publisher: { "@id": `${SITE_URL}/#organization` },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": url,
-    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
   };
 }
 
@@ -126,25 +138,16 @@ interface CourseSchemaInput {
 }
 
 export function buildCourseSchema(quest: CourseSchemaInput) {
-  const url = `${SITE_URL}/quests/${quest.slug}`; // adjust path if needed
+  const url = `${SITE_URL}/quests/${quest.slug}`;
   return {
     "@context": "https://schema.org",
     "@type": "Course",
     name: quest.name,
     ...(quest.description && { description: quest.description }),
     url,
-    ...(quest.image && {
-      image: {
-        "@type": "ImageObject",
-        url: quest.image,
-      },
-    }),
+    ...(quest.image && { image: { "@type": "ImageObject", url: quest.image } }),
     provider: { "@id": `${SITE_URL}/#organization` },
-    hasCourseInstance: {
-      "@type": "CourseInstance",
-      courseMode: "Online",
-      url,
-    },
+    hasCourseInstance: { "@type": "CourseInstance", courseMode: "Online", url },
   };
 }
 
@@ -162,15 +165,12 @@ export function buildFaqPageSchema(items: FaqItem[]) {
     mainEntity: items.map((item) => ({
       "@type": "Question",
       name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
     })),
   };
 }
 
-// ─── Utility: inject as <script> tag ─────────────────────────────────────────
+// ─── Utility ─────────────────────────────────────────────────────────────────
 
 export function schemaScript(data: object) {
   return JSON.stringify(data);

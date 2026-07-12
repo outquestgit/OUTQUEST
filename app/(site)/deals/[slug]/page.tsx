@@ -10,11 +10,12 @@ import { Nav } from "@/components/site/chrome/Nav";
 import { MobileMenu } from "@/components/site/chrome/MobileMenu";
 import { SiteEnd } from "@/components/site/chrome/SiteEnd";
 import { DealDetail } from "@/components/site/pages/DealDetail";
-import { buildDealSchema, schemaScript } from "@/lib/seo/schema";
+import { buildDealSchema, buildBreadcrumbSchema, schemaScript } from "@/lib/seo/schema";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
 
 type Params = Promise<{ slug: string }>;
 
-/** Fully-dynamic per-deal metadata from the admin-controlled SEO fields. */
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
   const [deal, settings] = await Promise.all([getDealBySlug(slug), getSiteSettings()]);
@@ -33,31 +34,30 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   );
 }
 
-/**
- * Server-rendered single deal page — the crawlable, SEO-canonical surface,
- * rendered from the database into the SPA deal page's exact markup, wrapped in
- * the full site chrome so it matches the app.
- */
 export default async function DealDetailRoute({ params }: { params: Params }) {
   const { slug } = await params;
   const [deal, settings] = await Promise.all([getDealBySlug(slug), getSiteSettings()]);
   if (!deal) notFound();
 
-  const schema = buildDealSchema({
+  const dealSchema = buildDealSchema({
     name: deal.title,
     description: deal.short_desc,
     image: deal.featured_image_path ?? deal.card_image_path,
     slug: deal.slug,
-    price: null,           // adjust if Deal has a price field
+    price: null,
     available: !deal.noindex,
   });
 
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home",     url: `${SITE_URL}/` },
+    { name: "Programs", url: `${SITE_URL}/quests` },
+    { name: deal.title },
+  ]);
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: schemaScript(schema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaScript(dealSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaScript(breadcrumbSchema) }} />
 
       <Overlays />
       <Nav nav={settings.nav} />
