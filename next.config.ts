@@ -7,15 +7,14 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         has: [{ type: "host", value: "joinoutquest.com" }],
         destination: "https://www.joinoutquest.com/:path*",
-        permanent: true, // 301
+        permanent: true,
       },
     ];
   },
   images: {
     // Prefer modern formats per spec (AVIF first, WebP fallback).
     formats: ["image/avif", "image/webp"],
-    // Supabase Storage public URLs. Tighten the hostname to your project ref
-    // once known (e.g. `<ref>.supabase.co`).
+    qualities: [75, 80, 82, 85],
     remotePatterns: [
       {
         protocol: "https",
