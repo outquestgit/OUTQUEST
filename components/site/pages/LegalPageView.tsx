@@ -18,7 +18,7 @@ export function LegalPageView({
 }) {
   const { hero, body, contact } = config;
   return (
-    <Page id={pageId}>
+    <Page id={pageId} active>
       <Breadcrumb trail={[{ label: "Home", page: "home" }]} current={current} />
       <div className="legal-hero">
         <div className="label">{hero.label}</div>

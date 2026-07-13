@@ -7,20 +7,9 @@ import { Page } from "../Page";
 import { Breadcrumb } from "../cards/Breadcrumb";
 import { Pagination } from "../cards/Pagination";
 import { journalGrid, type JournalGridCard } from "@/lib/site/data/journal";
-import { DEFAULT_JOURNAL_PAGE, type JournalPageConfig } from "@/lib/site/data/pages";
+import type { JournalPageConfig } from "@/lib/site/data/pages";
 import type { JournalFeatured } from "@/lib/site/journalMapping";
 import { openBlogPost } from "@/lib/site/runtime";
-
-/** Static fallback for the hero article when the DB has no `featured` post. */
-const FALLBACK_FEATURED: JournalFeatured = {
-  post: "japan-ski",
-  tag: "Seasonal Jobs",
-  title: "4 months in a Japanese ski resort — the honest version",
-  desc: "Powder days, staff dorms, instant friendships, and the best decision I made at 26. Here's what nobody tells you before you go.",
-  gradient: "linear-gradient(135deg,#1B3A5A,#2E7AA8,#5BA3D9)",
-  emoji: "🏔️",
-  image: null,
-};
 
 function optimisedBg(src: string, width: number, height: number): React.CSSProperties {
   const { props } = getImageProps({ src, width, height, quality: 80, alt: "" });
@@ -38,13 +27,13 @@ function artStyle(gradient: string, image?: string | null, w = 600, h = 400): Re
 
 /** The Journal index: featured article + "Top Articles" grid. */
 export function JournalPage({
-  featured = FALLBACK_FEATURED,
-  grid = journalGrid,
-  hero = DEFAULT_JOURNAL_PAGE,
+  featured,
+  grid,
+  hero,
 }: {
-  featured?: JournalFeatured;
-  grid?: JournalGridCard[];
-  hero?: JournalPageConfig;
+  featured: JournalFeatured;
+  grid: JournalGridCard[];
+  hero: JournalPageConfig;
 }) {
   const router = useRouter();
   const open = (card: { post: string; href?: string | null }) =>
@@ -61,7 +50,7 @@ export function JournalPage({
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   };
   return (
-    <Page id="journal">
+    <Page id="journal" active>
       <Breadcrumb trail={[{ label: "Home", page: "home" }]} current="Journal" />
       <div
         style={{
@@ -72,11 +61,11 @@ export function JournalPage({
         }}
       >
         <div className="label">{hero.label}</div>
-        <h1 className="serif-h" style={{ marginBottom: "12px" }}>{hero.heading}</h1>
-        <p className="sub" style={{ maxWidth: "520px", margin: "0 auto" }}>{hero.subtitle}</p>
-      </div>
-      <div className="journal-page-wrap">
-        {/* FEATURED ARTICLE — larger, use 800x500 */}
+          <h1 className="serif-h" style={{ marginBottom: "12px" }}>{hero.heading}</h1>
+          <p className="sub" style={{ maxWidth: "520px", margin: "0 auto" }}>{hero.subtitle}</p>
+        </div>
+        <div className="journal-page-wrap">
+          {/* FEATURED ARTICLE — larger, use 800x500 */}
         <div className="journal-featured">
           <div className="jf-left">
             <div className="jf-tag">{featured.tag}</div>

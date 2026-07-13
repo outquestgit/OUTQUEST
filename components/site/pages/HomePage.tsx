@@ -24,11 +24,13 @@ export function HomePage({
   featuredQuests = [],
   posts = journalCards,
   homepage = DEFAULT_HOMEPAGE,
+  showJournal = true,
 }: {
   programs: Program[];
   featuredQuests?: Quest[];
   posts?: JournalCardData[];
   homepage?: HomepageConfig;
+  showJournal?: boolean;
 }) {
   const { hero, why, whoUsesUs, popularPrograms, socialProof, destination, goals, journal } =
     homepage;
@@ -42,7 +44,7 @@ export function HomePage({
       {!socialProof.hide && <SocialProofSection socialProof={socialProof} />}
       <ReelSection reel={destination} bg="var(--bg)" />
       <ReelSection reel={goals} bg="var(--bg2)" />
-      <JournalSection journal={journal} posts={posts} />
+      {showJournal && <JournalSection journal={journal} posts={posts} />}
     </Page>
   );
 }

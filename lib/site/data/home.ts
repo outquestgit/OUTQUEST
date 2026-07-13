@@ -162,7 +162,7 @@ export interface JournalCard {
 }
 
 export const journalCards: JournalCard[] = [
-  { post: "japan-ski", imgGradient: "linear-gradient(135deg,#1B3A5A,#2E7AA8)", emoji: "🏔️", tag: "Seasonal Jobs", date: "Apr 2026", title: "4 months in a Japanese ski resort — the honest version", excerpt: "Powder days, staff dorms, and the best decision I made at 26." },
-  { post: "lisbon-2k", imgGradient: "linear-gradient(135deg,#1A3A0A,#3A8A1A)", emoji: "🌿", tag: "Move Abroad", date: "Mar 2026", title: "I moved to Lisbon with €2,000. Here's what happened.", excerpt: "Spoiler: I'm still here. The visa was easier than I thought." },
-  { post: "freelance-6mo", imgGradient: "linear-gradient(135deg,#3A1A42,#8A3A8A)", emoji: "💻", tag: "Upgrade Your Life", date: "Mar 2026", title: "How I went from £28k salary to freelancing in 6 months", excerpt: "The skill I learned. The clients I found. The exact path." },
+  { post: "japan-ski", imgGradient: "linear-gradient(135deg,#1B3A5A,#2E7AA8)", emoji: "🏔️", tag: "Seasonal Jobs", date: "Apr 2026", title: "4 months in a Japanese ski resort — the honest version", excerpt: "Powder days, staff dorms, and the best decision I made at 26.", href: "/journal/japan-ski" },
+  { post: "lisbon-2k", imgGradient: "linear-gradient(135deg,#1A3A0A,#3A8A1A)", emoji: "🌿", tag: "Move Abroad", date: "Mar 2026", title: "I moved to Lisbon with €2,000. Here's what happened.", excerpt: "Spoiler: I'm still here. The visa was easier than I thought.", href: "/journal/lisbon-2k" },
+  { post: "freelance-6mo", imgGradient: "linear-gradient(135deg,#3A1A42,#8A3A8A)", emoji: "💻", tag: "Upgrade Your Life", date: "Mar 2026", title: "How I went from £28k salary to freelancing in 6 months", excerpt: "The skill I learned. The clients I found. The exact path.", href: "/journal/freelance-6mo" },
 ];
