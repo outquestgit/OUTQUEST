@@ -74,24 +74,13 @@ interface DealSchemaInput {
   available?: boolean;
 }
 
-export function buildDealSchema(deal: DealSchemaInput) {
+export function buildDealSchema(deal: DealSchemaInput): object | null {
   const url = `${SITE_URL}/deals/${deal.slug}`;
 
-  // Always include Offer so Product schema qualifies for Google rich results
-  // (requires offers, review, or aggregateRating). Only add price + priceCurrency
-  // when a real value exists — omitting them avoids the fake price:0 problem.
-  const offers: Record<string, unknown> = {
-    "@type": "Offer",
-    url,
-    availability:
-      deal.available !== false
-        ? "https://schema.org/InStock"
-        : "https://schema.org/SoldOut",
-  };
-  if (deal.price != null) {
-    offers.price = deal.price;
-    offers.priceCurrency = deal.currency ?? "USD";
-  }
+  // Google Product rich results require price to qualify for snippets/merchant
+  // listings. Without a price, output null so the caller can skip the schema tag
+  // entirely — an invalid Product schema causes more harm than no schema at all.
+  if (deal.price == null) return null;
 
   return {
     "@context": "https://schema.org",
@@ -101,7 +90,16 @@ export function buildDealSchema(deal: DealSchemaInput) {
     ...(deal.image && { image: { "@type": "ImageObject", url: deal.image } }),
     url,
     brand: { "@id": `${SITE_URL}/#organization` },
-    offers,
+    offers: {
+      "@type": "Offer",
+      url,
+      price: deal.price,
+      priceCurrency: deal.currency ?? "USD",
+      availability:
+        deal.available !== false
+          ? "https://schema.org/InStock"
+          : "https://schema.org/SoldOut",
+    },
   };
 }
 
