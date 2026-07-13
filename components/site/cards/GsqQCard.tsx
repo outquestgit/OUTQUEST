@@ -15,10 +15,10 @@ export interface GsqCard {
 }
 
 export function GsqQCard({ card }: { card: GsqCard }) {
-  // Resolve optimised src via /_next/image (serves AVIF/WebP via Accept header).
-  // GsqQCard media: small hero card, width 400 height 300 per previous analysis.
+  // quality 65 matches ReelSection — saves ~15-20% transfer per card image
+  // with no perceptible visual difference at the 400×300 card size.
   const imgSrc = card.image
-    ? getImageProps({ src: card.image, width: 400, height: 300, quality: 80, alt: "" }).props.src
+    ? getImageProps({ src: card.image, width: 400, height: 300, quality: 65, alt: "" }).props.src
     : undefined;
 
   return (
