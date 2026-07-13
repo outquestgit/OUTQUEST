@@ -39,12 +39,14 @@ export default async function DealDetailRoute({ params }: { params: Params }) {
   const [deal, settings] = await Promise.all([getDealBySlug(slug), getSiteSettings()]);
   if (!deal) notFound();
 
+  // Pass price_from as the schema price — falls back to total_price for booking
+  // deals. If neither exists, buildDealSchema returns null and we skip the tag.
   const dealSchema = buildDealSchema({
     name: deal.title,
     description: deal.short_desc,
     image: deal.featured_image_path ?? deal.card_image_path,
     slug: deal.slug,
-    price: null,
+    price: deal.price_from ?? deal.total_price,
     available: !deal.noindex,
   });
 
@@ -56,7 +58,9 @@ export default async function DealDetailRoute({ params }: { params: Params }) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaScript(dealSchema) }} />
+      {dealSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaScript(dealSchema) }} />
+      )}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaScript(breadcrumbSchema) }} />
 
       <Overlays />
