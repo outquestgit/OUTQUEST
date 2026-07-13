@@ -4,6 +4,7 @@ import { requireAdminApi } from "@/lib/auth";
 import { DEALS_TAG } from "@/lib/deals";
 import { QUESTS_TAG } from "@/lib/quests";
 import { buildDealPayload } from "@/lib/admin/dealPayload";
+import { pingIndexNow } from "@/lib/indexnow";
 
 /** Update a deal; re-syncs the connected quests (delete-then-insert). */
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -39,6 +40,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
   revalidateTag(DEALS_TAG, { expire: 0 });
   revalidateTag(QUESTS_TAG, { expire: 0 });
+
+  // Ping Bing IndexNow so published deals get crawled immediately.
+  // Skip noindex deals — they shouldn't appear in search results anyway.
+  if (payload.visibility === "published" && !payload.noindex) {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
+    pingIndexNow(`${siteUrl}/deals/${slug}`);
+  }
+
   // Invalidate the front route + client router cache too, so edits show on a
   // normal refresh (tag revalidation alone is served stale-while-revalidate).
   revalidatePath("/", "layout");

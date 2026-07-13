@@ -1,5 +1,6 @@
 "use client";
 
+import { getImageProps } from "next/image";
 import { useRouter } from "next/navigation";
 import { showListing } from "@/lib/site/runtime";
 import { AppLink } from "@/components/site/ui/AppLink";
@@ -35,9 +36,17 @@ export function SlimQCard({ quest }: { quest: SlimQuest }) {
     Object.entries(quest.data).map(([k, v]) => [`data-${k}`, v])
   );
   const href = quest.href;
-  const bg = quest.image
-    ? { backgroundImage: `url(${quest.image})`, backgroundSize: "cover", backgroundPosition: "center" }
+
+  // Resolve optimised src via /_next/image (serves AVIF/WebP via Accept header).
+  // SlimQCard is full-bleed with aspect-ratio 2/3 — same dimensions as QCard.
+  const imgSrc = quest.image
+    ? getImageProps({ src: quest.image, width: 400, height: 600, quality: 80, alt: "" }).props.src
+    : undefined;
+
+  const bg = imgSrc
+    ? { backgroundImage: `url(${imgSrc})`, backgroundSize: "cover", backgroundPosition: "center" }
     : { background: quest.gradient };
+
   return (
     <div
       className="slim-qcard"

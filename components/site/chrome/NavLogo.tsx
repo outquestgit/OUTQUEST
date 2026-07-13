@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { NavBrand } from "@/lib/site/chromeConfig";
 import { AppLink } from "@/components/site/ui/AppLink";
 
@@ -29,12 +30,13 @@ export function NavLogo({
   if (brand?.logoUrl) {
     return (
       <AppLink className="nav-logo nav-logo--img" href={href} onActivate={onClick}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- admin-supplied
-            external URL; sizing is handled by CSS, not the Next image pipeline. */}
-        <img
+        <Image
           src={brand.logoUrl}
           alt={brand.logoAlt || "Home"}
-          style={{ height: `${size + 12}px`, width: "auto", display: "block", marginRight: "8px" }}
+          width={size + 12}
+          height={size + 12}
+          priority 
+          style={{ width: "auto", display: "block", marginRight: "8px" }}
         />
         {/* Brand name beside the uploaded logo image. The whole wordmark uses the
             inherited (near-black) text color — `.nav-logo span` is `color:inherit`. */}

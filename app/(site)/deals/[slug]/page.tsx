@@ -10,10 +10,12 @@ import { Nav } from "@/components/site/chrome/Nav";
 import { MobileMenu } from "@/components/site/chrome/MobileMenu";
 import { SiteEnd } from "@/components/site/chrome/SiteEnd";
 import { DealDetail } from "@/components/site/pages/DealDetail";
+import { buildDealSchema, buildBreadcrumbSchema, schemaScript } from "@/lib/seo/schema";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
 
 type Params = Promise<{ slug: string }>;
 
-/** Fully-dynamic per-deal metadata from the admin-controlled SEO fields. */
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
   const [deal, settings] = await Promise.all([getDealBySlug(slug), getSiteSettings()]);
@@ -25,23 +27,38 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       description: deal.short_desc ?? undefined,
       path: `/deals/${deal.slug}`,
       image: deal.featured_image_path || deal.card_image_path,
+      canonical: deal.canonical_url,
+      noindex: deal.noindex,
     },
     settings.seo
   );
 }
 
-/**
- * Server-rendered single deal page — the crawlable, SEO-canonical surface,
- * rendered from the database into the SPA deal page's exact markup, wrapped in
- * the full site chrome so it matches the app.
- */
 export default async function DealDetailRoute({ params }: { params: Params }) {
   const { slug } = await params;
   const [deal, settings] = await Promise.all([getDealBySlug(slug), getSiteSettings()]);
   if (!deal) notFound();
 
+  const dealSchema = buildDealSchema({
+    name: deal.title,
+    description: deal.short_desc,
+    image: deal.featured_image_path ?? deal.card_image_path,
+    slug: deal.slug,
+    price: null,
+    available: !deal.noindex,
+  });
+
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home",     url: `${SITE_URL}/` },
+    { name: "Programs", url: `${SITE_URL}/quests` },
+    { name: deal.title },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaScript(dealSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaScript(breadcrumbSchema) }} />
+
       <Overlays />
       <Nav nav={settings.nav} />
       <MobileMenu nav={settings.nav} />

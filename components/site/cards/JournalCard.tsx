@@ -1,5 +1,6 @@
 "use client";
 
+import { getImageProps } from "next/image";
 import { useRouter } from "next/navigation";
 import type { JournalCard as JournalCardData } from "@/lib/site/data/home";
 import { openBlogPost } from "@/lib/site/runtime";
@@ -12,6 +13,13 @@ import { openBlogPost } from "@/lib/site/runtime";
  */
 export function JournalCard({ card }: { card: JournalCardData }) {
   const router = useRouter();
+
+  // Resolve optimised src via /_next/image (serves AVIF/WebP via Accept header).
+  // JournalCard banner: fixed height 170px, width ~600px per previous analysis.
+  const imgSrc = card.image
+    ? getImageProps({ src: card.image, width: 600, height: 170, quality: 80, alt: "" }).props.src
+    : undefined;
+
   return (
     <div
       className="jcard"
@@ -23,16 +31,16 @@ export function JournalCard({ card }: { card: JournalCardData }) {
       <div
         className="jcard-img"
         style={
-          card.image
+          imgSrc
             ? {
-                backgroundImage: `url(${card.image})`,
+                backgroundImage: `url(${imgSrc})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }
             : { background: card.imgGradient }
         }
       >
-        {card.image ? "" : card.emoji}
+        {imgSrc ? "" : card.emoji}
       </div>
       <div className="jcard-body">
         <div className="jtag">{card.tag}</div>

@@ -126,6 +126,8 @@ export interface Program {
   art: string;
   /** Uploaded card/featured image; paints the banner over the gradient+art when set. */
   image?: string | null;
+  /** Alt text for the card image; falls back to title on the frontend. */
+  imageAlt?: string | null;
   type: string;
   title: string;
   meta: string;
@@ -180,6 +182,7 @@ export function dealToProgram(d: Deal): Program {
     art: d.card_icon || d.hero_icon || "🎯",
     // Same image the deal page hero uses (DealDetail: featured → card).
     image: d.featured_image_path || d.card_image_path || null,
+    imageAlt: d.image_alt || null,
     type: d.partner_name || "Programs & Experiences",
     title: d.title,
     meta: d.short_desc || d.outcome_text || "",

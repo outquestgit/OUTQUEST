@@ -3,6 +3,8 @@ import "./globals.css";
 import { getSiteSettings } from "@/lib/siteSettings";
 import { DEFAULT_SEO_DEFAULTS } from "@/lib/site/data/seoDefaults";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { ClarityProvider } from "@/components/ClarityProvider";
+
 
 // Async so the admin-managed favicon (nav branding) can be wired into <head>.
 // Falls back to whatever file-based icon exists when no favicon is uploaded.
@@ -22,7 +24,12 @@ export async function generateMetadata(): Promise<Metadata> {
     settings?.seo.metaDescription?.trim() || DEFAULT_SEO_DEFAULTS.metaDescription;
   const siteUrl = settings?.general.siteUrl?.trim() || process.env.NEXT_PUBLIC_SITE_URL;
 
-  const meta: Metadata = { title, description };
+  const meta: Metadata = {
+    title,
+    description,
+    // Bing Webmaster Tools site verification.
+    verification: { other: { "msvalidate.01": "76278BF8F86BE9EB32418743E7AA5811" } },
+  };
   if (siteUrl) {
     try {
       meta.metadataBase = new URL(siteUrl);
@@ -54,6 +61,7 @@ export default function RootLayout({
     <html lang="en" data-scroll-behavior="smooth">
       <body>{children}</body>
       <GoogleAnalytics />
+      <ClarityProvider />
     </html>
   );
 }

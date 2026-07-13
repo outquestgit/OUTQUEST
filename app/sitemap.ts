@@ -2,9 +2,12 @@ import type { MetadataRoute } from "next";
 import { getSiteSettings } from "@/lib/siteSettings";
 import { getPublishedQuests } from "@/lib/quests";
 import { getPublishedJournalPosts } from "@/lib/journal";
+import { getPublishedDeals } from "@/lib/deals";
 import { questCategorySlug } from "@/lib/site/questMapping";
 
-const FALLBACK_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+export const revalidate = 3600; // re-generate every 1 hour
+
+const FALLBACK_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
 
 /** Public, always-present routes (SPA sections + editorial index pages). */
 const STATIC_PATHS = [
@@ -43,9 +46,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === "/" ? 1 : 0.7,
   }));
 
-  const [quests, posts] = await Promise.all([
+  const [quests, posts, deals] = await Promise.all([
     getPublishedQuests().catch(() => []),
     getPublishedJournalPosts().catch(() => []),
+    getPublishedDeals().catch(() => []),
   ]);
 
   for (const q of quests) {
@@ -65,6 +69,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: p.updated_at ? new Date(p.updated_at) : now,
       changeFrequency: "monthly",
       priority: 0.6,
+    });
+  }
+
+  for (const d of deals) {
+    // Skip noindex deals — don't tell Google about pages we don't want indexed.
+    if (d.noindex) continue;
+    entries.push({
+      url: `${base}/deals/${d.slug}`,
+      lastModified: d.updated_at ? new Date(d.updated_at) : now,
+      changeFrequency: "weekly",
+      priority: 0.75,
     });
   }
 

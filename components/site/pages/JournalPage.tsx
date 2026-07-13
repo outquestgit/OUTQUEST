@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getImageProps } from "next/image";
 import { useRouter } from "next/navigation";
 import { Page } from "../Page";
 import { Breadcrumb } from "../cards/Breadcrumb";
@@ -21,11 +22,18 @@ const FALLBACK_FEATURED: JournalFeatured = {
   image: null,
 };
 
-/** Card art style: an uploaded image (cover) or the gradient + emoji. */
-function artStyle(gradient: string, image?: string | null) {
-  return image
-    ? { backgroundImage: `url(${image})`, backgroundSize: "cover", backgroundPosition: "center" }
-    : { background: gradient };
+function optimisedBg(src: string, width: number, height: number): React.CSSProperties {
+  const { props } = getImageProps({ src, width, height, quality: 80, alt: "" });
+  return {
+    backgroundImage: `url("${props.src}")`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  };
+}
+
+/** Card art style: an uploaded image routed through the Next.js optimiser, or gradient + emoji. */
+function artStyle(gradient: string, image?: string | null, w = 600, h = 400): React.CSSProperties {
+  return image ? optimisedBg(image, w, h) : { background: gradient };
 }
 
 /** The Journal index: featured article + "Top Articles" grid. */
@@ -39,13 +47,6 @@ export function JournalPage({
   hero?: JournalPageConfig;
 }) {
   const router = useRouter();
-  /**
-   * DB posts have a real `/journal/{slug}` route: navigate, so the click leaves a
-   * history entry and Back returns here. `openBlogPost` only swaps the in-DOM
-   * `blog-post` section (it's in front.js's `_SPA_NO_URL`) and pushes nothing, so
-   * Back skipped the listing entirely and landed on whatever preceded it — home.
-   * Static seed cards have no route, so they keep the overlay.
-   */
   const open = (card: { post: string; href?: string | null }) =>
     card.href ? router.push(card.href) : openBlogPost(card.post);
 
@@ -71,40 +72,32 @@ export function JournalPage({
         }}
       >
         <div className="label">{hero.label}</div>
-        <h1 className="serif-h" style={{ marginBottom: "12px" }}>
-          {hero.heading}
-        </h1>
-        <p className="sub" style={{ maxWidth: "520px", margin: "0 auto" }}>
-          {hero.subtitle}
-        </p>
+        <h1 className="serif-h" style={{ marginBottom: "12px" }}>{hero.heading}</h1>
+        <p className="sub" style={{ maxWidth: "520px", margin: "0 auto" }}>{hero.subtitle}</p>
       </div>
       <div className="journal-page-wrap">
-        {/* FEATURED ARTICLE */}
+        {/* FEATURED ARTICLE — larger, use 800x500 */}
         <div className="journal-featured">
           <div className="jf-left">
             <div className="jf-tag">{featured.tag}</div>
-            <div className="jf-title" onClick={() => open(featured)}>
-              {featured.title}
-            </div>
+            <div className="jf-title" onClick={() => open(featured)}>{featured.title}</div>
             <p className="jf-desc">{featured.desc}</p>
-            <span className="jf-readmore" onClick={() => open(featured)}>
-              Read more
-            </span>
+            <span className="jf-readmore" onClick={() => open(featured)}>Read more</span>
           </div>
           <div className="jf-img" onClick={() => open(featured)}>
-            <div className="jf-img-inner" style={artStyle(featured.gradient, featured.image)}>
+            <div className="jf-img-inner" style={artStyle(featured.gradient, featured.image, 800, 500)}>
               {featured.image ? "" : featured.emoji}
             </div>
           </div>
         </div>
 
-        {/* TOP ARTICLES GRID */}
+        {/* TOP ARTICLES GRID — smaller cards, use 400x280 */}
         <div className="journal-section-title">Top Articles</div>
         <div className="journal-grid">
           {pageItems.map((card) => (
             <div className="jg-card" key={card.post} onClick={() => open(card)}>
               <div className="jg-img">
-                <div className="jg-img-inner" style={artStyle(card.gradient, card.image)}>
+                <div className="jg-img-inner" style={artStyle(card.gradient, card.image, 400, 280)}>
                   {card.image ? "" : card.emoji}
                 </div>
               </div>

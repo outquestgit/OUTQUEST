@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getImageProps } from "next/image";
 import { useRouter } from "next/navigation";
 import { openLink } from "@/lib/site/runtime";
 import type { Deal } from "@/lib/deals";
@@ -8,6 +9,15 @@ import { DealLeadForm } from "./DealLeadForm";
 import { DealBookingSheet } from "./DealBookingSheet";
 
 const FALLBACK_BG = "linear-gradient(160deg,#1A0A2A,#4A1A7A,#A060E0)";
+
+function optimisedBg(src: string, width: number, height: number): React.CSSProperties {
+  const { props } = getImageProps({ src, width, height, quality: 80, alt: "" });
+  return {
+    backgroundImage: `url("${props.src}")`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  };
+}
 
 /**
  * Single deal page — reproduces the SPA `openDealPage` markup/classes exactly
@@ -18,7 +28,6 @@ const FALLBACK_BG = "linear-gradient(160deg,#1A0A2A,#4A1A7A,#A060E0)";
 export function DealDetail({ deal }: { deal: Deal }) {
   const router = useRouter();
   const heroBg = deal.hero_bg || deal.card_color || FALLBACK_BG;
-  // An uploaded featured (or card) image paints the hero; else the gradient + icon.
   const heroImage = deal.featured_image_path || deal.card_image_path || null;
   const offerPrice =
     deal.offer_price ||
@@ -29,15 +38,10 @@ export function DealDetail({ deal }: { deal: Deal }) {
   const isLeadForm = deal.action_type === "leadform";
   const isBooking = deal.action_type === "booking";
   const claimLabel = deal.cta_label || (isBooking ? "Book now" : "Claim offer");
-  // The bottom "Final CTA" button can have its own text (admin: Final CTA Copy);
-  // falls back to the main claim label.
   const finalCtaLabel = deal.cta_button_label || claimLabel;
   const [bookOpen, setBookOpen] = useState(false);
   const claim = () => {
-    if (isBooking) {
-      setBookOpen(true);
-      return;
-    }
+    if (isBooking) { setBookOpen(true); return; }
     if (isLeadForm) {
       document.getElementById("dp-lead-form-anchor")?.scrollIntoView({ behavior: "smooth" });
       return;
@@ -45,47 +49,34 @@ export function DealDetail({ deal }: { deal: Deal }) {
     if (offerUrl && offerUrl !== "#") openLink(offerUrl);
   };
 
+  // Deal hero is a full-width panel; 800x450 (16/9) is a good optimisation target.
+  const heroStyle = heroImage
+    ? { ...optimisedBg(heroImage, 800, 450), marginTop: "20px" }
+    : { background: heroBg, marginTop: "20px" };
+
   return (
     <>
       <div className="deal-back-bar">
         <div style={{ maxWidth: "560px", margin: "0 auto", padding: "20px 20px 0" }}>
-          <button className="deal-back-btn" onClick={() => router.back()}>
-            Back
-          </button>
+          <button className="deal-back-btn" onClick={() => router.back()}>Back</button>
         </div>
       </div>
       <div className="deal-page-wrap">
-        <div
-          className="dp-hero-img"
-          style={
-            heroImage
-              ? {
-                  backgroundImage: `url(${heroImage})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  marginTop: "20px",
-                }
-              : { background: heroBg, marginTop: "20px" }
-          }
-        >
+        <div className="dp-hero-img" style={heroStyle}>
           {!heroImage && (deal.hero_icon || deal.card_icon || "✦")}
           {deal.partner_name && <div className="dp-hero-label">{deal.partner_name}</div>}
         </div>
         {deal.badge && <div className="dp-badge">{deal.badge}</div>}
         <h1 className="dp-title">{deal.title}</h1>
         {deal.short_desc && <p className="dp-desc">{deal.short_desc}</p>}
-
         <div className="dp-offer-box">
           <div>
             {deal.offer_label && <div className="dp-offer-label">{deal.offer_label}</div>}
             {offerPrice && <div className="dp-offer-price">{offerPrice}</div>}
             {deal.outcome_text && <div className="dp-offer-saving">{deal.outcome_text}</div>}
           </div>
-          <button className="dp-claim-btn" onClick={claim}>
-            {claimLabel}
-          </button>
+          <button className="dp-claim-btn" onClick={claim}>{claimLabel}</button>
         </div>
-
         {deal.what_is && (
           <div className="dp-section">
             <h2>What this is</h2>
@@ -115,9 +106,7 @@ export function DealDetail({ deal }: { deal: Deal }) {
           <div className="dp-section">
             <h2>What you get</h2>
             <ul className="dp-checklist">
-              {deal.checklist.map((c, i) => (
-                <li key={i}>{c}</li>
-              ))}
+              {deal.checklist.map((c, i) => <li key={i}>{c}</li>)}
             </ul>
           </div>
         )}
@@ -127,26 +116,19 @@ export function DealDetail({ deal }: { deal: Deal }) {
             <p dangerouslySetInnerHTML={{ __html: deal.why_useful }} />
           </div>
         )}
-
         {isLeadForm ? (
-          <div id="dp-lead-form-anchor">
-            <DealLeadForm deal={deal} />
-          </div>
+          <div id="dp-lead-form-anchor"><DealLeadForm deal={deal} /></div>
         ) : (
           (deal.cta_heading || deal.cta_subtext) && (
             <div className="dp-end-cta">
               {deal.cta_heading && <h3>{deal.cta_heading}</h3>}
               {deal.cta_subtext && <p>{deal.cta_subtext}</p>}
-              <button className="dp-claim-btn" onClick={claim}>
-                {finalCtaLabel}
-              </button>
+              <button className="dp-claim-btn" onClick={claim}>{finalCtaLabel}</button>
             </div>
           )
         )}
       </div>
-      {isBooking && bookOpen && (
-        <DealBookingSheet deal={deal} onClose={() => setBookOpen(false)} />
-      )}
+      {isBooking && bookOpen && <DealBookingSheet deal={deal} onClose={() => setBookOpen(false)} />}
     </>
   );
 }

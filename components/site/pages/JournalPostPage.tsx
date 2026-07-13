@@ -1,8 +1,22 @@
 "use client";
 
+import { getImageProps } from "next/image";
 import { useRouter } from "next/navigation";
 import { showPage } from "@/lib/site/runtime";
 import type { BlogPostData } from "@/lib/site/journalMapping";
+
+function optimisedBg(src: string, width: number, height: number): React.CSSProperties {
+  const { props } = getImageProps({ src, width, height, quality: 80, alt: "" });
+  return {
+    backgroundImage: `url("${props.src}")`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  };
+}
+
+function artStyle(gradient: string, image?: string | null, w = 400, h = 280): React.CSSProperties {
+  return image ? optimisedBg(image, w, h) : { background: gradient };
+}
 
 /**
  * Single journal post — reproduces the SPA `openBlogPost` markup/classes exactly
@@ -13,31 +27,15 @@ import type { BlogPostData } from "@/lib/site/journalMapping";
  */
 export function JournalPostPage({ post }: { post: BlogPostData }) {
   const router = useRouter();
-  const artStyle = (gradient: string, image?: string | null) =>
-    image
-      ? {
-          backgroundImage: `url(${image})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }
-      : { background: gradient };
 
   // A real uploaded featured image paints the hero (cover); else gradient + emoji.
+  // Hero is a wide banner — 1200x500 is a good optimisation target.
   const heroStyle = post.featuredImage
-    ? {
-        backgroundImage: `url(${post.featuredImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }
+    ? optimisedBg(post.featuredImage, 1200, 500)
     : { background: post.heroBg };
 
   return (
     <>
-      {/* Route via showPage(), as QuestListing does. A router.push("/?p=journal")
-          soft-navigates to the `/` route, whose SiteApp mounts with no
-          `initialPage` — PageActivator then re-asserts "home" and the `?p=` query
-          is never read (FrontBoot only reads it on script load). showPage() sees
-          `#page-journal` is absent on this standalone route and deep-links properly. */}
       <nav className="bc-nav">
         <span onClick={() => showPage("home")}>Home</span>
         <span className="bc-sep">›</span>
@@ -65,9 +63,7 @@ export function JournalPostPage({ post }: { post: BlogPostData }) {
         {post.related.length > 0 && (
           <div className="blog-related">
             <h3>More from the Journal</h3>
-            {/* No inline columns / no `.blog-related` overrides: these are the
-                journal-index cards, styled entirely by `.journal-grid` + `.jg-card`. */}
-            <div className="journal-grid">
+            <div className="journal-grid" style={{ gridTemplateColumns: "repeat(3,1fr)" }}>
               {post.related.map((r) => (
                 <div
                   className="jg-card"

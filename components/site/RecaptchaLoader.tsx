@@ -11,6 +11,6 @@ export function RecaptchaLoader() {
   const key = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
   if (!key) return null;
   return (
-    <Script src={`https://www.google.com/recaptcha/api.js?render=${key}`} strategy="afterInteractive" />
+    <Script src={`https://www.google.com/recaptcha/api.js?render=${key}`} strategy="lazyOnload" />
   );
 }

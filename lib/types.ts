@@ -120,3 +120,13 @@ export interface Lead {
   assigned_supplier: string | null;
   created_at: string;
 }
+
+export interface PageSeoData {
+  seo_title?: string;
+  meta_description?: string;
+  og_title?: string;
+  og_description?: string;
+  og_image_url?: string;
+  canonical_url?: string;
+  noindex?: boolean;
+}

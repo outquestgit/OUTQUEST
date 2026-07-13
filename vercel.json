@@ -1,0 +1,21 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://www.joinoutquest.com/$1",
+      "statusCode": 301,
+      "has": [
+        { "type": "host", "value": "joinoutquest.com" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "destination": "https://www.joinoutquest.com/$1",
+      "statusCode": 301,
+      "has": [
+        { "type": "host", "value": "joinoutquest.com" },
+        { "type": "header", "key": "x-forwarded-proto", "value": "http" }
+      ]
+    }
+  ]
+}
