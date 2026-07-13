@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const KEY = "048c5c8a8205d41738fb31015d768b5a";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://joinoutquest.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
 
 export async function POST(req: NextRequest) {
   const { urls } = await req.json();
