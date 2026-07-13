@@ -9,12 +9,16 @@ import { MobileMenu } from "@/components/site/chrome/MobileMenu";
 import { SiteEnd } from "@/components/site/chrome/SiteEnd";
 import { CategoryPage } from "@/components/site/pages/CategoryPage";
 import { HomePage } from "@/components/site/pages/HomePage";
+import { JournalPage } from "@/components/site/pages/JournalPage";
+import { BlogPostPage } from "@/components/site/pages/BlogPostPage";
 import { QuestsPage } from "@/components/site/pages/QuestsPage";
 import { PartnerPage } from "@/components/site/pages/PartnerPage";
 import { ListingPage } from "@/components/site/pages/ListingPage";
 import { DealDynamicPage, DealHubbaPage } from "@/components/site/pages/DealPages";
 import { AboutPage } from "@/components/site/pages/AboutPage";
 import { ContactPage } from "@/components/site/pages/ContactPage";
+import { PrivacyPage } from "@/components/site/pages/PrivacyPage";
+import { TosPage } from "@/components/site/pages/TosPage";
 import { FaqPage } from "@/components/site/pages/FaqPage";
 import { altCategoryPages } from "@/lib/site/data/altCategoryPages";
 import { altCategoryFilterGroups, buildCategoryFilterGroups } from "@/lib/site/data/categoryFilters";
@@ -23,6 +27,13 @@ import { getSiteSettings } from "@/lib/siteSettings";
 import { getPublishedQuests, getActiveCategoryTerms, getActiveFilterTerms } from "@/lib/quests";
 import { getPublishedDeals } from "@/lib/deals";
 import { questToCard, questToSlim, dealToProgram } from "@/lib/site/questMapping";
+import { getPublishedJournalPosts } from "@/lib/journal";
+import {
+  postToGridCard,
+  postToHomeCard,
+  postToFeatured,
+  postsToReaderMap,
+} from "@/lib/site/journalMapping";
 
 /** Cache-busting token for the front runtime: the file's mtime (recomputed per
  *  request in dev, baked at build for static pages). */
@@ -41,9 +52,10 @@ function frontJsVersion(): string {
  * `/faq` opens that section on load (via `<FrontBoot>`), keeping the clean URL.
  */
 export async function SiteApp({ initialPage }: { initialPage?: string }) {
-  const [dbQuests, dbDeals, settings, categoryTerms, filterTerms] = await Promise.all([
+  const [dbQuests, dbDeals, posts, settings, categoryTerms, filterTerms] = await Promise.all([
     getPublishedQuests(),
     getPublishedDeals(),
+    getPublishedJournalPosts(),
     getSiteSettings(),
     getActiveCategoryTerms(),
     getActiveFilterTerms(),
@@ -109,6 +121,11 @@ export async function SiteApp({ initialPage }: { initialPage?: string }) {
     .slice(0, 6)
     .map(dealToProgram);
 
+  const featuredPost = posts.find((p) => p.featured) ?? posts[0];
+  const gridPosts = posts.filter((p) => p.slug !== featuredPost?.slug);
+  const homePosts = posts.slice(0, 3).map(postToHomeCard);
+  const readerMap = posts.length ? postsToReaderMap(posts) : null;
+
   return (
     <>
       <h2 className="sr-only">{settings.general.siteName}</h2>
@@ -116,6 +133,17 @@ export async function SiteApp({ initialPage }: { initialPage?: string }) {
       <Overlays />
       <Nav nav={settings.nav} />
       <MobileMenu nav={settings.nav} />
+
+      {/* Expose DB journal posts to the SPA reader (front.js `openBlogPost`). */}
+      {readerMap && (
+        <script
+          id="journal-data"
+          type="application/json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(readerMap).replace(/</g, "\\u003c"),
+          }}
+        />
+      )}
 
       {/* Admin-editable Compare Paths cards → front.js `sqComparePaths`. */}
       <script
@@ -126,7 +154,17 @@ export async function SiteApp({ initialPage }: { initialPage?: string }) {
         }}
       />
 
-      <HomePage programs={programs} featuredQuests={featuredQuestCards} homepage={settings.homepage} />
+      <HomePage programs={programs} featuredQuests={featuredQuestCards} posts={homePosts.length ? homePosts : undefined} homepage={settings.homepage} />
+      {posts.length ? (
+        <JournalPage
+          featured={featuredPost ? postToFeatured(featuredPost) : undefined}
+          grid={gridPosts.map(postToGridCard)}
+          hero={settings.pages.journal}
+        />
+      ) : (
+        <JournalPage hero={settings.pages.journal} />
+      )}
+      <BlogPostPage />
       <QuestsPage quests={questCards} hero={settings.pages.quests} filterGroups={questFilters} />
 
       {/* Goal-style category pages (alt filter sidebar — static sample data) */}
@@ -145,6 +183,14 @@ export async function SiteApp({ initialPage }: { initialPage?: string }) {
       <DealHubbaPage />
       <AboutPage about={settings.pages.about} />
       <ContactPage contact={settings.pages.contact} />
+      {/* Legal pages are the one exception to "every section is always mounted".
+          Nothing swaps to them client-side — no `showPage('privacy'|'tos')` exists
+          anywhere in front.js or the components — so they're only ever reached by a
+          real navigation to /privacy or /tos. Mounting them everywhere put ~11KB of
+          policy text into the crawlable body of every route on the site. `showPage`
+          routes to them when they aren't mounted (see lib/site/runtime.ts). */}
+      {initialPage === "privacy" && <PrivacyPage privacy={settings.pages.privacy} />}
+      {initialPage === "tos" && <TosPage terms={settings.pages.terms} />}
       <FaqPage faq={settings.pages.faq} />
 
       <SiteEnd footer={settings.footer} />
