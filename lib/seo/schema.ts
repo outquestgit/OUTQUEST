@@ -77,21 +77,21 @@ interface DealSchemaInput {
 export function buildDealSchema(deal: DealSchemaInput) {
   const url = `${SITE_URL}/deals/${deal.slug}`;
 
-  // Only include Offer when a real price is known — price: 0 tells Google the
-  // item is free, which is misleading for deals where the price simply isn't set.
-  const offers =
-    deal.price != null
-      ? {
-          "@type": "Offer",
-          url,
-          price: deal.price,
-          priceCurrency: deal.currency ?? "USD",
-          availability:
-            deal.available !== false
-              ? "https://schema.org/InStock"
-              : "https://schema.org/SoldOut",
-        }
-      : undefined;
+  // Always include Offer so Product schema qualifies for Google rich results
+  // (requires offers, review, or aggregateRating). Only add price + priceCurrency
+  // when a real value exists — omitting them avoids the fake price:0 problem.
+  const offers: Record<string, unknown> = {
+    "@type": "Offer",
+    url,
+    availability:
+      deal.available !== false
+        ? "https://schema.org/InStock"
+        : "https://schema.org/SoldOut",
+  };
+  if (deal.price != null) {
+    offers.price = deal.price;
+    offers.priceCurrency = deal.currency ?? "USD";
+  }
 
   return {
     "@context": "https://schema.org",
@@ -101,7 +101,7 @@ export function buildDealSchema(deal: DealSchemaInput) {
     ...(deal.image && { image: { "@type": "ImageObject", url: deal.image } }),
     url,
     brand: { "@id": `${SITE_URL}/#organization` },
-    ...(offers && { offers }),
+    offers,
   };
 }
 
