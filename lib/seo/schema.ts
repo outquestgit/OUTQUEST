@@ -1,6 +1,6 @@
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
 const ORG_NAME = "OutQuest";
-const LOGO_URL = `${SITE_URL}/logo.png`;
+const LOGO_URL = "https://occcfjeqfzvyypcfqnwq.supabase.co/storage/v1/object/public/quests/01e6d09c-7b0d-4cf0-9752-1b2f78be6ef0.png";
 
 // ─── Shared org reference ────────────────────────────────────────────────────
 
@@ -24,11 +24,7 @@ export function buildHomepageSchema() {
         url: SITE_URL,
         name: ORG_NAME,
         publisher: { "@id": `${SITE_URL}/#organization` },
-        potentialAction: {
-          "@type": "SearchAction",
-          target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/deals?q={search_term_string}` },
-          "query-input": "required name=search_term_string",
-        },
+        // SearchAction removed — /deals?q= is not a verified search endpoint.
       },
       orgRef,
     ],
@@ -80,6 +76,23 @@ interface DealSchemaInput {
 
 export function buildDealSchema(deal: DealSchemaInput) {
   const url = `${SITE_URL}/deals/${deal.slug}`;
+
+  // Only include Offer when a real price is known — price: 0 tells Google the
+  // item is free, which is misleading for deals where the price simply isn't set.
+  const offers =
+    deal.price != null
+      ? {
+          "@type": "Offer",
+          url,
+          price: deal.price,
+          priceCurrency: deal.currency ?? "USD",
+          availability:
+            deal.available !== false
+              ? "https://schema.org/InStock"
+              : "https://schema.org/SoldOut",
+        }
+      : undefined;
+
   return {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -88,15 +101,7 @@ export function buildDealSchema(deal: DealSchemaInput) {
     ...(deal.image && { image: { "@type": "ImageObject", url: deal.image } }),
     url,
     brand: { "@id": `${SITE_URL}/#organization` },
-    offers: {
-      "@type": "Offer",
-      url,
-      price: deal.price ?? 0,
-      priceCurrency: deal.currency ?? "USD",
-      availability: deal.available !== false
-        ? "https://schema.org/InStock"
-        : "https://schema.org/SoldOut",
-    },
+    ...(offers && { offers }),
   };
 }
 
@@ -130,15 +135,48 @@ export function buildArticleSchema(post: ArticleSchemaInput) {
 
 // ─── Quest pages: Course ──────────────────────────────────────────────────────
 
+/**
+ * Valid Schema.org CourseInstance courseMode values.
+ * https://schema.org/courseMode
+ */
+type CourseMode = "Online" | "Onsite" | "Blended";
+
+/**
+ * Map a quest's `delivery` taxonomy term slug to a Schema.org courseMode.
+ * Returns undefined when the slug is unrecognised or absent — courseMode is
+ * then omitted from the schema rather than defaulting to a potentially wrong value.
+ */
+function deliveryToCourseMode(deliverySlug?: string | null): CourseMode | undefined {
+  if (!deliverySlug) return undefined;
+  // A quest can carry multiple delivery slugs (space-joined by questToFilters).
+  // Check for each Schema.org value by scanning the joined string.
+  const s = deliverySlug.toLowerCase();
+  if (s.includes("online")) return "Online";
+  if (s.includes("onsite") || s.includes("in-person") || s.includes("inperson")) return "Onsite";
+  if (s.includes("hybrid") || s.includes("blended")) return "Blended";
+  return undefined;
+}
+
 interface CourseSchemaInput {
   name: string;
   description?: string | null;
-  slug: string;
+  /** Canonical public URL for this quest (e.g. /work-abroad/japan-ski-season). */
+  canonicalUrl: string;
   image?: string | null;
+  /**
+   * The quest's `delivery` term slug(s) — space-joined when multiple.
+   * Used to set courseMode dynamically. Omit to leave courseMode out of the schema.
+   */
+  deliverySlug?: string | null;
 }
 
 export function buildCourseSchema(quest: CourseSchemaInput) {
-  const url = `${SITE_URL}/quests/${quest.slug}`;
+  const url = quest.canonicalUrl.startsWith("http")
+    ? quest.canonicalUrl
+    : `${SITE_URL}${quest.canonicalUrl}`;
+
+  const courseMode = deliveryToCourseMode(quest.deliverySlug);
+
   return {
     "@context": "https://schema.org",
     "@type": "Course",
@@ -147,7 +185,11 @@ export function buildCourseSchema(quest: CourseSchemaInput) {
     url,
     ...(quest.image && { image: { "@type": "ImageObject", url: quest.image } }),
     provider: { "@id": `${SITE_URL}/#organization` },
-    hasCourseInstance: { "@type": "CourseInstance", courseMode: "Online", url },
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      ...(courseMode && { courseMode }),
+      url,
+    },
   };
 }
 

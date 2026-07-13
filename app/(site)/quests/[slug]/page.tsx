@@ -16,6 +16,9 @@ import { buildCourseSchema, buildBreadcrumbSchema, schemaScript } from "@/lib/se
 
 type Params = Promise<{ slug: string }>;
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.joinoutquest.com";
+
+
 /** Fully-dynamic per-quest metadata from the admin-controlled SEO fields. */
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
@@ -56,11 +59,17 @@ export default async function QuestDetailRoute({ params }: { params: Params }) {
   const deals = await getDealsForQuest(quest.id);
   const data = questToListing(quest, all, deals);
 
+  const deliverySlug = quest.terms
+    .filter((t) => t.kind === "delivery")
+    .map((t) => t.slug)
+    .join(" ") || null;
+
   const courseSchema = buildCourseSchema({
     name: quest.title,
     description: quest.meta_description ?? quest.tagline,
-    slug: quest.slug,
+    canonicalUrl: `${SITE_URL}/quests/${quest.slug}`,
     image: quest.featured_image_path ?? quest.card_image_path,
+    deliverySlug,
   });
 
   const breadcrumbSchema = buildBreadcrumbSchema([

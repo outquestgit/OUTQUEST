@@ -39,10 +39,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = (settings?.general.siteUrl?.trim() || FALLBACK_URL).replace(/\/+$/, "");
   const now = new Date();
 
+  // Static pages: omit lastModified — we have no per-page timestamp, and using
+  // `now` on every regeneration misleads Google into thinking all pages changed.
   const entries: MetadataRoute.Sitemap = STATIC_PATHS.map((path) => ({
     url: `${base}${path}`,
-    lastModified: now,
-    changeFrequency: "weekly",
+    changeFrequency: "weekly" as const,
     priority: path === "/" ? 1 : 0.7,
   }));
 

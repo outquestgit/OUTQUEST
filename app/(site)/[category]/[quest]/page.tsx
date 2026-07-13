@@ -64,11 +64,20 @@ export default async function QuestInCategoryRoute({ params }: { params: Params 
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
 
+  // Canonical URL uses the actual route path, not the legacy /quests/{slug} pattern.
+  const canonicalPath = `/${canonical}/${q.slug}`;
+  // delivery term slugs are space-joined when multiple (same shape as questToFilters).
+  const deliverySlug = q.terms
+    .filter((t) => t.kind === "delivery")
+    .map((t) => t.slug)
+    .join(" ") || null;
+
   const courseSchema = buildCourseSchema({
     name: q.title,
     description: q.meta_description ?? q.tagline,
-    slug: q.slug,
+    canonicalUrl: `${SITE_URL}${canonicalPath}`,
     image: q.featured_image_path ?? q.card_image_path,
+    deliverySlug,
   });
 
   const breadcrumbSchema = buildBreadcrumbSchema([
