@@ -1249,61 +1249,6 @@ function togglePartnerFaq(el){
 function toggleOffering(el){
   el.classList.toggle('active');
 }
-function submitPartnerForm(){
-  const name=document.getElementById('pf-name').value.trim();
-  const email=document.getElementById('pf-email').value.trim();
-  if(!name||!email){alert('Please fill in your name and email.');return;}
-  document.getElementById('partner-form-fields').style.display='none';
-  document.getElementById('partner-success-state').style.display='block';
-}
-
-// ── NEWSLETTER HANDLER ──
-// Fetch a reCAPTCHA v3 token (reads the site key from the loaded recaptcha
-// script). Resolves '' when not configured/loaded — the server then skips it.
-function _recaptchaToken(action){
-  return new Promise(function(resolve){
-    try{
-      var s=document.querySelector('script[src*="recaptcha/api.js?render="]');
-      var m=s?s.src.match(/[?&]render=([^&]+)/):null;
-      var key=m?decodeURIComponent(m[1]):'';
-      var g=window.grecaptcha;
-      if(!key||!g){resolve('');return;}
-      g.ready(function(){ g.execute(key,{action:action}).then(resolve).catch(function(){resolve('');}); });
-    }catch(e){resolve('');}
-  });
-}
-
-function handleNewsletter(btn){
-  const row=btn.closest('.email-row');
-  const input=row?row.querySelector('input[type="email"]'):null;
-  const email=input?input.value.trim():'';
-  const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const flash=function(msg){
-    if(!input)return;
-    input.style.borderColor='var(--orange)';
-    var ph=input.placeholder; if(msg){input.value='';input.placeholder=msg;}
-    setTimeout(function(){input.style.borderColor='';if(msg)input.placeholder=ph;},2200);
-  };
-  if(!EMAIL_RE.test(email)){ flash('Enter a valid email first ↑'); return; }
-
-  const orig=btn.textContent;
-  btn.disabled=true; btn.textContent='…';
-  _recaptchaToken('newsletter').then(function(token){
-    return fetch('/api/newsletter',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email:email,recaptchaToken:token})
-    });
-  }).then(function(res){
-    if(res.ok){
-      row.innerHTML='<div style="display:flex;align-items:center;gap:12px;color:#fff;font-size:15px;font-weight:600;padding:8px 0;"><span style="font-size:24px;">🎉</span> You\'ve been Quested in!</div>';
-      return;
-    }
-    btn.disabled=false; btn.textContent=orig;
-    res.json().then(function(d){ flash((d&&d.error)||'Could not subscribe — try again.'); })
-      .catch(function(){ flash('Could not subscribe — try again.'); });
-  }).catch(function(){ btn.disabled=false; btn.textContent=orig; flash('Network error — try again.'); });
-}
 
 // ── DESTINATION-SPECIFIC FILTER ──
 function filterAndGoToQuestsSpecific(filterType, locationVal, questId){

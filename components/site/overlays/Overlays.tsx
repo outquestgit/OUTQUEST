@@ -1,11 +1,28 @@
-import { LeadModal } from "./LeadModal";
-import { ShareSheet } from "./ShareSheet";
-import { Toast } from "./Toast";
-import { MyQuestsDrawer } from "./MyQuestsDrawer";
+import dynamic from "next/dynamic";
 import { getSiteSettings } from "@/lib/siteSettings";
 import { getPublishedQuests } from "@/lib/quests";
 import { questToCard } from "@/lib/site/questMapping";
 import type { QuestMeta } from "@/lib/site/data/myQuestsNext";
+
+const LazyLeadModal = dynamic(() => import("./LeadModal").then((mod) => mod.LeadModal), {
+  ssr: true,
+  loading: () => null,
+});
+const LazyShareSheet = dynamic(() => import("./ShareSheet").then((mod) => mod.ShareSheet), {
+  ssr: true,
+  loading: () => null,
+});
+const LazyToast = dynamic(() => import("./Toast").then((mod) => mod.Toast), {
+  ssr: true,
+  loading: () => null,
+});
+const LazyMyQuestsDrawer = dynamic(
+  () => import("./MyQuestsDrawer").then((mod) => mod.MyQuestsDrawer),
+  {
+    ssr: true,
+    loading: () => null,
+  }
+);
 
 /**
  * The global overlays that sit at the top of the document in source order
@@ -37,10 +54,10 @@ export async function Overlays() {
         type="application/json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(globalCopy).replace(/</g, "\\u003c") }}
       />
-      <LeadModal copy={globalCopy} />
-      <ShareSheet />
-      <Toast />
-      <MyQuestsDrawer copy={globalCopy} catalog={catalog} />
+      <LazyLeadModal copy={globalCopy} />
+      <LazyShareSheet />
+      <LazyToast />
+      <LazyMyQuestsDrawer copy={globalCopy} catalog={catalog} />
     </>
   );
 }

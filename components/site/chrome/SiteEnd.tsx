@@ -1,9 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Footer } from "./Footer";
-import { NewsletterSection } from "../sections/NewsletterSection";
 import type { FooterConfig } from "@/lib/site/chromeConfig";
 import { DEFAULT_FOOTER, DEFAULT_NEWSLETTER } from "@/lib/site/chromeConfig";
+
+const NewsletterSection = dynamic(
+  () => import("../sections/NewsletterSection").then((mod) => mod.NewsletterSection),
+  {
+    ssr: true,
+    loading: () => null,
+  }
+);
 
 /**
  * The `.global-site-end` block that closes every page in the source: the

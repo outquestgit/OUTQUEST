@@ -12,7 +12,6 @@
 // so removing two unused weights cuts font payload by ~50%.
 import "./front.css";
 import { Cormorant_Garamond } from "next/font/google";
-import { RecaptchaLoader } from "@/components/site/RecaptchaLoader";
 import { MyQuestsProvider } from "@/components/site/state/MyQuestsProvider";
 import { OverlayProvider } from "@/components/site/state/OverlayProvider";
 
@@ -29,7 +28,6 @@ export default function SiteLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className={cormorant.variable}>
-      <RecaptchaLoader />
       {/* Client state shared across all (site) routes; consumers wired in later
           migration phases. Until then front.js still drives behavior — these
           providers only supply context and touch no DOM, so they coexist. */}
