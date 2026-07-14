@@ -164,7 +164,7 @@ export function QuestEditPage({
                       </div>
                     </div>
                     <div className="field">
-                      <label>Difficulty</label>
+                      <label>Effort</label>
                       <div className="multi-options">
                         {DIFFICULTY.map(([v, l]) => (
                           <Chip key={v} val={v} label={l} />
