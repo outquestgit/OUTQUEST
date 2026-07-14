@@ -2,7 +2,6 @@
 
 import { getImageProps } from "next/image";
 import { GsqQCard } from "../cards/GsqQCard";
-import { Button } from "../ui/Button";
 import type { HomepageConfig } from "@/lib/site/data/homepage";
 import { openQuiz, showPage } from "@/lib/site/runtime";
 import { dispatchQuestFilter } from "@/lib/site/questFilterBus";
@@ -50,12 +49,12 @@ export function HeroSection({ hero }: { hero: HomepageConfig["hero"] }) {
             </h1>
             <p className="sub">{hero.tagline}</p>
             <div className="gsq-hero-btns">
-              <Button variant="primary" onClick={() => openQuiz()}>
+              <button className="gsq-btn-primary" onClick={() => openQuiz()}>
                 {hero.primaryCtaLabel}
-              </Button>
-              <Button variant="secondary" onClick={() => showPage("quests")}>
+              </button>
+              <button className="gsq-btn-secondary" onClick={() => showPage("quests") }>
                 {hero.secondaryCtaLabel}
-              </Button>
+              </button>
             </div>
 
             <div className="gsq-goal-wrap">

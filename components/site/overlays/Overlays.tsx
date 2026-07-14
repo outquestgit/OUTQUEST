@@ -1,11 +1,9 @@
-import { LeadModal } from "./LeadModal";
-import { ShareSheet } from "./ShareSheet";
-import { Toast } from "./Toast";
-import { MyQuestsDrawer } from "./MyQuestsDrawer";
+import dynamic from "next/dynamic";
 import { getSiteSettings } from "@/lib/siteSettings";
 import { getPublishedQuests } from "@/lib/quests";
 import { questToCard } from "@/lib/site/questMapping";
 import type { QuestMeta } from "@/lib/site/data/myQuestsNext";
+import { OverlaysClient } from "./OverlaysClient";
 
 /**
  * The global overlays that sit at the top of the document in source order
@@ -37,10 +35,7 @@ export async function Overlays() {
         type="application/json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(globalCopy).replace(/</g, "\\u003c") }}
       />
-      <LeadModal copy={globalCopy} />
-      <ShareSheet />
-      <Toast />
-      <MyQuestsDrawer copy={globalCopy} catalog={catalog} />
+      <OverlaysClient copy={globalCopy} catalog={catalog} />
     </>
   );
 }

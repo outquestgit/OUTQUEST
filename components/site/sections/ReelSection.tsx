@@ -1,7 +1,6 @@
 "use client";
 
 import { getImageProps } from "next/image";
-import { SectionHeader } from "../ui/SectionHeader";
 import type { HomepageConfig } from "@/lib/site/data/homepage";
 import type { ReelCard } from "@/lib/site/data/homepage";
 import { showPage } from "@/lib/site/runtime";
@@ -29,7 +28,12 @@ function reelClick(action: ReelCard["action"]) {
 export function ReelSection({ reel, bg }: { reel: HomepageConfig["destination"]; bg: string }) {
   return (
     <section className="sec" style={{ background: bg }}>
-      <SectionHeader title={reel.title} actionLabel={reel.buttonLabel} onAction={() => showPage("quests")} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "32px", flexWrap: "wrap", gap: "12px" }}>
+        <h2 className="serif-h home-section-title">{reel.title}</h2>
+        <button className="btn-orange" style={{ fontSize: "13px", padding: "9px 18px" }} onClick={() => showPage("quests")}>
+          {reel.buttonLabel}
+        </button>
+      </div>
       <div className="dest-reel-grid">
         {reel.cards.map((card, i) => {
           // Resolve optimised src per card (AVIF/WebP via /_next/image Accept header).

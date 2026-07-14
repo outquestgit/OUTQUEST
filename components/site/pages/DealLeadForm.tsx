@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { Deal, LeadFormField } from "@/lib/deals";
-import { getRecaptchaToken } from "@/lib/recaptchaClient";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const errStyle: React.CSSProperties = { color: "#d9303e", fontSize: "12px", marginTop: "4px" };
@@ -119,6 +118,7 @@ export function DealLeadForm({ deal }: { deal: Deal }) {
         ? new URLSearchParams(window.location.search).get("from") ?? ""
         : "";
     try {
+      const { getRecaptchaToken } = await import("@/lib/recaptchaClient");
       const recaptchaToken = await getRecaptchaToken("lead");
       const res = await fetch("/api/leads", {
         method: "POST",

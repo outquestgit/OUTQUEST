@@ -16,12 +16,12 @@ export function JournalSection({
 }) {
   return (
     <section className="sec" style={{ background: "var(--bg)" }}>
-      <SectionHeader
-        title={journal.title}
-        actionLabel={journal.buttonLabel}
-        marginBottom={0}
-        onAction={() => showPage("journal")}
-      />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 0, flexWrap: "wrap", gap: "12px" }}>
+        <h2 className="serif-h home-section-title">{journal.title}</h2>
+        <button className="btn-orange" style={{ fontSize: "13px", padding: "9px 18px" }} onClick={() => showPage("journal")}>
+          {journal.buttonLabel}
+        </button>
+      </div>
       <div className="jgrid" style={{ marginTop: "32px" }}>
         {posts.map((card) => (
           <JournalCard card={card} key={card.post} />

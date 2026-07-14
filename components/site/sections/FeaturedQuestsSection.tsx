@@ -1,7 +1,6 @@
 "use client";
 
 import { QCard, type Quest } from "../cards/QCard";
-import { Button } from "../ui/Button";
 import { showPage } from "@/lib/site/runtime";
 
 /**
@@ -28,9 +27,9 @@ export function FeaturedQuestsSection({ quests }: { quests: Quest[] }) {
         }}
       >
         <h2 className="serif-h home-section-title">Featured Quests</h2>
-        <Button style={{ fontSize: "13px", padding: "9px 18px" }} onClick={() => showPage("quests")}>
+        <button className="btn-orange" style={{ fontSize: "13px", padding: "9px 18px" }} onClick={() => showPage("quests") }>
           All quests
-        </Button>
+        </button>
       </div>
       <div className="pq-grid" style={{ marginTop: "32px" }}>
         {quests.map((q) => (

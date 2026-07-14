@@ -368,7 +368,7 @@ export function questToListing(
       { icon: "⏱️", label: "Timeline", val: q.duration || q.timeline_label || firstName(q, "duration") || "Varies" },
       { icon: "📊", label: "Effort", val: (q.level && DIFF_BY_LEVEL[q.level]) || q.difficulty_label || firstName(q, "difficulty") || "Moderate" },
       { icon: "💰", label: "Budget", val: q.monthly_budget || q.budget_label || firstName(q, "budget") || "Varies" },
-      { icon: "📅", label: "Best time to go", val: q.best_time || "Year-round" },
+      { icon: "📅", label: "Best time to start", val: q.best_time || "Year-round" },
     ],
     outcomePills,
     // Default a blank unlock icon to a sparkle so the card never renders an

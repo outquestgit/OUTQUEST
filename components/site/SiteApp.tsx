@@ -1,21 +1,12 @@
 import { statSync } from "node:fs";
 import { join } from "node:path";
+import dynamic from "next/dynamic";
 import FrontBoot from "@/app/(site)/FrontBoot";
 import { PageActivator } from "@/components/site/PageActivator";
 import { Overlays } from "@/components/site/overlays/Overlays";
-import { QuizModal } from "@/components/site/overlays/QuizModal";
 import { Nav } from "@/components/site/chrome/Nav";
 import { MobileMenu } from "@/components/site/chrome/MobileMenu";
 import { SiteEnd } from "@/components/site/chrome/SiteEnd";
-import { CategoryPage } from "@/components/site/pages/CategoryPage";
-import { HomePage } from "@/components/site/pages/HomePage";
-import { QuestsPage } from "@/components/site/pages/QuestsPage";
-import { PartnerPage } from "@/components/site/pages/PartnerPage";
-import { ListingPage } from "@/components/site/pages/ListingPage";
-import { DealDynamicPage, DealHubbaPage } from "@/components/site/pages/DealPages";
-import { AboutPage } from "@/components/site/pages/AboutPage";
-import { ContactPage } from "@/components/site/pages/ContactPage";
-import { FaqPage } from "@/components/site/pages/FaqPage";
 import { altCategoryPages } from "@/lib/site/data/altCategoryPages";
 import { altCategoryFilterGroups, buildCategoryFilterGroups } from "@/lib/site/data/categoryFilters";
 import { buildQuestFilterGroups } from "@/lib/site/data/quests";
@@ -23,6 +14,65 @@ import { getSiteSettings } from "@/lib/siteSettings";
 import { getPublishedQuests, getActiveCategoryTerms, getActiveFilterTerms } from "@/lib/quests";
 import { getPublishedDeals } from "@/lib/deals";
 import { questToCard, questToSlim, dealToProgram } from "@/lib/site/questMapping";
+import { HomePage } from "@/components/site/pages/HomePage";
+
+const CategoryPage = dynamic(
+  () => import("@/components/site/pages/CategoryPage").then((mod) => mod.CategoryPage),
+  {
+    ssr: true,
+    loading: () => null,
+  }
+);
+const QuestsPage = dynamic(() => import("@/components/site/pages/QuestsPage").then((mod) => mod.QuestsPage), {
+  ssr: true,
+  loading: () => null,
+});
+
+const PartnerPage = dynamic(() => import("@/components/site/pages/PartnerPage").then((mod) => mod.PartnerPage), {
+  ssr: true,
+  loading: () => null,
+});
+const ListingPage = dynamic(() => import("@/components/site/pages/ListingPage").then((mod) => mod.ListingPage), {
+  ssr: true,
+  loading: () => null,
+});
+const DealDynamicPage = dynamic(
+  () => import("@/components/site/pages/DealPages").then((mod) => mod.DealDynamicPage),
+  {
+    ssr: true,
+    loading: () => null,
+  }
+);
+const DealHubbaPage = dynamic(
+  () => import("@/components/site/pages/DealPages").then((mod) => mod.DealHubbaPage),
+  {
+    ssr: true,
+    loading: () => null,
+  }
+);
+const AboutPage = dynamic(() => import("@/components/site/pages/AboutPage").then((mod) => mod.AboutPage), {
+  ssr: true,
+  loading: () => null,
+});
+const ContactPage = dynamic(
+  () => import("@/components/site/pages/ContactPage").then((mod) => mod.ContactPage),
+  {
+    ssr: true,
+    loading: () => null,
+  }
+);
+const FaqPage = dynamic(() => import("@/components/site/pages/FaqPage").then((mod) => mod.FaqPage), {
+  ssr: true,
+  loading: () => null,
+});
+
+const QuizModal = dynamic(
+  () => import("@/components/site/overlays/QuizModal").then((mod) => mod.QuizModal),
+  {
+    ssr: true,
+    loading: () => null,
+  }
+);
 
 /** Cache-busting token for the front runtime: the file's mtime (recomputed per
  *  request in dev, baked at build for static pages). */

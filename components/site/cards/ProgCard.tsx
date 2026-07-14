@@ -1,9 +1,5 @@
-"use client";
-
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import type { Program } from "@/lib/site/questMapping";
-import { AppLink } from "@/components/site/ui/AppLink";
 
 /**
  * Homepage "Popular Programs" card — the new reference's `.prog-card`. Faithful
@@ -12,19 +8,9 @@ import { AppLink } from "@/components/site/ui/AppLink";
  * since the grid is fed dynamically from the database rather than hardcoded.
  */
 export function ProgCard({ program: p }: { program: Program }) {
-  const router = useRouter();
-  const go = () => router.push(p.href);
   return (
     <div className="prog-card">
-      {/* Full-card link (under the footer actions) so the whole card opens in a
-          new tab on right/⌘/middle-click; a plain click soft-navigates. */}
-      <AppLink
-        className="prog-card-cover"
-        href={p.href}
-        onActivate={go}
-        aria-label={p.title}
-        style={{ position: "absolute", inset: 0, zIndex: 1 }}
-      />
+      <a className="prog-card-cover" href={p.href} aria-label={p.title} style={{ position: "absolute", inset: 0, zIndex: 1 }} />
       {p.featured && <div className="prog-card-featured">★ Featured</div>}
       <div className="prog-card-banner">
         {p.image ? (
@@ -58,9 +44,9 @@ export function ProgCard({ program: p }: { program: Program }) {
         {/* Above the cover link (z-index) so these stay independently clickable
             and right-clickable. */}
         <div className="prog-card-footer" style={{ position: "relative", zIndex: 2, justifyContent: "flex-end" }}>
-          <AppLink className="prog-cta" href={p.href} onActivate={go}>
+          <a className="prog-cta" href={p.href}>
             {p.questLabel}
-          </AppLink>
+          </a>
         </div>
       </div>
     </div>
