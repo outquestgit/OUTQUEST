@@ -1,5 +1,9 @@
 import { Page } from "../Page";
 import { HeroSection } from "../sections/HeroSection";
+import type { Program } from "@/lib/site/questMapping";
+import type { Quest } from "../cards/QCard";
+import { DEFAULT_HOMEPAGE, type HomepageConfig } from "@/lib/site/data/homepage";
+import { journalCards, type JournalCard as JournalCardData } from "@/lib/site/data/home";
 import { WhySection } from "../sections/WhySection";
 import { PersonaSection } from "../sections/PersonaSection";
 import { ProgramsSection } from "../sections/ProgramsSection";
@@ -7,10 +11,6 @@ import { FeaturedQuestsSection } from "../sections/FeaturedQuestsSection";
 import { SocialProofSection } from "../sections/SocialProofSection";
 import { ReelSection } from "../sections/ReelSection";
 import { JournalSection } from "../sections/JournalSection";
-import type { Program } from "@/lib/site/questMapping";
-import type { Quest } from "../cards/QCard";
-import { DEFAULT_HOMEPAGE, type HomepageConfig } from "@/lib/site/data/homepage";
-import { journalCards, type JournalCard as JournalCardData } from "@/lib/site/data/home";
 
 /**
  * The marketing home page — a composition of reusable section components. Each

@@ -1,10 +1,6 @@
-"use client";
-
 import { ProgCard } from "../cards/ProgCard";
-import { Button } from "../ui/Button";
 import type { HomepageConfig } from "@/lib/site/data/homepage";
 import type { Program } from "@/lib/site/questMapping";
-import { showPage } from "@/lib/site/runtime";
 
 /** "Popular programs" — copy header + a grid of dynamic published-quest cards. */
 export function ProgramsSection({
@@ -24,9 +20,9 @@ export function ProgramsSection({
           <h2>{popularPrograms.title}</h2>
           <p className="programs-sub">{popularPrograms.subtitle}</p>
         </div>
-        <Button style={{ fontSize: "13px", padding: "9px 18px" }} onClick={() => showPage("quests")}>
+        <a className="btn-orange" href="/quests" style={{ fontSize: "13px", padding: "9px 18px" }}>
           {popularPrograms.buttonLabel}
-        </Button>
+        </a>
       </div>
       <div className="programs-grid">
         {programs.map((p) => (

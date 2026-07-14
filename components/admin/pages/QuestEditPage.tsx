@@ -200,9 +200,9 @@ export function QuestEditPage({
                     </div>
                     <div style={{ height: "1px", background: "var(--border)", margin: "2px 0" }}></div>
                     <div className="field">
-                      <label>Best Time to Go</label>
+                      <label>Best Time to Start</label>
                       <div className="field-hint">Shown in the hero info strip on the quest page. e.g. &quot;Nov – Mar&quot;</div>
-                      <input type="text" id="q-best-time" placeholder="e.g. Nov – Mar" style={{ marginTop: "6px" }} />
+                      <input type="text" id="q-best-time" placeholder="e.g. Nov – Mar" style={{ marginTop: "6px", width: "100%", boxSizing: "border-box" }} />
                     </div>
                   </div>
                 </div>

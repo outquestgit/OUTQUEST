@@ -3,7 +3,11 @@
 const SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 const SCRIPT_SRC = SITE_KEY ? `https://www.google.com/recaptcha/api.js?render=${SITE_KEY}` : "";
 
-let loadPromise: Promise<void> | null = null;
+declare global {
+  interface Window {
+    __recaptchaLoadPromise?: Promise<void>;
+  }
+}
 
 interface Grecaptcha {
   ready: (cb: () => void) => void;
@@ -19,9 +23,9 @@ function ensureRecaptchaLoaded(): Promise<void> {
   if (!SITE_KEY) return Promise.resolve();
   const g = (window as unknown as { grecaptcha?: Grecaptcha }).grecaptcha;
   if (g) return Promise.resolve();
-  if (loadPromise) return loadPromise;
+  if (window.__recaptchaLoadPromise) return window.__recaptchaLoadPromise;
 
-  loadPromise = new Promise<void>((resolve) => {
+  window.__recaptchaLoadPromise = new Promise<void>((resolve) => {
     const existing = document.querySelector<HTMLScriptElement>('script[data-recaptcha-script="true"]');
     if (existing) {
       existing.addEventListener("load", () => resolve(), { once: true });
@@ -38,10 +42,10 @@ function ensureRecaptchaLoaded(): Promise<void> {
     script.addEventListener("error", () => resolve(), { once: true });
     document.head.appendChild(script);
   }).finally(() => {
-    loadPromise = null;
+    window.__recaptchaLoadPromise = undefined;
   });
 
-  return loadPromise;
+  return window.__recaptchaLoadPromise;
 }
 
 export async function getRecaptchaToken(action: string): Promise<string> {

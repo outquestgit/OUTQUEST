@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { FooterNewsletter } from "@/lib/site/chromeConfig";
-import { getRecaptchaToken } from "@/lib/recaptchaClient";
 
 /**
  * Admin-managed newsletter sign-up strip (the `.nl-section` block) — React-owned
@@ -36,6 +35,7 @@ export function NewsletterSection({ newsletter }: { newsletter: FooterNewsletter
     }
     setSubmitting(true);
     try {
+      const { getRecaptchaToken } = await import("@/lib/recaptchaClient");
       const token = await getRecaptchaToken("newsletter");
       const res = await fetch("/api/newsletter", {
         method: "POST",

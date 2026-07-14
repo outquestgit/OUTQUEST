@@ -1,6 +1,5 @@
 "use client";
 
-import { getRecaptchaToken } from "@/lib/recaptchaClient";
 import type { PartnerConfig } from "@/lib/site/data/partner";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -41,6 +40,7 @@ async function handlePartnerSubmit(btn: HTMLButtonElement) {
   btn.disabled = true;
   btn.textContent = "Submitting…";
   try {
+    const { getRecaptchaToken } = await import("@/lib/recaptchaClient");
     const recaptchaToken = await getRecaptchaToken("partner");
     const res = await fetch("/api/partner", {
       method: "POST",

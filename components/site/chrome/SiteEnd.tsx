@@ -8,7 +8,7 @@ import { DEFAULT_FOOTER, DEFAULT_NEWSLETTER } from "@/lib/site/chromeConfig";
 const NewsletterSection = dynamic(
   () => import("../sections/NewsletterSection").then((mod) => mod.NewsletterSection),
   {
-    ssr: true,
+    ssr: false,
     loading: () => null,
   }
 );

@@ -14,9 +14,19 @@ import { getSiteSettings } from "@/lib/siteSettings";
 import { getPublishedQuests, getActiveCategoryTerms, getActiveFilterTerms } from "@/lib/quests";
 import { getPublishedDeals } from "@/lib/deals";
 import { questToCard, questToSlim, dealToProgram } from "@/lib/site/questMapping";
-import { CategoryPage } from "@/components/site/pages/CategoryPage";
 import { HomePage } from "@/components/site/pages/HomePage";
-import { QuestsPage } from "@/components/site/pages/QuestsPage";
+
+const CategoryPage = dynamic(
+  () => import("@/components/site/pages/CategoryPage").then((mod) => mod.CategoryPage),
+  {
+    ssr: true,
+    loading: () => null,
+  }
+);
+const QuestsPage = dynamic(() => import("@/components/site/pages/QuestsPage").then((mod) => mod.QuestsPage), {
+  ssr: true,
+  loading: () => null,
+});
 
 const PartnerPage = dynamic(() => import("@/components/site/pages/PartnerPage").then((mod) => mod.PartnerPage), {
   ssr: true,
