@@ -31,7 +31,7 @@ export function JournalPage({
   grid,
   hero,
 }: {
-  featured: JournalFeatured;
+  featured: JournalFeatured | null;
   grid: JournalGridCard[];
   hero: JournalPageConfig;
 }) {
@@ -65,20 +65,22 @@ export function JournalPage({
           <p className="sub" style={{ maxWidth: "520px", margin: "0 auto" }}>{hero.subtitle}</p>
         </div>
         <div className="journal-page-wrap">
-          {/* FEATURED ARTICLE — larger, use 800x500 */}
-        <div className="journal-featured">
-          <div className="jf-left">
-            <div className="jf-tag">{featured.tag}</div>
-            <div className="jf-title" onClick={() => open(featured)}>{featured.title}</div>
-            <p className="jf-desc">{featured.desc}</p>
-            <span className="jf-readmore" onClick={() => open(featured)}>Read more</span>
-          </div>
-          <div className="jf-img" onClick={() => open(featured)}>
-            <div className="jf-img-inner" style={artStyle(featured.gradient, featured.image, 800, 500)}>
-              {featured.image ? "" : featured.emoji}
+            {/* FEATURED ARTICLE — larger, use 800x500 */}
+          {featured && (
+            <div className="journal-featured">
+              <div className="jf-left">
+                <div className="jf-tag">{featured.tag}</div>
+                <div className="jf-title" onClick={() => open(featured)}>{featured.title}</div>
+                <p className="jf-desc">{featured.desc}</p>
+                <span className="jf-readmore" onClick={() => open(featured)}>Read more</span>
+              </div>
+              <div className="jf-img" onClick={() => open(featured)}>
+                <div className="jf-img-inner" style={artStyle(featured.gradient, featured.image, 800, 500)}>
+                  {featured.image ? "" : featured.emoji}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          )}
 
         {/* TOP ARTICLES GRID — smaller cards, use 400x280 */}
         <div className="journal-section-title">Top Articles</div>

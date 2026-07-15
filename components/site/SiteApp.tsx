@@ -13,8 +13,10 @@ import { buildQuestFilterGroups } from "@/lib/site/data/quests";
 import { getSiteSettings } from "@/lib/siteSettings";
 import { getPublishedQuests, getActiveCategoryTerms, getActiveFilterTerms } from "@/lib/quests";
 import { getPublishedDeals } from "@/lib/deals";
+import { getPublishedJournalPosts } from "@/lib/journal";
 import { questToCard, questToSlim, dealToProgram } from "@/lib/site/questMapping";
 import { HomePage } from "@/components/site/pages/HomePage";
+import { postToHomeCard } from "@/lib/site/journalMapping";
 
 const CategoryPage = dynamic(
   () => import("@/components/site/pages/CategoryPage").then((mod) => mod.CategoryPage),
@@ -98,6 +100,7 @@ export async function SiteApp({ initialPage }: { initialPage?: string }) {
     getActiveCategoryTerms(),
     getActiveFilterTerms(),
   ]);
+  const dbJournalPosts = await getPublishedJournalPosts();
   // Filter sidebars whose Effort/Delivery/Budget/Duration groups are generated
   // from the live taxonomy, so admin term edits reflect in the front filters.
   const questFilters = buildQuestFilterGroups(filterTerms);
@@ -158,6 +161,7 @@ export async function SiteApp({ initialPage }: { initialPage?: string }) {
     .filter((d) => d.featured && PUBLIC_VIS.includes(d.visibility))
     .slice(0, 6)
     .map(dealToProgram);
+  const journalPosts = dbJournalPosts.map(postToHomeCard);
   const showHomeJournal = !initialPage || initialPage === "home";
 
   return (
@@ -180,6 +184,7 @@ export async function SiteApp({ initialPage }: { initialPage?: string }) {
       <HomePage
         programs={programs}
         featuredQuests={featuredQuestCards}
+        posts={journalPosts}
         homepage={settings.homepage}
         showJournal={showHomeJournal}
       />
