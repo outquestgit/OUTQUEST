@@ -42,6 +42,7 @@ export type EditQuest = {
 const GROUP_KIND: Record<string, string> = {
   Budget: "budget",
   Timeline: "duration",
+  Effort: "difficulty",
   Difficulty: "difficulty",
   "Delivery Mode": "delivery",
   "Life Direction": "life_direction",

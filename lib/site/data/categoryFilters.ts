@@ -43,7 +43,7 @@ export const categoryFilterGroups: CatFilterGroup[] = [
     ],
   },
   {
-    label: "Difficulty",
+    label: "Effort",
     grid: true,
     pills: [
       { filter: "difficulty", value: "easy", label: "Easy" },
@@ -151,7 +151,7 @@ export const altCategoryFilterGroups: CatFilterGroup[] = [
     ],
   },
   {
-    label: "Difficulty",
+    label: "Effort",
     grid: true,
     pills: [
       { filter: "difficulty", value: "easy", label: "Easy" },
