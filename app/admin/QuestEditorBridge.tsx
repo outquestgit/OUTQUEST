@@ -258,6 +258,21 @@ export default function QuestEditorBridge({
       const a = rteArea(label);
       if (a) a.innerHTML = html ?? "";
     };
+    const readRteAny = (labels: string[]): string => {
+      for (const label of labels) {
+        const html = readRte(label);
+        if (html) return html;
+      }
+      return "";
+    };
+    const setRteAny = (labels: string[], html: string) => {
+      for (const label of labels) {
+        if (rteArea(label)) {
+          setRte(label, html);
+          return;
+        }
+      }
+    };
     const companionToggle = () =>
       phInput(COMP_HEAD_PH)
         ?.closest(".end-cta-block")
@@ -406,7 +421,7 @@ export default function QuestEditorBridge({
     const readContent = (): QuestContent => {
       const content: QuestContent = {};
       const intro = phTextarea(INTRO_PH)?.value.trim() ?? "";
-      const immersive = readRte("Immersive Narrative");
+      const immersive = readRteAny(["What This Quest Looks Like", "Immersive Narrative"]);
       const unlocksIntro = readPh(UNLOCKS_INTRO_PH);
       const why = readRte("Why Do This");
       if (intro) content.intro = intro;
@@ -456,7 +471,7 @@ export default function QuestEditorBridge({
       setVal("q-duration-display", q.duration ?? "");
       setVal("q-monthly-budget", q.monthly_budget ?? "");
       setVal("q-best-time", q.best_time ?? "");
-      setRte("Immersive Narrative", c.immersive ?? "");
+      setRteAny(["What This Quest Looks Like", "Immersive Narrative"], c.immersive ?? "");
       setRte("Why Do This", c.why ?? "");
       setChecked("q-featured", q.featured);
       setChecked("q-popular", q.featured); // mirror — same flag as q-featured
@@ -520,7 +535,7 @@ export default function QuestEditorBridge({
       setPh(COMP_HEAD_PH, "");
       setPhTextarea(COMP_BODY_PH, "");
       setPh(COMP_BTN_PH, "");
-      setRte("Immersive Narrative", "");
+      setRteAny(["What This Quest Looks Like", "Immersive Narrative"], "");
       setRte("Why Do This", "");
       const urlEl = urlInput();
       if (urlEl) urlEl.value = "";
