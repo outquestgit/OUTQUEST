@@ -233,7 +233,7 @@ export function QuestListing({ data }: { data: ListingData }) {
 
         {data.prepTiers.length > 0 && (
           <div style={{ marginBottom: "48px" }}>
-            <h2 className="serif-h" style={{ marginBottom: "32px" }}>Everything else you&apos;ll need</h2>
+            <h2 className="serif-h" style={{ marginBottom: "32px" }}>Everything You Need for This Quest</h2>
             <div>
               {data.prepTiers.map((tier, ri) => (
                 <div className={`prep-tier ${tier.cls}`} key={ri}>
