@@ -51,7 +51,20 @@ export type EditDeal = {
   questSlugs: string[];
 };
 
-export type DealQuestOpt = { id: string; slug: string; title: string; location: string; type: string };
+export type DealQuestOpt = {
+  id: string;
+  slug: string;
+  title: string;
+  countrySlug: string;
+  countryLabel: string;
+  categorySlug: string;
+  categoryLabel: string;
+};
+
+export type DealQuestTaxonomy = {
+  countries: { slug: string; name: string }[];
+  categories: { slug: string; name: string }[];
+};
 
 const SHORT_DESC_PH = "2–3 sentences summarising this deal…";
 const PARTNER_PH = "e.g. Surf Bali Co.";
@@ -65,7 +78,15 @@ const esc = (s: string) =>
  * connected-quests selector globals (admin.js renders them from a hardcoded list)
  * to use live DB quests instead.
  */
-export default function DealsBridge({ deals, quests }: { deals: EditDeal[]; quests: DealQuestOpt[] }) {
+export default function DealsBridge({
+  deals,
+  quests,
+  taxonomies,
+}: {
+  deals: EditDeal[];
+  quests: DealQuestOpt[];
+  taxonomies: DealQuestTaxonomy;
+}) {
   useEffect(() => {
     const root = document.getElementById("page-deals-edit");
     const list = document.getElementById("page-deals-list");
@@ -377,6 +398,30 @@ export default function DealsBridge({ deals, quests }: { deals: EditDeal[]; ques
       }
     };
 
+    const setSelectOptions = (id: string, options: { value: string; label: string }[], allLabel: string) => {
+      const sel = document.getElementById(id) as HTMLSelectElement | null;
+      if (!sel) return;
+      const current = sel.value;
+      sel.innerHTML = [
+        `<option value="">${esc(allLabel)}</option>`,
+        ...options.map((opt) => `<option value="${esc(opt.value)}">${esc(opt.label)}</option>`),
+      ].join("");
+      if (current) sel.value = current;
+    };
+
+    const regenQuestFilters = () => {
+      setSelectOptions(
+        "dq-filter-location",
+        taxonomies.countries.map((t) => ({ value: t.slug, label: t.name })),
+        "All Countries"
+      );
+      setSelectOptions(
+        "dq-filter-type",
+        taxonomies.categories.map((t) => ({ value: t.slug, label: t.name })),
+        "All Categories"
+      );
+    };
+
     // ── connected-quests selector (override admin.js hardcoded version) ───
     const selected = new Set<string>();
     type W = Window & Record<string, unknown>;
@@ -384,7 +429,7 @@ export default function DealsBridge({ deals, quests }: { deals: EditDeal[]; ques
     const filtered = () => {
       const loc = (document.getElementById("dq-filter-location") as HTMLSelectElement | null)?.value || "";
       const typ = (document.getElementById("dq-filter-type") as HTMLSelectElement | null)?.value || "";
-      return quests.filter((q) => (!loc || q.location === loc) && (!typ || q.type === typ));
+      return quests.filter((q) => (!loc || q.countrySlug === loc) && (!typ || q.categorySlug === typ));
     };
     // Toggle / remove via direct listeners (below) — independent of admin.js's
     // window globals, which it re-renders on every nav('deals-edit').
@@ -417,7 +462,7 @@ export default function DealsBridge({ deals, quests }: { deals: EditDeal[]; ques
           // No text ✓ inside .quest-checkbox: the tick is supplied by CSS
           // (#d-quests-group label.selected .quest-checkbox::after). Rendering it
           // here too produced a doubled checkmark.
-          return `<label data-quest="${q.id}" style="display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;${isLast ? "" : "border-bottom:1px solid var(--border);"}background:${sel ? "#fef2ee" : "var(--surface2)"};transition:background .12s" class="${sel ? "selected" : ""}"><span style="width:16px;height:16px;border-radius:4px;border:2px solid ${sel ? "var(--accent)" : "var(--border)"};background:${sel ? "var(--accent)" : "var(--surface)"};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:#fff" class="quest-checkbox"></span><span style="flex:1;min-width:0"><span style="font-size:13px;color:var(--text);display:block">${esc(q.title)}</span><span style="font-size:11px;color:var(--muted)">${esc(q.location)} · ${esc(q.type)}</span></span></label>`;
+          return `<label data-quest="${q.id}" style="display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;${isLast ? "" : "border-bottom:1px solid var(--border);"}background:${sel ? "#fef2ee" : "var(--surface2)"};transition:background .12s" class="${sel ? "selected" : ""}"><span style="width:16px;height:16px;border-radius:4px;border:2px solid ${sel ? "var(--accent)" : "var(--border)"};background:${sel ? "var(--accent)" : "var(--surface)"};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:#fff" class="quest-checkbox"></span><span style="flex:1;min-width:0"><span style="font-size:13px;color:var(--text);display:block">${esc(q.title)}</span><span style="font-size:11px;color:var(--muted)">${esc(q.countryLabel || "—")} · ${esc(q.categoryLabel || "—")}</span></span></label>`;
         })
         .join("");
       // Click handling is delegated once to #d-quests-group (see wiring below),
@@ -453,6 +498,7 @@ export default function DealsBridge({ deals, quests }: { deals: EditDeal[]; ques
       updateSummary();
     };
     const installSelectorOverrides = () => {
+      regenQuestFilters();
       w.renderQuestSelector = renderSelector;
       w.filterQuestSelector = renderAllQuests;
       // Clicks are handled by delegation on the containers (see wiring); make

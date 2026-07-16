@@ -5,7 +5,7 @@ import { AdminSessionKeeper } from "./AdminSessionKeeper";
 import { AdminFlash } from "./AdminFlash";
 import QuestEditorBridge, { type EditQuest } from "./QuestEditorBridge";
 import TaxonomyBridge, { type TaxTerm } from "./TaxonomyBridge";
-import DealsBridge, { type EditDeal, type DealQuestOpt } from "./DealsBridge";
+import DealsBridge, { type EditDeal, type DealQuestOpt, type DealQuestTaxonomy } from "./DealsBridge";
 import { requireAdmin } from "@/lib/auth";
 import {
   adminListQuests,
@@ -363,16 +363,6 @@ function buildDashboard(
   return { stats, recentLeads, recentUpdates };
 }
 
-// Country slug → region label (for the Connected-Quests filter in the deal editor).
-const COUNTRY_REGION: Record<string, string> = {
-  indonesia: "Asia",
-  japan: "Asia",
-  nepal: "Asia",
-  thailand: "Asia",
-  morocco: "Middle East & Africa",
-  portugal: "Europe",
-};
-
 /** Sections we can render active server-side (so a `?p=` deep-link / post-save
  *  redirect paints that section immediately — no Dashboard flash before admin.js
  *  loads). Others fall back to Dashboard, then admin.js switches on load. */
@@ -525,14 +515,21 @@ export default async function AdminPage({
 
   const dealQuestOptions: DealQuestOpt[] = quests.map((q) => {
     const country = q.terms.find((t) => t.kind === "country");
+    const category = q.terms.find((t) => t.kind === "category");
     return {
       id: q.id,
       slug: q.slug,
       title: q.title,
-      location: (country && COUNTRY_REGION[country.slug]) || q.location_label || "",
-      type: q.terms.find((t) => t.kind === "category")?.name ?? "",
+      countrySlug: country?.slug ?? "",
+      countryLabel: country?.name ?? q.location_label ?? "",
+      categorySlug: category?.slug ?? "",
+      categoryLabel: category?.name ?? "",
     };
   });
+  const dealQuestTaxonomy: DealQuestTaxonomy = {
+    countries: (taxonomy.country ?? []).filter((t) => t.active).map((t) => ({ slug: t.slug, name: t.name })),
+    categories: (taxonomy.category ?? []).filter((t) => t.active).map((t) => ({ slug: t.slug, name: t.name })),
+  };
 
   // Build `#content` as an ordered list of segments: converted sections render
   // their component in place, everything else passes through as raw markup. The
@@ -703,7 +700,7 @@ export default async function AdminPage({
       {/* Drives the Taxonomies tables + CRUD from the DB (no UI change). */}
       <TaxonomyBridge taxonomy={taxForBridge} />
       {/* Wires the Deals list + editor to create + update deals (no UI change). */}
-      <DealsBridge deals={editDeals} quests={dealQuestOptions} />
+      <DealsBridge deals={editDeals} quests={dealQuestOptions} taxonomies={dealQuestTaxonomy} />
       {/* Wires the Journal list + editor to create + update posts (no UI change). */}
       <JournalBridge
         posts={journalPosts}
