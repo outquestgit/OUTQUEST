@@ -94,7 +94,7 @@ export const getPublishedJournalPosts = unstable_cache(
     return ((data ?? []) as RawPost[]).map(normalize);
   },
   ["published-journal-posts"],
-  { revalidate: 60, tags: [JOURNAL_TAG] }
+  { revalidate: 300, tags: [JOURNAL_TAG] }
 );
 
 export const getJournalPostBySlug = unstable_cache(
@@ -109,5 +109,5 @@ export const getJournalPostBySlug = unstable_cache(
     return data ? normalize(data as RawPost) : null;
   },
   ["journal-post-by-slug"],
-  { revalidate: 60, tags: [JOURNAL_TAG] }
+  { revalidate: 300, tags: [JOURNAL_TAG] }
 );
