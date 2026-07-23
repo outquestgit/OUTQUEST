@@ -458,7 +458,7 @@ export const getSiteSettings = unstable_cache(
   // Admin saves invalidate via `revalidateTag(SITE_SETTINGS_TAG)` for an instant
   // refresh; this short fallback bounds staleness to ~60s if that ever misses
   // (e.g. a direct DB edit), instead of the previous up-to-an-hour delay.
-  { revalidate: 60, tags: [SITE_SETTINGS_TAG] }
+  { revalidate: 3600, tags: [SITE_SETTINGS_TAG] }
 );
 
 /** Admin (uncached) read — used to populate the editor. */
