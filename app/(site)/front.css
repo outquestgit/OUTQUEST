@@ -842,7 +842,7 @@ h2.serif-h{font-size:clamp(26px,3.5vw,42px);}
 .dp-claim-btn:hover{background:var(--orange-dark);transform:translateY(-2px);box-shadow:0 10px 28px rgba(232,69,26,0.3);}
 /* Content sections */
 .dp-section{border-top:1px solid var(--border);padding:24px 0;}
-.dp-section h2{font-size:17px;font-weight:400;color:var(--text);margin-bottom:12px;font-family:var(--serif);}
+.dp-section h2{font-size:24px;font-weight:600;color:var(--text);margin-bottom:14px;font-family:var(--serif);}
 .dp-section p{font-size:15px;color:var(--text2);line-height:1.75;}
 /* Checklist — neo-brutalist color cycling, no borders */
 .dp-checklist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;}
@@ -863,7 +863,7 @@ h2.serif-h{font-size:clamp(26px,3.5vw,42px);}
 .dp-req-item:last-child{border-bottom:none;}
 .dp-req-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0;}
 .dp-req-text{font-size:14px;color:var(--text2);line-height:1.5;}
-.dp-section.req-section h2{color:var(--text);font-size:18px;font-weight:400;letter-spacing:0;text-transform:none;font-family:var(--serif);margin-bottom:2px;}
+.dp-section.req-section h2{color:var(--text);font-size:24px;font-weight:600;letter-spacing:0;text-transform:none;font-family:var(--serif);margin-bottom:2px;}
 /* End CTA */
 .dp-end-cta{background:#1A1A1A;border-radius:20px;padding:36px 28px;text-align:center;margin-top:8px;}
 .dp-end-cta h3{color:#fff;font-family:var(--serif);font-size:20px;font-weight:400;letter-spacing:0;margin-bottom:6px;line-height:1.2;}
