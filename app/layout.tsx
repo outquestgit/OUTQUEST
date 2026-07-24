@@ -4,7 +4,7 @@ import { getSiteSettings } from "@/lib/siteSettings";
 import { DEFAULT_SEO_DEFAULTS } from "@/lib/site/data/seoDefaults";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { ClarityProvider } from "@/components/ClarityProvider";
-
+import Script from 'next/script';
 
 // Async so the admin-managed favicon (nav branding) can be wired into <head>.
 // Falls back to whatever file-based icon exists when no favicon is uploaded.
@@ -61,7 +61,12 @@ export default function RootLayout({
     <html lang="en" data-scroll-behavior="smooth">
       <body>{children}</body>
       <GoogleAnalytics />
-      <ClarityProvider />
-    </html>
+<ClarityProvider />
+
+{/* AvantLink Verification Script - DO NOT REMOVE */}
+<Script
+  src="https://classic.avantlink.com/affiliate_app_confirm.php?mode=js&authResponse=d2a500dbf83a52769017ab817284d3cf564da90e"
+  strategy="afterInteractive"
+/>
   );
 }
