@@ -59,17 +59,17 @@ export default function RootLayout({
   // pages stay byte-faithful to their source HTML.
  return (
   <html lang="en" data-scroll-behavior="smooth">
+    {/* AvantLink Verification Script */}
+    <Script
+      src="https://classic.avantlink.com/affiliate_app_confirm.php?mode=js&authResponse=d2a500dbf83a52769017ab817284d3cf564da90e"
+      strategy="afterInteractive"
+      async
+    />
+
     <body>
       {children}
       <GoogleAnalytics />
       <ClarityProvider />
-
-      {/* AvantLink Verification Script - DO NOT REMOVE */}
-      <Script
-        src="https://classic.avantlink.com/affiliate_app_confirm.php?mode=js&authResponse=d2a500dbf83a52769017ab817284d3cf564da90e"
-        strategy="afterInteractive"
-      />
     </body>
   </html>
 );
-}
