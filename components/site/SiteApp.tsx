@@ -161,7 +161,7 @@ export async function SiteApp({ initialPage }: { initialPage?: string }) {
     .filter((d) => d.featured && PUBLIC_VIS.includes(d.visibility))
     .slice(0, 6)
     .map(dealToProgram);
-  const journalPosts = dbJournalPosts.map(postToHomeCard);
+  const journalPosts = dbJournalPosts.slice(0, 3).map(postToHomeCard);
   const showHomeJournal = !initialPage || initialPage === "home";
 
   return (
