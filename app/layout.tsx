@@ -57,16 +57,19 @@ export default function RootLayout({
 }>) {
   // Each site (front / admin) loads its own fonts in its own layout so the
   // pages stay byte-faithful to their source HTML.
-  return (
-    <html lang="en" data-scroll-behavior="smooth">
-      <body>{children}</body>
+ return (
+  <html lang="en" data-scroll-behavior="smooth">
+    <body>
+      {children}
       <GoogleAnalytics />
-<ClarityProvider />
+      <ClarityProvider />
 
-{/* AvantLink Verification Script - DO NOT REMOVE */}
-<Script
-  src="https://classic.avantlink.com/affiliate_app_confirm.php?mode=js&authResponse=d2a500dbf83a52769017ab817284d3cf564da90e"
-  strategy="afterInteractive"
-/>
-  );
+      {/* AvantLink Verification Script - DO NOT REMOVE */}
+      <Script
+        src="https://classic.avantlink.com/affiliate_app_confirm.php?mode=js&authResponse=d2a500dbf83a52769017ab817284d3cf564da90e"
+        strategy="afterInteractive"
+      />
+    </body>
+  </html>
+);
 }
