@@ -65,10 +65,6 @@ export default function RootLayout({
         {children}
         <GoogleAnalytics />
         <ClarityProvider />
-              <script
-        type="text/javascript"
-        src="http://classic.avantlink.com/affiliate_app_confirm.php?mode=js&authResponse=d2a500dbf83a52769017ab817284d3cf564da90e"
-      ></script>
       </body>
     </html>
   );
