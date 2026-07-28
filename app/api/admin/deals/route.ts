@@ -35,5 +35,6 @@ export async function POST(req: Request) {
   // Invalidate the front route + client router cache too, so the change shows on
   // a normal refresh (tag revalidation alone is served stale-while-revalidate).
   revalidatePath("/", "layout");
+  revalidatePath(`/deals/${slug}`);
   return NextResponse.json({ ok: true, id: inserted.id });
 }
