@@ -683,7 +683,7 @@ export default function DealsBridge({
       if (featured_image_path) payload.featured_image_path = featured_image_path;
       if (card_image_path) payload.card_image_path = card_image_path;
       if (og_image_url) payload.og_image_url = og_image_url;
-
+console.log("DEAL SAVE PAYLOAD:", JSON.stringify(payload, null, 2));
       const url = currentEditId ? `/api/admin/deals/${currentEditId}` : "/api/admin/deals";
       const method = currentEditId ? "PUT" : "POST";
       try {
