@@ -51,6 +51,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   // Invalidate the front route + client router cache too, so edits show on a
   // normal refresh (tag revalidation alone is served stale-while-revalidate).
   revalidatePath("/", "layout");
+  revalidatePath(`/deals/${slug}`);
   return NextResponse.json({ ok: true, id });
 }
 
