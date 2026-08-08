@@ -42,7 +42,7 @@ export function CategoryPage({
   );
   const getDim = useCallback((it: { data: Record<string, string> }, dim: string) => it.data[dim], []);
   const { toggle, clear, isActive, visible, pageItems, page, setPage, totalPages, hasFilters } =
-    useGridFilters(items, getDim, { singleSelectPerDim: true });
+    useGridFilters(items, getDim, { singleSelectPerDim: true, pageParam: "page" });
 
   const onToggle = (filter: string, value: string) => {
     setTouched(true);
