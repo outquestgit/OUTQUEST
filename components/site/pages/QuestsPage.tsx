@@ -36,8 +36,7 @@ export function QuestsPage({
     []
   );
   const { toggle, clear, isActive, active, visible, pageItems, page, setPage, totalPages, hasFilters } =
-    useGridFilters(quests, getDim, { perPage: 20 });
-
+    useGridFilters(quests, getDim, { perPage: 20, pageParam: "page" });
   // Preset-filter shortcuts (hero goal pills, destination/goal reels) dispatch
   // an event; apply it as a single active filter (ports filterByOutcome/Destination).
   useEffect(() => {
