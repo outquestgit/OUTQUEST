@@ -24,7 +24,7 @@ export default async function Page() {
       <MobileMenu nav={settings.nav} />
       <TosContent terms={settings.pages.terms} />
       <SiteEnd footer={settings.footer} />
-      <QuizModal />
+      <QuizModal quiz={settings.quiz} />
     </>
   );
 }
