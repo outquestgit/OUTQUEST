@@ -1972,13 +1972,12 @@ function _quizPickQuests(quests, filters, limit){
   var matchesAll=function(q){return kinds.every(function(k){return _quizHasTerm(q,k,filters[k]);});};
   return quests.filter(matchesAll).slice(0,limit);
 }
-
-function showQuizResults(){
+// Compute (but don't render) the quiz's matched quests from the currently
+// selected answers. Sets window._lastQuizPaths / _lastQuizQuests as a side
+// effect (used by "Compare all 3" and the quiz-lead capture gate), and
+// returns { picks, chips } for the caller to render.
+function _quizComputeMatches(){
   var cfg=_readQuizData();
-
-  // Taxonomy filters + chips from the selected answers. Each answer carries one
-  // filter (kind = category|budget|duration, + term slug); the first chosen of
-  // each kind wins, and _quizPickQuests matches quests by ALL of them (AND).
   var filters={}, chips=[];
   document.querySelectorAll('#quiz-overlay .quiz-opt.selected').forEach(function(el){
     var kind=el.getAttribute('data-fkind'), slug=el.getAttribute('data-fslug');
@@ -1987,13 +1986,16 @@ function showQuizResults(){
       var lb=el.querySelector('.quiz-opt-label'); if(lb) chips.push(lb.textContent);
     }
   });
-
   var limit = cfg.resultsDisplay==='all' ? 99 : (cfg.resultsDisplay==='top' ? 1 : 3);
   var picks=_quizPickQuests(_readQuizQuests(), filters, limit);
   window._lastQuizPaths=picks.map(function(q){return q.slug;});
-  // Keep the full quest objects so "Compare all 3" can show the real matched
-  // quests (their own cost/time/difficulty), not the generic Compare Paths.
   window._lastQuizQuests=picks;
+  return {picks:picks, chips:chips};
+}
+window._quizComputeMatches = _quizComputeMatches;
+function showQuizResults(){
+    var m=_quizComputeMatches();
+  var picks=m.picks, chips=m.chips;
 
   var badges=['Best match','Strong match','Worth exploring'];
   var container=document.getElementById('quiz-paths-container');
