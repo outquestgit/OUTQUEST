@@ -224,12 +224,16 @@ function normalizeQuiz(row: Row | null): QuizConfig {
       slug: txt(intro.slug, D.intro.slug),
     },
     questions,
-    settings: {
+        settings: {
       status: st.status === "draft" ? "draft" : "published",
       showOnHomepage: st.showOnHomepage !== false,
       showOnQuests: st.showOnQuests !== false,
       progression: st.progression === "all" || st.progression === "snap" ? st.progression : "one",
       resultsDisplay: st.resultsDisplay === "top" || st.resultsDisplay === "all" ? st.resultsDisplay : "top3",
+      collectContact: st.collectContact !== false,
+      contactHeadline: txt(st.contactHeadline, D.settings.contactHeadline),
+      contactSubline: txt(st.contactSubline, D.settings.contactSubline),
+      contactCta: txt(st.contactCta, D.settings.contactCta),
     },
   };
 }
