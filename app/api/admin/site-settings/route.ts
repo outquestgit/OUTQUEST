@@ -673,12 +673,16 @@ function cleanQuiz(v: unknown): QuizConfig {
       slug: str(intro.slug) || D.intro.slug,
     },
     questions,
-    settings: {
+        settings: {
       status: st.status === "draft" ? "draft" : "published",
       showOnHomepage: st.showOnHomepage !== false,
       showOnQuests: st.showOnQuests !== false,
       progression: st.progression === "all" || st.progression === "snap" ? st.progression : "one",
       resultsDisplay: st.resultsDisplay === "top" || st.resultsDisplay === "all" ? st.resultsDisplay : "top3",
+      collectContact: st.collectContact !== false,
+      contactHeadline: str(st.contactHeadline) || D.settings.contactHeadline,
+      contactSubline: str(st.contactSubline) || D.settings.contactSubline,
+      contactCta: str(st.contactCta) || D.settings.contactCta,
     },
   };
 }
