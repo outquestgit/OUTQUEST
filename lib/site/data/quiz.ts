@@ -115,22 +115,13 @@ export const DEFAULT_QUIZ_QUESTIONS: QuizBuilderQuestion[] = [
   },
 ];
 
-export interface QuizSettings {
-  /** Draft hides the live quiz (the CTA buttons no-op); published shows it. */
-  status: QuizStatus;
-  showOnHomepage: boolean;
-  showOnQuests: boolean;
-  progression: QuizProgression;
-  resultsDisplay: QuizResultsDisplay;
-  /** When true, visitors must enter name + email before seeing results. */
-  collectContact: boolean;
-  /** Headline on the contact step. */
-  contactHeadline: string;
-  /** Supporting line under the headline. */
-  contactSubline: string;
-  /** CTA button label on the contact step. */
-  contactCta: string;
-}
+export const DEFAULT_QUIZ_SETTINGS: QuizSettings = {
+  status: "published",
+  showOnHomepage: true,
+  showOnQuests: true,
+  progression: "one",
+  resultsDisplay: "top3",
+};
 
 export const DEFAULT_QUIZ: QuizConfig = {
   intro: DEFAULT_QUIZ_INTRO,
