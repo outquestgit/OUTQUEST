@@ -34,7 +34,7 @@ export default async function Page() {
         hero={settings.pages.journal ?? DEFAULT_JOURNAL_PAGE}
       />
       <SiteEnd footer={settings.footer} />
-      <QuizModal />
+      <QuizModal quiz={settings.quiz} />
     </>
   );
 }
