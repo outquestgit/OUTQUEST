@@ -8,6 +8,7 @@ const LABELS: Record<string, string> = {
   lead: "lead",
   contact: "contact message",
   partner: "partner application",
+  quiz: "quiz result lead",
 };
 
 const escapeHtml = (s: string) =>
@@ -18,16 +19,37 @@ const escapeHtml = (s: string) =>
 
 const looksLikeEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 
+/** A small "label: value" table, reused for the admin alert and (for quiz
+ *  results) the visitor's own confirmation email. */
+function rowsTable(rows: [string, string][]): string {
+  const filtered = rows.filter(([, v]) => v);
+  if (!filtered.length) return "";
+  return `
+    <table style="font-family:sans-serif;font-size:14px;border-collapse:collapse;margin:4px 0 14px">
+      ${filtered
+        .map(
+          ([k, v]) =>
+            `<tr><td style="padding:6px 14px 6px 0;color:#666;vertical-align:top;white-space:nowrap"><strong>${escapeHtml(
+              k
+            )}</strong></td><td style="padding:6px 0;white-space:pre-wrap">${escapeHtml(v)}</td></tr>`
+        )
+        .join("")}
+    </table>`;
+}
+
 /**
  * The visitor-facing confirmation copy for each form. Sent to the address the
  * visitor entered, so they know the submission went through. `brand` is the
- * public site name, `sender` the reply-to inbox (the Spacemail mailbox).
+ * public site name, `sender` the reply-to inbox (the Spacemail mailbox). For
+ * `quiz`, `rows` carries the visitor's matched quests — the "Find My Path"
+ * quiz promises to email results, so this is where that promise is kept.
  */
 function confirmationEmail(
-  kind: "lead" | "contact" | "partner",
+  kind: "lead" | "contact" | "partner" | "quiz",
   name: string,
   brand: string,
-  sender: string
+  sender: string,
+  rows: [string, string][] = []
 ): { subject: string; html: string } {
   const hi = name ? `Hi ${escapeHtml(name)},` : "Hi there,";
   const intro: Record<typeof kind, { subject: string; line: string }> = {
@@ -43,12 +65,17 @@ function confirmationEmail(
       subject: `Thanks for your enquiry — ${brand}`,
       line: `Thanks for your interest in ${escapeHtml(brand)}. We've received your enquiry and someone from our team will reach out shortly.`,
     },
+    quiz: {
+      subject: `Your quest matches — ${brand}`,
+      line: `Thanks for taking the "Find My Path" quiz on ${escapeHtml(brand)}. Here's a copy of what matched your answers:`,
+    },
   };
   const { subject, line } = intro[kind];
   const html = `
     <div style="font-family:sans-serif;font-size:15px;line-height:1.6;color:#222;max-width:520px">
       <p style="margin:0 0 14px">${hi}</p>
       <p style="margin:0 0 14px">${line}</p>
+      ${kind === "quiz" ? rowsTable(rows) : ""}
       <p style="margin:0 0 14px">If you didn't submit this, you can safely ignore this email.</p>
       <p style="margin:18px 0 0;color:#666">— The ${escapeHtml(brand)} team<br>
         <a href="mailto:${escapeHtml(sender)}" style="color:#666">${escapeHtml(sender)}</a></p>
@@ -66,7 +93,7 @@ function confirmationEmail(
  * entirely when neither an SMTP transport nor a sender is configured.
  */
 export async function sendLeadAlert(input: {
-  kind: "lead" | "contact" | "partner";
+  kind: "lead" | "contact" | "partner" | "quiz";
   name: string;
   email: string;
   rows: [string, string][];
@@ -112,24 +139,14 @@ export async function sendLeadAlert(input: {
       ];
       const html = `
         <h2 style="font-family:sans-serif;font-size:18px;margin:0 0 12px">New ${escapeHtml(label)}</h2>
-        <table style="font-family:sans-serif;font-size:14px;border-collapse:collapse">
-          ${allRows
-            .filter(([, v]) => v)
-            .map(
-              ([k, v]) =>
-                `<tr><td style="padding:6px 14px 6px 0;color:#666;vertical-align:top;white-space:nowrap"><strong>${escapeHtml(
-                  k
-                )}</strong></td><td style="padding:6px 0;white-space:pre-wrap">${escapeHtml(v)}</td></tr>`
-            )
-            .join("")}
-        </table>`;
+        ${rowsTable(allRows)}`;
       const subject = `New ${label} from ${input.name || input.email || "a visitor"}`;
       await deliver(recipients, subject, html, input.email || undefined);
     }
 
     // 2) Confirmation to the visitor — only when they gave a valid email.
     if (looksLikeEmail(input.email)) {
-      const c = confirmationEmail(input.kind, input.name, brand, sender);
+      const c = confirmationEmail(input.kind, input.name, brand, sender, input.rows);
       await deliver([input.email], c.subject, c.html, sender || undefined);
     }
   } catch {
