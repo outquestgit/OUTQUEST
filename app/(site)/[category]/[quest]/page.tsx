@@ -98,7 +98,7 @@ export default async function QuestInCategoryRoute({ params }: { params: Params 
       <QuestListing data={data} />
 
       <SiteEnd footer={settings.footer} />
-      <QuizModal />
+      <QuizModal quiz={settings.quiz} />
       <FrontBoot />
     </>
   );
