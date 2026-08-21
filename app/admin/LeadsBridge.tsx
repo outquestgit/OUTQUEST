@@ -35,10 +35,11 @@ const TABS: { type: LeadType; label: string }[] = [
   { type: "deal", label: "Leads" },
   { type: "contact", label: "Contact Us" },
   { type: "partner", label: "Partnership" },
+  { type: "quiz", label: "Quiz" },
 ];
 
-// Per-tab column layout for the client-rendered (contact + partner) tables.
-const COLS: Record<"contact" | "partner", { head: string[]; cell: (l: LeadRow) => string[] }> = {
+// Per-tab column layout for the client-rendered (contact + partner + quiz) tables.
+const COLS: Record<"contact" | "partner" | "quiz", { head: string[]; cell: (l: LeadRow) => string[] }> = {
   contact: {
     head: ["Name", "Email", "Subject", "Status", "Date"],
     cell: (l) => [
@@ -55,6 +56,15 @@ const COLS: Record<"contact" | "partner", { head: string[]; cell: (l: LeadRow) =
       `<span style="color:var(--muted)">${esc(l.email ?? "—")}</span>`,
     ],
   },
+  // Quiz leads' answers/matches live in the shared `answers` [[q, a], …] column,
+  // shown via the same "View" modal as every other lead type — no extra cell.
+  quiz: {
+    head: ["Name", "Email", "Status", "Date"],
+    cell: (l) => [
+      `<strong>${esc(l.name)}</strong>`,
+      `<span style="color:var(--muted)">${esc(l.email ?? "—")}</span>`,
+    ],
+  },
 };
 
 const pill = (l: LeadRow) =>
@@ -63,16 +73,20 @@ const actions = (l: LeadRow) =>
   `<div class="row-actions"><button class="btn btn-ghost btn-sm" data-lead-view="${l.id}">View</button>` +
   `<button class="btn btn-danger btn-sm" data-lead-del="${l.id}">Del</button></div>`;
 
-/** Build a client-rendered Contact/Partnership table-wrap (matches the design). */
-function buildTableWrap(type: "contact" | "partner", leads: LeadRow[]): string {
+/** Build a client-rendered Contact/Partnership/Quiz table-wrap (matches the design). */
+function buildTableWrap(type: "contact" | "partner" | "quiz", leads: LeadRow[]): string {
   const cfg = COLS[type];
-  const placeholder = type === "contact" ? "Search contact messages…" : "Search partner applications…";
+  const placeholder =
+    type === "contact"
+      ? "Search contact messages…"
+      : type === "partner"
+        ? "Search partner applications…"
+        : "Search quiz leads…";
+  const emptyNoun = type === "contact" ? "messages" : type === "partner" ? "applications" : "quiz leads";
   const head = `<tr>${cfg.head.map((h) => `<th>${h}</th>`).join("")}<th></th></tr>`;
   const body =
     leads.length === 0
-      ? `<tr><td colspan="${cfg.head.length + 1}" style="color:var(--muted);padding:20px">No ${
-          type === "contact" ? "messages" : "applications"
-        } yet.</td></tr>`
+      ? `<tr><td colspan="${cfg.head.length + 1}" style="color:var(--muted);padding:20px">No ${emptyNoun} yet.</td></tr>`
       : leads
           .map((l) => {
             const cells = [...cfg.cell(l), pill(l), `<span style="color:var(--muted)">${esc(fmtDate(l.created_at))}</span>`];
@@ -91,9 +105,9 @@ function buildTableWrap(type: "contact" | "partner", leads: LeadRow[]): string {
 
 /**
  * Drives the admin Leads dashboard: splits leads into Leads / Contact Us /
- * Partnership tabs (the latter two rendered here), opens the reference lead
- * modal with real data, updates status, deletes, and powers each tab's search
- * box, status filter chips, and Export CSV — without changing the design.
+ * Partnership / Quiz tabs, opens the reference lead modal with real data,
+ * updates status, deletes, and powers each tab's search box, status filter
+ * chips, and Export CSV — without changing the design.
  */
 export default function LeadsBridge({ leads }: { leads: LeadRow[] }) {
   useEffect(() => {
@@ -115,7 +129,6 @@ export default function LeadsBridge({ leads }: { leads: LeadRow[] }) {
     };
 
     // ── Restructure into tabbed views ───────────────────────────────────────
-    // Wrap the existing (server-rendered) deal table in a view container…
     const dealWrap = page.querySelector(".table-wrap");
     const views: Record<LeadType, HTMLElement> = {} as Record<LeadType, HTMLElement>;
     if (dealWrap) {
@@ -126,8 +139,8 @@ export default function LeadsBridge({ leads }: { leads: LeadRow[] }) {
       dealView.appendChild(dealWrap);
       views.deal = dealView;
     }
-    // …and add Contact + Partner views.
-    (["contact", "partner"] as const).forEach((type) => {
+    // …and add Contact + Partner + Quiz views.
+    (["contact", "partner", "quiz"] as const).forEach((type) => {
       const view = document.createElement("div");
       view.className = "lead-view";
       view.dataset.leadview = type;
@@ -176,7 +189,6 @@ export default function LeadsBridge({ leads }: { leads: LeadRow[] }) {
       if (sel) sel.value = STATUS_LABEL[l.status] ?? "New";
     };
 
-    // View + Delete are wired across the whole page (covers all three tables).
     const wireRowButtons = () => {
       page.querySelectorAll<HTMLButtonElement>("button[data-lead-view]").forEach((b) => {
         const id = b.getAttribute("data-lead-view");
@@ -275,7 +287,9 @@ export default function LeadsBridge({ leads }: { leads: LeadRow[] }) {
               ? ["Name", "Email", "Subject"]
               : type === "partner"
                 ? ["Name", "Company", "Email"]
-                : ["Name", "Email", "Source Quest", "Source Deal"];
+                : type === "quiz"
+                  ? ["Name", "Email"]
+                  : ["Name", "Email", "Source Quest", "Source Deal"];
           const header = [...base, "Status", "Date", "Details"];
           const data = rows.map((l) => {
             const lead =
@@ -283,7 +297,9 @@ export default function LeadsBridge({ leads }: { leads: LeadRow[] }) {
                 ? [l.name, l.email ?? "", l.subject ?? ""]
                 : type === "partner"
                   ? [l.name, l.company ?? "", l.email ?? ""]
-                  : [l.name, l.email ?? "", l.source_quest ?? "", l.source_deal ?? ""];
+                  : type === "quiz"
+                    ? [l.name, l.email ?? ""]
+                    : [l.name, l.email ?? "", l.source_quest ?? "", l.source_deal ?? ""];
             return [
               ...lead,
               STATUS_LABEL[l.status] ?? l.status,
@@ -307,13 +323,13 @@ export default function LeadsBridge({ leads }: { leads: LeadRow[] }) {
 
     return () => {
       cleanups.forEach((fn) => fn());
-      // Fully reverse the DOM restructuring (so a Strict-Mode remount re-runs cleanly).
       if (views.deal && dealWrap) {
         page.insertBefore(dealWrap, views.deal);
         views.deal.remove();
       }
       views.contact?.remove();
       views.partner?.remove();
+      views.quiz?.remove();
       tabBar.remove();
       delete page.dataset.leadsWired;
     };
