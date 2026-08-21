@@ -72,7 +72,7 @@ export default async function DealDetailRoute({ params }: { params: Params }) {
       </div>
 
       <SiteEnd footer={settings.footer} />
-      <QuizModal />
+      <QuizModal quiz={settings.quiz} />
       <FrontBoot />
     </>
   );
