@@ -53,13 +53,7 @@ export async function POST(req: Request) {
     answers: rows,
     status: "new",
   });
-   if (error) {
-    console.error("quiz-lead insert error:", error);
-    return NextResponse.json(
-      { error: "Could not submit — please try again.", detail: error.message },
-      { status: 500 }
-    );
-  }
+  
 
   await sendLeadAlert({ kind: "quiz", name, email, rows });
 
