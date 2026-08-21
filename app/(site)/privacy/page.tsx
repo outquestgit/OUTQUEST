@@ -24,7 +24,7 @@ export default async function Page() {
       <MobileMenu nav={settings.nav} />
       <PrivacyContent privacy={settings.pages.privacy} />
       <SiteEnd footer={settings.footer} />
-      <QuizModal />
+      <QuizModal quiz={settings.quiz} />
     </>
   );
 }
