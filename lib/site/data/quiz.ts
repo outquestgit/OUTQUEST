@@ -64,6 +64,14 @@ export interface QuizSettings {
   showOnQuests: boolean;
   progression: QuizProgression;
   resultsDisplay: QuizResultsDisplay;
+  /** When true, visitors must enter name + email before seeing results. */
+  collectContact: boolean;
+  /** Headline on the contact step. */
+  contactHeadline: string;
+  /** Supporting line under the headline. */
+  contactSubline: string;
+  /** CTA button label on the contact step. */
+  contactCta: string;
 }
 
 export interface QuizConfig {
@@ -121,6 +129,10 @@ export const DEFAULT_QUIZ_SETTINGS: QuizSettings = {
   showOnQuests: true,
   progression: "one",
   resultsDisplay: "top3",
+  collectContact: true,
+  contactHeadline: "Get your matches",
+  contactSubline: "Enter your name and email and we’ll send your top quest matches straight to your inbox.",
+  contactCta: "See my results",
 };
 
 export const DEFAULT_QUIZ: QuizConfig = {
