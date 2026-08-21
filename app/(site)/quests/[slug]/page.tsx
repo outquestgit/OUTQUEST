@@ -97,7 +97,7 @@ export default async function QuestDetailRoute({ params }: { params: Params }) {
       <QuestListing data={data} />
 
       <SiteEnd footer={settings.footer} />
-      <QuizModal />
+      <QuizModal quiz={settings.quiz} />
       <FrontBoot />
     </>
   );
