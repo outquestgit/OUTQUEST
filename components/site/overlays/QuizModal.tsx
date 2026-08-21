@@ -123,7 +123,12 @@ function QuizContactStep({
         <button className="quiz-back-btn" onClick={() => nextStep(backStep)}>
           Back
         </button>
-        <button className="quiz-next-btn" onClick={submit} disabled={status === "sending"}>
+               <button
+          className="quiz-next-btn"
+          data-requires-answer="0"
+          onClick={submit}
+          disabled={status === "sending"}
+        >
           {status === "sending" ? "Loading…" : ctaLabel}
         </button>
       </div>
