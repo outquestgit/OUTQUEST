@@ -245,10 +245,11 @@ export function QuizModal({ quiz = DEFAULT_QUIZ }: { quiz?: QuizConfig }) {
             </button>
           </div>
 
-          {/* RESULTS */}
+                   {/* RESULTS */}
           <div className="quiz-results" id="quiz-results">
             <div className="quiz-results-inner" id="quiz-results-inner">
-              {/* filled by front.js */}
+              <div id="quiz-match-tags" className="quiz-match-tags" style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }} />
+              <div id="quiz-paths-container" className="quiz-paths-container" />
             </div>
             <div className="quiz-nav quiz-results-nav">
               <button className="quiz-back-btn" onClick={() => retakeQuiz()}>
