@@ -148,7 +148,21 @@ const FAQS: { q: string; a: string }[] = [
   },
 ];
 
-const ROLE_OPTIONS = ["Creator", "Community leader", "Travel", "Wellness", "Coach / Mentor", "Professional", "Other"];
+const ROLE_OPTIONS = [
+  "Creator / Content Creator",
+  "Community Leader / Organizer",
+  "Business Owner / Entrepreneur",
+  "Coach / Consultant",
+  "Educator / Instructor",
+  "Fitness / Wellness Professional",
+  "Travel Professional",
+  "Event Organizer",
+  "Student / Alumni Leader",
+  "Sales / Business Development Professional",
+  "HR / People & Culture Professional",
+  "Founder / Startup Community Member",
+  "Other",
+];
 const SHARE_OPTIONS = ["Personal recommendations", "Community / group", "Social media", "Events / classes", "Newsletter / email", "Other"];
 
 /**
