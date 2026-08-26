@@ -35,11 +35,15 @@ const TABS: { type: LeadType; label: string }[] = [
   { type: "deal", label: "Leads" },
   { type: "contact", label: "Contact Us" },
   { type: "partner", label: "Partnership" },
+  { type: "ambassador", label: "Ambassadors" },
   { type: "quiz", label: "Quiz" },
 ];
 
-// Per-tab column layout for the client-rendered (contact + partner + quiz) tables.
-const COLS: Record<"contact" | "partner" | "quiz", { head: string[]; cell: (l: LeadRow) => string[] }> = {
+// Per-tab column layout for the client-rendered (contact + partner + ambassador + quiz) tables.
+const COLS: Record
+  "contact" | "partner" | "ambassador" | "quiz",
+  { head: string[]; cell: (l: LeadRow) => string[] }
+> = {
   contact: {
     head: ["Name", "Email", "Subject", "Status", "Date"],
     cell: (l) => [
@@ -65,6 +69,14 @@ const COLS: Record<"contact" | "partner" | "quiz", { head: string[]; cell: (l: L
       `<span style="color:var(--muted)">${esc(l.email ?? "—")}</span>`,
     ],
   },
+  ambassador: {
+    head: ["Name", "Location", "Email", "Status", "Date"],
+    cell: (l) => [
+      `<strong>${esc(l.name)}</strong>`,
+      esc(l.company || "—"),
+      `<span style="color:var(--muted)">${esc(l.email ?? "—")}</span>`,
+    ],
+  },
 };
 
 const pill = (l: LeadRow) =>
@@ -73,16 +85,25 @@ const actions = (l: LeadRow) =>
   `<div class="row-actions"><button class="btn btn-ghost btn-sm" data-lead-view="${l.id}">View</button>` +
   `<button class="btn btn-danger btn-sm" data-lead-del="${l.id}">Del</button></div>`;
 
-/** Build a client-rendered Contact/Partnership/Quiz table-wrap (matches the design). */
-function buildTableWrap(type: "contact" | "partner" | "quiz", leads: LeadRow[]): string {
+/** Build a client-rendered Contact/Partnership/Ambassador/Quiz table-wrap (matches the design). */
+function buildTableWrap(type: "contact" | "partner" | "ambassador" | "quiz", leads: LeadRow[]): string {
   const cfg = COLS[type];
   const placeholder =
     type === "contact"
       ? "Search contact messages…"
       : type === "partner"
         ? "Search partner applications…"
-        : "Search quiz leads…";
-  const emptyNoun = type === "contact" ? "messages" : type === "partner" ? "applications" : "quiz leads";
+        : type === "ambassador"
+          ? "Search ambassador applications…"
+          : "Search quiz leads…";
+  const emptyNoun =
+    type === "contact"
+      ? "messages"
+      : type === "partner"
+        ? "applications"
+        : type === "ambassador"
+          ? "applications"
+          : "quiz leads";
   const head = `<tr>${cfg.head.map((h) => `<th>${h}</th>`).join("")}<th></th></tr>`;
   const body =
     leads.length === 0
@@ -105,9 +126,9 @@ function buildTableWrap(type: "contact" | "partner" | "quiz", leads: LeadRow[]):
 
 /**
  * Drives the admin Leads dashboard: splits leads into Leads / Contact Us /
- * Partnership / Quiz tabs, opens the reference lead modal with real data,
- * updates status, deletes, and powers each tab's search box, status filter
- * chips, and Export CSV — without changing the design.
+ * Partnership / Ambassador / Quiz tabs, opens the reference lead modal with
+ * real data, updates status, deletes, and powers each tab's search box,
+ * status filter chips, and Export CSV — without changing the design.
  */
 export default function LeadsBridge({ leads }: { leads: LeadRow[] }) {
   useEffect(() => {
@@ -139,8 +160,8 @@ export default function LeadsBridge({ leads }: { leads: LeadRow[] }) {
       dealView.appendChild(dealWrap);
       views.deal = dealView;
     }
-    // …and add Contact + Partner + Quiz views.
-    (["contact", "partner", "quiz"] as const).forEach((type) => {
+    // …and add Contact + Partner + Ambassador + Quiz views.
+    (["contact", "partner", "ambassador", "quiz"] as const).forEach((type) => {
       const view = document.createElement("div");
       view.className = "lead-view";
       view.dataset.leadview = type;
@@ -287,9 +308,11 @@ export default function LeadsBridge({ leads }: { leads: LeadRow[] }) {
               ? ["Name", "Email", "Subject"]
               : type === "partner"
                 ? ["Name", "Company", "Email"]
-                : type === "quiz"
-                  ? ["Name", "Email"]
-                  : ["Name", "Email", "Source Quest", "Source Deal"];
+                : type === "ambassador"
+                  ? ["Name", "Location", "Email"]
+                  : type === "quiz"
+                    ? ["Name", "Email"]
+                    : ["Name", "Email", "Source Quest", "Source Deal"];
           const header = [...base, "Status", "Date", "Details"];
           const data = rows.map((l) => {
             const lead =
@@ -297,9 +320,11 @@ export default function LeadsBridge({ leads }: { leads: LeadRow[] }) {
                 ? [l.name, l.email ?? "", l.subject ?? ""]
                 : type === "partner"
                   ? [l.name, l.company ?? "", l.email ?? ""]
-                  : type === "quiz"
-                    ? [l.name, l.email ?? ""]
-                    : [l.name, l.email ?? "", l.source_quest ?? "", l.source_deal ?? ""];
+                  : type === "ambassador"
+                    ? [l.name, l.company ?? "", l.email ?? ""]
+                    : type === "quiz"
+                      ? [l.name, l.email ?? ""]
+                      : [l.name, l.email ?? "", l.source_quest ?? "", l.source_deal ?? ""];
             return [
               ...lead,
               STATUS_LABEL[l.status] ?? l.status,
@@ -329,6 +354,7 @@ export default function LeadsBridge({ leads }: { leads: LeadRow[] }) {
       }
       views.contact?.remove();
       views.partner?.remove();
+      views.ambassador?.remove();
       views.quiz?.remove();
       tabBar.remove();
       delete page.dataset.leadsWired;
