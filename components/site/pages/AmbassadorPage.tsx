@@ -467,29 +467,6 @@ export function AmbassadorPage() {
         </div>
       </section>
 
-      {/* ── THE IMPORTANT PART: selective, not "anyone can join" ───────── */}
-      <section className="sec" style={{ maxWidth: "700px", margin: "0 auto", paddingBottom: "72px" }}>
-        <div
-          style={{
-            background: "var(--bg)",
-            border: "1px solid var(--border)",
-            borderRadius: "20px",
-            padding: "40px 36px",
-            textAlign: "center",
-          }}
-        >
-          <p style={{ fontFamily: "var(--serif)", fontSize: "20px", marginBottom: "18px" }}>
-            You don&apos;t become an ambassador just by signing up.
-          </p>
-          <p style={{ fontSize: "14px", color: "var(--text2)", lineHeight: 1.7, marginBottom: "14px" }}>
-            We review every application. We&apos;re building a network of people who genuinely connect
-            others with interesting experiences, opportunities and things worth doing.
-          </p>
-          <p style={{ fontSize: "14px", color: "var(--text2)", lineHeight: 1.7, margin: 0 }}>
-            If you&apos;re selected, we&apos;ll invite you in.
-          </p>
-        </div>
-      </section>
 
       {/* ── FINAL BIG IMAGE, full width, overlay CTA ───────────────────── */}
       {/* NOTE: reuses hero.jpg since it's the only photo uploaded so far.
