@@ -2314,11 +2314,10 @@ nav{padding:14px 4.2%!important;}
 .nav-logo{font-size:30px!important;white-space:nowrap!important;line-height:1!important;}
 .nav-logo svg{width:34px!important;height:34px!important;margin-right:10px!important;border-radius:10px!important;padding:5px!important;}
 .nav-logo sup{font-size:15px!important;margin-left:2px!important;}
-.nav-pill-bar{flex:1 1 auto!important;margin:0 24px!important;min-width:360px!important;}
-.nav-pill-track{width:100%!important;display:flex!important;justify-content:space-evenly!important;align-items:center!important;gap:28px!important;padding:0!important;}
+.nav-pill-bar{flex:1 1 auto!important;margin:0 20px!important;min-width:360px!important;}
+.nav-pill-track{width:100%!important;display:flex!important;justify-content:space-evenly!important;align-items:center!important;gap:18px!important;padding:0!important;}
 .nav-pill-dd{height:78px!important;align-items:center!important;}
-.nav-pill{font-family:var(--serif)!important;font-size:20px!important;font-weight:400!important;letter-spacing:0!important;padding:18px 18px!important;line-height:1!important;color:#4F493F!important;}
-.nav-pill.active-pill,.nav-pill:hover{color:#161412!important;}
+.nav-pill{font-family:var(--serif)!important;font-size:19px!important;font-weight:400!important;letter-spacing:0!important;padding:18px 14px!important;line-height:1!important;color:#4F493F!important;}
 .nav-pill-caret{font-size:11px!important;margin-left:3px!important;opacity:.5!important;}
 .nav-pill-dropdown{top:68px!important;min-width:245px!important;border-radius:20px!important;padding:10px!important;}
 .nav-pill-dropdown a{font-family:var(--serif)!important;font-size:17px!important;font-weight:400!important;padding:12px 14px!important;}
