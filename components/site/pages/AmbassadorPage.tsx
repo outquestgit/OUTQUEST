@@ -348,7 +348,7 @@ export function AmbassadorPage() {
         </div>
       </section>
 
-      {/* ── WHO WE'RE LOOKING FOR: polaroid photo grid ─────────────────── */}
+      {/* ── WHO WE'RE LOOKING FOR: polaroid + full copy ─────────────────── */}
       <section className="sec" style={{ maxWidth: "780px", margin: "0 auto", paddingBottom: "72px" }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
@@ -358,35 +358,46 @@ export function AmbassadorPage() {
         <h2 style={{ ...sectionHeading, textAlign: "center" }}>Who we&apos;re looking for</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "28px", marginTop: "40px" }}>
           {WHO.map((w) => (
-            <div
-              key={w.label}
-              className="polaroid"
-              style={{
-                background: "#fff",
-                padding: "10px 10px 28px",
-                boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
-                transform: `rotate(${w.rotate}deg)`,
-              }}
-            >
-              <div style={{ aspectRatio: "1 / 1", overflow: "hidden", background: "var(--bg)" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={w.photo}
-                  alt={w.label}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                />
-              </div>
+            <div key={w.title}>
               <div
+                className="polaroid"
                 style={{
-                  fontFamily: "'Caveat', cursive",
-                  fontSize: "26px",
-                  color: "#222",
-                  textAlign: "center",
-                  marginTop: "8px",
+                  background: "#fff",
+                  padding: "10px 10px 28px",
+                  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+                  transform: `rotate(${w.rotate}deg)`,
+                  marginBottom: "20px",
                 }}
               >
-                {w.label}
+                <div style={{ aspectRatio: "1 / 1", overflow: "hidden", background: "var(--bg)" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={w.photo}
+                    alt={w.label}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                </div>
+                <div
+                  style={{
+                    fontFamily: "'Caveat', cursive",
+                    fontSize: "26px",
+                    color: "#222",
+                    textAlign: "center",
+                    marginTop: "8px",
+                  }}
+                >
+                  {w.label}
+                </div>
               </div>
+              <h4 style={{ fontFamily: "var(--serif)", fontSize: "16px", fontWeight: 400, marginBottom: "6px", textAlign: "center" }}>
+                {w.title}
+              </h4>
+              <p style={{ fontSize: "13px", color: "var(--orange)", fontStyle: "italic", marginBottom: "8px", textAlign: "center" }}>
+                {w.hook}
+              </p>
+              <p style={{ fontSize: "12.5px", color: "var(--text2)", lineHeight: 1.6, margin: 0, textAlign: "center" }}>
+                {w.body}
+              </p>
             </div>
           ))}
         </div>
