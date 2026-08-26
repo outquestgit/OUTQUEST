@@ -52,4 +52,4 @@ const WHO: { icon: string; title: string; body: string }[] = [
   { icon: "👥", title: "A community leader", body: "Running a group, club, society or online community." },
   { icon: "🎥", title: "A creator", body: "With an audience that trusts your recommendations." },
   { icon: "💼", title: "A professional or entrepreneur", body: "With a strong network of ambitious, curious people." },
-  { icon: "🎓", title: "A student or
+  { icon: "🎓", title: "A student or alumni leader", body: "Connected to people looking for international opportunities." },
