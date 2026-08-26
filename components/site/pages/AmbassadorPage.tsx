@@ -322,6 +322,7 @@ export function AmbassadorPage() {
           />
         </div>
       </section>
+        
 {/* ── YOU KNOW THE PEOPLE ─────────────────────────────────────────── */}
       <section className="sec" style={{ maxWidth: "780px", margin: "0 auto", paddingBottom: "72px", textAlign: "center" }}>
         <h2 style={sectionHeading}>
