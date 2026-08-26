@@ -315,27 +315,28 @@ export function AmbassadorPage() {
             </div>
           ))}
         </div>
-
-        {/* ── WHO WE WANT: dark section ──────────────────────────────── */}
+{/* ── WHO WE WANT: dark section, hexagon badges, spread grid ──── */}
         <div
           style={{
             background: "#141414",
             borderRadius: "24px",
-            padding: "48px 36px",
+            padding: "72px 40px",
             marginBottom: "64px",
           }}
         >
           <h3
             style={{
               fontFamily: "var(--serif)",
-              fontSize: "26px",
               fontWeight: 400,
+              letterSpacing: 0,
+              lineHeight: 0.95,
+              fontSize: "clamp(32px, 4.5vw, 52px)",
               color: "#fff",
               textAlign: "center",
-              marginBottom: "6px",
+              marginBottom: "16px",
             }}
           >
-            Who we want as Ambassadors
+            Who We Want As Ambassadors
           </h3>
           <p
             style={{
@@ -343,7 +344,7 @@ export function AmbassadorPage() {
               color: "rgba(255,255,255,0.6)",
               fontSize: "14px",
               maxWidth: "480px",
-              margin: "0 auto 20px",
+              margin: "0 auto 24px",
               lineHeight: 1.6,
             }}
           >
@@ -357,7 +358,7 @@ export function AmbassadorPage() {
               flexWrap: "wrap",
               justifyContent: "center",
               gap: "8px",
-              marginBottom: "40px",
+              marginBottom: "72px",
             }}
           >
             {LOOKING_FOR.map((tag) => (
@@ -379,45 +380,47 @@ export function AmbassadorPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "20px",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              rowGap: "56px",
+              columnGap: "32px",
             }}
           >
             {WHO.map((w) => (
-              <div
-                key={w.title}
-                style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: "16px",
-                  padding: "22px 20px",
-                }}
-              >
+              <div key={w.title} style={{ textAlign: "center", maxWidth: "280px", margin: "0 auto" }}>
                 <div
                   style={{
-                    width: "48px",
-                    height: "48px",
-                    borderRadius: "14px",
-                    background: "rgba(255,255,255,0.08)",
+                    width: "88px",
+                    height: "88px",
+                    background: "#F2D98D",
+                    clipPath: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "22px",
-                    marginBottom: "14px",
+                    fontSize: "32px",
+                    margin: "0 auto 20px",
                   }}
                 >
                   {w.icon}
                 </div>
-                <h4 style={{ color: "#fff", fontSize: "15px", fontWeight: 700, marginBottom: "6px" }}>
+                <h4
+                  style={{
+                    color: "#fff",
+                    fontSize: "14px",
+                    fontWeight: 700,
+                    letterSpacing: "0.5px",
+                    textTransform: "uppercase",
+                    marginBottom: "10px",
+                  }}
+                >
                   {w.title}
                 </h4>
-                <p style={{ color: "rgba(255,255,255,0.85)", fontSize: "13px", fontStyle: "italic", marginBottom: "8px" }}>
+                <p style={{ color: "#F2D98D", fontSize: "12.5px", fontStyle: "italic", marginBottom: "10px" }}>
                   {w.hook}
                 </p>
-                <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "12.5px", lineHeight: 1.6, marginBottom: "10px" }}>
+                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "12.5px", lineHeight: 1.6, marginBottom: "12px" }}>
                   {w.body}
                 </p>
-                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "11.5px", lineHeight: 1.5, margin: 0 }}>
+                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "11px", lineHeight: 1.5, margin: 0 }}>
                   <strong style={{ color: "rgba(255,255,255,0.55)" }}>Think:</strong> {w.think}
                 </p>
               </div>
