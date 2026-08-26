@@ -294,9 +294,8 @@ export function AmbassadorPage() {
         
           <div className="label" style={{ marginBottom: "12px" }}>LEAD THE ADVENTURE</div>
           <h1 style={{ ...sectionHeading, fontSize: "clamp(36px, 4.5vw, 54px)", marginBottom: "20px" }}>
-            Be the one who inspires people to go further, try something new and discover
-            what&apos;s possible.
-          </h1>
+            {/* ── YOU KNOW THE PEOPLE ─────────────────────────────────────────── */}
+      <section className="sec" style={{ maxWidth: "780px", margin: "0 auto", paddingBottom: "72px", textAlign: "center" }}>
           <p className="sub" style={{ marginBottom: "16px", maxWidth: "480px" }}>
             OutQuest Ambassadors are the curious ones, the connectors, the people who are always
             finding the next great thing — and bringing others along with them.
