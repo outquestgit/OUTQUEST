@@ -323,23 +323,40 @@ export function AmbassadorPage() {
         </div>
       </section>
         
-{/* ── YOU KNOW THE PEOPLE ─────────────────────────────────────────── */}
-      <section className="sec" style={{ maxWidth: "780px", margin: "0 auto", paddingBottom: "72px", textAlign: "center" }}>
-        <h2 style={sectionHeading}>
-          You know the people.
+<h2 style={sectionHeading}>
+          Some people send memes.
           <br />
-          And you know what they&apos;d love.
+          You send life-changing links.
         </h2>
-        <p className="sub" style={{ maxWidth: "520px", margin: "0 auto 8px" }}>
-          You&apos;re the friend who sends the link. The person who knows where to go. The one who
-          hears about someone&apos;s plans and immediately thinks —
+        <p className="sub" style={{ maxWidth: "540px", margin: "0 auto 20px" }}>
+          You&apos;re not the person they call when they want another opinion. You&apos;re the
+          person they call when they&apos;re ready to do something about it.
         </p>
-        <p style={{ fontFamily: "var(--serif)", fontSize: "20px", color: "var(--text)", margin: "0 0 24px" }}>
-          &ldquo;Wait — I know something perfect for you.&rdquo;
+        <div style={{ marginBottom: "24px" }}>
+          <p style={{ fontFamily: "var(--serif)", fontStyle: "italic", fontSize: "18px", color: "var(--text)", margin: "0 0 6px" }}>
+            &ldquo;I want to move.&rdquo;
+          </p>
+          <p style={{ fontFamily: "var(--serif)", fontStyle: "italic", fontSize: "18px", color: "var(--text)", margin: "0 0 6px" }}>
+            &ldquo;I want to change careers.&rdquo;
+          </p>
+          <p style={{ fontFamily: "var(--serif)", fontStyle: "italic", fontSize: "18px", color: "var(--text)", margin: "0 0 6px" }}>
+            &ldquo;I want to build something.&rdquo;
+          </p>
+          <p style={{ fontFamily: "var(--serif)", fontStyle: "italic", fontSize: "18px", color: "var(--text)", margin: 0 }}>
+            &ldquo;I want to go somewhere.&rdquo;
+          </p>
+        </div>
+        <p className="sub" style={{ maxWidth: "480px", margin: "0 auto 20px" }}>
+          And you&apos;re already thinking, <em>I know exactly where to send you.</em>
         </p>
-        <p className="sub" style={{ maxWidth: "480px", margin: "0 auto 48px" }}>
-          OutQuest gives you more things worth sharing.
+        <p className="sub" style={{ maxWidth: "560px", margin: "0 auto 32px" }}>
+          OutQuest gives you the links, opportunities and experiences worth sending — so you can
+          be the person who helps someone go from &ldquo;someday&rdquo; to &ldquo;let&apos;s
+          go.&rdquo;
         </p>
+        <Button style={{ padding: "14px 32px", marginBottom: "48px" }} onClick={scrollToForm}>
+          Become an Ambassador
+        </Button>
      <div className="about-paths-grid" style={{ maxWidth: "1140px", gridTemplateColumns: "repeat(4, 1fr)", gap: "28px" }}>
           {STRIP.map((s) => (
             <div className="about-path-card" key={s.title}>
