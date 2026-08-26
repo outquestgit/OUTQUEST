@@ -48,11 +48,11 @@ const sectionHeading: CSSProperties = {
   marginBottom: "16px",
 };
 
-const STRIP: { emoji: string; title: string; sub: string }[] = [
-  { emoji: "🧭", title: "Go Somewhere", sub: "Travel & adventure" },
-  { emoji: "📚", title: "Learn Something", sub: "Courses & certifications" },
-  { emoji: "🌿", title: "Feel Something", sub: "Wellness & experiences" },
-  { emoji: "✨", title: "Try Something New", sub: "Activities & opportunities" },
+cconst STRIP: { emoji: string; tag: string; title: string; desc: string }[] = [
+  { emoji: "✈️", tag: "WORK ABROAD", title: "Work Abroad", desc: "Jobs, seasonal work & international opportunities." },
+  { emoji: "🌍", tag: "MOVE ABROAD", title: "Move Abroad", desc: "Cities, relocation & life overseas." },
+  { emoji: "🎓", tag: "GET CERTIFIED", title: "Get Certified", desc: "Credentials, courses & career-changing skills." },
+  { emoji: "🚀", tag: "BUILD SOMETHING", title: "Build Something", desc: "Business ideas, income streams & entrepreneurship." },
 ];
 
 const WHO: { icon: string; title: string; hook: string; body: string }[] = [
