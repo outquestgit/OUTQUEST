@@ -63,6 +63,13 @@ const ContactPage = dynamic(
     loading: () => null,
   }
 );
+const AmbassadorPage = dynamic(
+  () => import("@/components/site/pages/AmbassadorPage").then((mod) => mod.AmbassadorPage),
+  {
+    ssr: true,
+    loading: () => null,
+  }
+);
 const FaqPage = dynamic(() => import("@/components/site/pages/FaqPage").then((mod) => mod.FaqPage), {
   ssr: true,
   loading: () => null,
@@ -194,7 +201,7 @@ export async function SiteApp({ initialPage }: { initialPage?: string }) {
       {altCategoryPages.map((data) => (
         <CategoryPage data={data} filterGroups={altCategoryFilterGroups} key={data.id} />
       ))}
-
+<AmbassadorPage />
       {/* Directory-style category pages (DB-driven; taxonomy-backed filters) */}
       {categoryPages.map((data) => (
         <CategoryPage data={data} filterGroups={catFilters} key={data.id} />
