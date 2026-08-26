@@ -260,7 +260,7 @@ export function AmbassadorPage() {
             marginBottom: "28px",
           }}
         >
-          How it works
+          How It Works
         </h3>
         <div
           style={{
