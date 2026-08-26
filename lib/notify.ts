@@ -9,7 +9,7 @@ const LABELS: Record<string, string> = {
   contact: "contact message",
   partner: "partner application",
   quiz: "quiz result lead",
-};
+ambassador: "ambassador application",};
 
 const escapeHtml = (s: string) =>
   String(s ?? "")
@@ -45,7 +45,7 @@ function rowsTable(rows: [string, string][]): string {
  * quiz promises to email results, so this is where that promise is kept.
  */
 function confirmationEmail(
-  kind: "lead" | "contact" | "partner" | "quiz",
+  kind: "lead" | "contact" | "partner" | "quiz" | "ambassador",
   name: string,
   brand: string,
   sender: string,
@@ -69,7 +69,10 @@ function confirmationEmail(
       subject: `Your quest matches — ${brand}`,
       line: `Thanks for taking the "Find My Path" quiz on ${escapeHtml(brand)}. Here's a copy of what matched your answers:`,
     },
-  };
+  ambassador: {
+      subject: `We've received your Ambassador application — ${brand}`,
+      line: `Thanks for applying to the ${escapeHtml(brand)} Ambassador Program. We review applications individually and will be in touch if you're a good fit.`,
+    },};
   const { subject, line } = intro[kind];
   const html = `
     <div style="font-family:sans-serif;font-size:15px;line-height:1.6;color:#222;max-width:520px">
@@ -93,7 +96,7 @@ function confirmationEmail(
  * entirely when neither an SMTP transport nor a sender is configured.
  */
 export async function sendLeadAlert(input: {
-  kind: "lead" | "contact" | "partner" | "quiz";
+ kind: "lead" | "contact" | "partner" | "quiz" | "ambassador";
   name: string;
   email: string;
   rows: [string, string][];
