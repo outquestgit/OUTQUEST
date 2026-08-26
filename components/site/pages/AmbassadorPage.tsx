@@ -299,7 +299,23 @@ export function AmbassadorPage() {
           />
         </div>
       </section>
-
+{/* ── YOU KNOW THE PEOPLE ─────────────────────────────────────────── */}
+      <section className="sec" style={{ maxWidth: "780px", margin: "0 auto", paddingBottom: "72px", textAlign: "center" }}>
+        <h2 style={sectionHeading}>
+          You know the people.
+          <br />
+          And you know what they&apos;d love.
+        </h2>
+        <p className="sub" style={{ maxWidth: "520px", margin: "0 auto 8px" }}>
+          You&apos;re the friend who sends the link. The person who knows where to go. The one who
+          hears about someone&apos;s plans and immediately thinks —
+        </p>
+        <p style={{ fontFamily: "var(--serif)", fontSize: "20px", color: "var(--text)", margin: "0 0 24px" }}>
+          &ldquo;Wait — I know something perfect for you.&rdquo;
+        </p>
+        <p className="sub" style={{ maxWidth: "480px", margin: "0 auto 48px" }}>
+          OutQuest gives you more things worth sharing.
+        </p>
      <div className="about-paths-grid" style={{ maxWidth: "780px" }}>
           {STRIP.map((s) => (
             <div className="about-path-card" key={s.title}>
