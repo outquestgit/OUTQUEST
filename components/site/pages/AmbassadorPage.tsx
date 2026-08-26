@@ -110,4 +110,4 @@ const WHY: { icon: string; title: string; body: string }[] = [
   {
     icon: "💸",
     title: "Earn US$500 per successful referral",
-    body: "Recommend an OutQuest experience to the right person. When they join and qualify, you
+    body: "Recommend an OutQuest experience to the right person. When they join and qualify, you earn US$500. There's no cap on how many qualifying referrals you can make.",
