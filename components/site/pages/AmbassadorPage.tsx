@@ -635,7 +635,7 @@ export function AmbassadorPage() {
           </p>
 
           {sent ? (
-           {sent ? (
+
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", padding: "8px 0", textAlign: "center" }}>
               <div style={{ fontSize: "40px" }}>🎉</div>
               <h4 style={{ fontFamily: "var(--serif)", fontSize: "18px", fontWeight: 400 }}>
