@@ -291,23 +291,28 @@ export function AmbassadorPage() {
         }}
       >
         <div>
+         <div>
+          <div className="label" style={{ marginBottom: "12px" }}>LEAD THE ADVENTURE</div>
           <h1 style={{ ...sectionHeading, fontSize: "clamp(36px, 4.5vw, 54px)", marginBottom: "20px" }}>
-            Be the one who knows what&apos;s next.
+            Be the one who inspires people to go further, try something new and discover
+            what&apos;s possible.
           </h1>
+          <p className="sub" style={{ marginBottom: "16px", maxWidth: "480px" }}>
+            OutQuest Ambassadors are the curious ones, the connectors, the people who are always
+            finding the next great thing — and bringing others along with them.
+          </p>
           <p className="sub" style={{ marginBottom: "20px", maxWidth: "480px" }}>
-            You know the people who are always looking for somewhere new to go, something new to
-            learn, or their next adventure. Become an OutQuest Ambassador and get rewarded for
-            introducing them to something they&apos;ll love.
+            Turn your influence into inspiration. Discover new opportunities, share what excites
+            you and help your people make their next move.
           </p>
           <Button style={{ padding: "14px 32px", marginBottom: "14px" }} onClick={scrollToForm}>
-            Apply to Become an Ambassador
+            Become an Ambassador
           </Button>
           <p style={{ fontSize: "13px", color: "var(--text2)", maxWidth: "440px", margin: 0 }}>
             Selected ambassadors earn US$500 for every qualifying referral that books and completes
             an eligible program.
           </p>
         </div>
-
         <div style={{ borderRadius: "24px", overflow: "hidden", aspectRatio: "4 / 5", boxShadow: "0 20px 50px rgba(0,0,0,0.18)" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -334,12 +339,12 @@ export function AmbassadorPage() {
         <p className="sub" style={{ maxWidth: "480px", margin: "0 auto 48px" }}>
           OutQuest gives you more things worth sharing.
         </p>
-     <div className="about-paths-grid" style={{ maxWidth: "980px", gridTemplateColumns: "repeat(4, 1fr)" }}>
+     <div className="about-paths-grid" style={{ maxWidth: "1140px", gridTemplateColumns: "repeat(4, 1fr)", gap: "28px" }}>
           {STRIP.map((s) => (
             <div className="about-path-card" key={s.title}>
               <div>
                 <div className="about-path-emoji">{s.emoji}</div>
-                <div className="about-path-tag">{s.tag}</div>
+            
                 <h3 className="about-path-title">{s.title}</h3>
                 <p className="about-path-desc">{s.desc}</p>
               </div>
