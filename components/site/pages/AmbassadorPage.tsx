@@ -46,13 +46,51 @@ const focusProps = {
   },
 };
 
-const WHO: { icon: string; title: string; body: string }[] = [
-  { icon: "🧘", title: "First Movers", body: "You're already in the rooms where interesting people gather." },
-  { icon: "✈️", title: "Trusted Voices", body: "When you recommend something, people actually act on it." },
-  { icon: "👥", title: "Community Builders", body: "You run a group, club, society or online community." },
-  { icon: "🎥", title: "Creators", body: "You have an audience — big or small — that trusts you." },
-  { icon: "🎓", title: "Connectors", body: "You know people looking for their next move, always." },
-  { icon: "💼", title: "The Genuinely Curious", body: "You care about travel, growth and helping others find both." },
+const LOOKING_FOR = [
+  "People who travel",
+  "People taking a gap year",
+  "People learning something new",
+  "People changing direction",
+  "People investing in themselves",
+  "People looking for their next experience",
+];
+
+const WHO: { icon: string; title: string; hook: string; body: string; think: string }[] = [
+  {
+    icon: "👥",
+    title: "Community Leaders",
+    hook: "You run the rooms where people gather.",
+    body: "You lead an established community, group, club, membership or online space — and people actually pay attention when you share something.",
+    think: "Community organisers, group admins, club leaders, membership communities, event communities and online group leaders.",
+  },
+  {
+    icon: "🧘",
+    title: "Wellness & Fitness Pros",
+    hook: "Your clients already trust your recommendations.",
+    body: "You're a yoga teacher, Pilates instructor, trainer, coach or wellness professional with an established community around you.",
+    think: "Instructors, studio owners, personal trainers, wellness practitioners and fitness professionals.",
+  },
+  {
+    icon: "✈️",
+    title: "Travel Connectors",
+    hook: "You're the person people ask: \"Where should I go?\"",
+    body: "You know people who travel, explore and look for interesting things to do — and you're naturally the person they turn to for ideas and recommendations.",
+    think: "Frequent travellers, travel organisers, digital nomads, expat connectors and travel community members.",
+  },
+  {
+    icon: "🎥",
+    title: "Creators & Curators",
+    hook: "You know what your audience will want next.",
+    body: "You create content, run a newsletter, social channel, podcast, publication or community around travel, wellness, lifestyle, learning, careers or experiences. Your audience doesn't have to be huge — relevance and trust matter more than follower count.",
+    think: "Newsletter writers, podcasters, social creators, publications and niche online communities.",
+  },
+  {
+    icon: "🧭",
+    title: "Coaches & Mentors",
+    hook: "People come to you when they're figuring out what's next.",
+    body: "You advise, coach or mentor people around their careers, education, personal development, health, business or life direction — and your recommendations carry weight.",
+    think: "Career coaches, life coaches, business mentors, education advisors, professional mentors and personal development coaches.",
+  },
 ];
 
 const STEPS: { icon: string; title: string; body: string }[] = [
@@ -212,12 +250,18 @@ export function AmbassadorPage() {
 
       <section className="sec" style={{ maxWidth: "780px", margin: "0 auto", paddingTop: "60px" }}>
         {/* ── HOW IT WORKS: 4-step row ───────────────────────────────── */}
-        <h3 style={{ fontFamily: "var(--serif)", fontSize: "24px", fontWeight: 400, marginBottom: "8px" }}>
+        <h3
+          style={{
+            fontFamily: "var(--serif)",
+            fontWeight: 400,
+            letterSpacing: 0,
+            lineHeight: 0.95,
+            fontSize: "clamp(38px, 5vw, 68px)",
+            marginBottom: "28px",
+          }}
+        >
           How it works
         </h3>
-        <p className="sub" style={{ marginBottom: "28px" }}>
-          Four steps, start to finish.
-        </p>
         <div
           style={{
             display: "grid",
@@ -293,38 +337,88 @@ export function AmbassadorPage() {
           >
             Who we want as Ambassadors
           </h3>
-          <p style={{ textAlign: "center", color: "rgba(255,255,255,0.55)", fontSize: "13px", marginBottom: "32px" }}>
-            It&apos;s not about followers. It&apos;s about who you know.
+          <p
+            style={{
+              textAlign: "center",
+              color: "rgba(255,255,255,0.6)",
+              fontSize: "14px",
+              maxWidth: "480px",
+              margin: "0 auto 20px",
+              lineHeight: 1.6,
+            }}
+          >
+            We&apos;re looking for people who are already connected to curious, active, ambitious people
+            looking for what&apos;s next.
           </p>
+
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              gap: "8px",
+              marginBottom: "40px",
+            }}
+          >
+            {LOOKING_FOR.map((tag) => (
+              <span
+                key={tag}
+                style={{
+                  border: "1px solid rgba(255,255,255,0.18)",
+                  borderRadius: "999px",
+                  padding: "6px 14px",
+                  fontSize: "12px",
+                  color: "rgba(255,255,255,0.75)",
+                }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr",
-              gap: "24px",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "20px",
             }}
           >
             {WHO.map((w) => (
-              <div key={w.title} style={{ textAlign: "center" }}>
+              <div
+                key={w.title}
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: "16px",
+                  padding: "22px 20px",
+                }}
+              >
                 <div
                   style={{
-                    width: "56px",
-                    height: "56px",
-                    borderRadius: "16px",
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "14px",
                     background: "rgba(255,255,255,0.08)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "24px",
-                    margin: "0 auto 12px",
+                    fontSize: "22px",
+                    marginBottom: "14px",
                   }}
                 >
                   {w.icon}
                 </div>
-                <h4 style={{ color: "#fff", fontSize: "13px", fontWeight: 700, marginBottom: "6px" }}>
+                <h4 style={{ color: "#fff", fontSize: "15px", fontWeight: 700, marginBottom: "6px" }}>
                   {w.title}
                 </h4>
-                <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "12px", lineHeight: 1.5, margin: 0 }}>
+                <p style={{ color: "rgba(255,255,255,0.85)", fontSize: "13px", fontStyle: "italic", marginBottom: "8px" }}>
+                  {w.hook}
+                </p>
+                <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "12.5px", lineHeight: 1.6, marginBottom: "10px" }}>
                   {w.body}
+                </p>
+                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "11.5px", lineHeight: 1.5, margin: 0 }}>
+                  <strong style={{ color: "rgba(255,255,255,0.55)" }}>Think:</strong> {w.think}
                 </p>
               </div>
             ))}
