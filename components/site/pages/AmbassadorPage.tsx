@@ -55,20 +55,97 @@ const STRIP: { emoji: string; title: string; sub: string }[] = [
   { emoji: "✨", title: "Try Something New", sub: "Activities & opportunities" },
 ];
 
-const COLLAGE: { emoji: string; label: string }[] = [
-  { emoji: "👥", label: "Community" },
-  { emoji: "✈️", label: "Travel" },
-  { emoji: "🌿", label: "Wellness" },
-  { emoji: "🎥", label: "Creators" },
-  { emoji: "🧭", label: "Coaches" },
-  { emoji: "🔗", label: "Connectors" },
+const WHO: { icon: string; title: string; hook: string; body: string }[] = [
+  {
+    icon: "👥",
+    title: "Community Leaders",
+    hook: "You bring people together.",
+    body: "You run a community, club, membership, group, event series or online space — and people actually listen when you share something.",
+  },
+  {
+    icon: "🧘",
+    title: "Wellness & Fitness Pros",
+    hook: "Your clients already trust your recommendations.",
+    body: "You're a yoga teacher, Pilates instructor, trainer, coach, wellness practitioner or fitness professional with a community around you.",
+  },
+  {
+    icon: "✈️",
+    title: "Travel Connectors",
+    hook: "You're the person people ask where to go.",
+    body: "You travel often, organise trips, know interesting places or naturally become the person friends turn to for ideas.",
+  },
+  {
+    icon: "🎥",
+    title: "Creators & Curators",
+    hook: "You know what's worth discovering.",
+    body: "You create content, run a newsletter, curate recommendations or have built an audience around interesting places, people, ideas or experiences.",
+  },
+  {
+    icon: "🧭",
+    title: "Coaches & Mentors",
+    hook: "People come to you when they're figuring out what's next.",
+    body: "You help people make decisions, change direction, build confidence or navigate their next chapter.",
+  },
 ];
 
-const HOW: { title: string; body: string }[] = [
-  { title: "Apply", body: "Tell us a little about yourself, your network and the kinds of people you know." },
-  { title: "Get Approved", body: "We review applications and select ambassadors who are a good fit for OutQuest." },
-  { title: "Start Sharing", body: "Once you're approved, you'll get access to OutQuest programs and ambassador resources you can share." },
-  { title: "Earn", body: "When someone you refer books and completes a qualifying program, you earn US$500." },
+const WHY: { icon: string; title: string; body: string }[] = [
+  {
+    icon: "💸",
+    title: "Earn US$500 per successful referral",
+    body: "Recommend an OutQuest experience to the right person. When they join and qualify, you earn US$500. There's no cap on how many qualifying referrals you can make.",
+  },
+  {
+    icon: "🎁",
+    title: "Give your community something genuinely useful",
+    body: "Instead of recommending the same trips, courses or generic travel options, give people access to immersive experiences designed around learning, travel and personal growth.",
+  },
+  {
+    icon: "🔄",
+    title: "It's easy to fit around what you already do",
+    body: "No events to organise, no products to sell and no content quota. Share OutQuest when you genuinely know someone it could be right for.",
+  },
+];
+
+const HOW: { icon: string; title: string; body: string }[] = [
+  { icon: "📝", title: "Apply", body: "Tell us about yourself and your network." },
+  { icon: "✅", title: "Get Approved", body: "We review and select the right fit." },
+  { icon: "🚀", title: "Start Sharing", body: "Get access to programs to recommend." },
+  { icon: "💸", title: "Earn", body: "US$500 per qualifying referral." },
+];
+
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "Do I need a large following?",
+    a: "No. We care much more about the quality of your relationships and whether people trust your recommendations.",
+  },
+  {
+    q: "Do I need to be an influencer?",
+    a: "Absolutely not. You can be a community leader, professional, connector, creator, traveller, coach, organiser — or simply someone with a strong network.",
+  },
+  {
+    q: "How much do I earn?",
+    a: "You earn US$500 for every qualifying referral who joins an eligible OutQuest experience.",
+  },
+  {
+    q: "Is there a limit?",
+    a: "No. There is no limit to the number of qualifying referrals you can make.",
+  },
+  {
+    q: "Do I have to post on social media?",
+    a: "No. OutQuest is built around genuine recommendations. Share however you naturally communicate with your people.",
+  },
+  {
+    q: "What counts as a referral?",
+    a: "A referral is someone who discovers OutQuest through your referral mechanism and subsequently completes a qualifying purchase.",
+  },
+  {
+    q: "Can I refer friends and people I know personally?",
+    a: "Yes. In fact, that's exactly the kind of recommendation we're looking for — provided the referral meets the program's qualifying criteria.",
+  },
+  {
+    q: "What happens after I apply?",
+    a: "We'll review your application and, if there's a fit, invite you to join the Ambassador program with everything you need to get started.",
+  },
 ];
 
 const ROLE_OPTIONS = ["Creator", "Community leader", "Travel", "Wellness", "Coach / Mentor", "Professional", "Other"];
@@ -76,10 +153,12 @@ const SHARE_OPTIONS = ["Personal recommendations", "Community / group", "Social 
 
 /**
  * "Become an Ambassador" page — identity-led rebuild: leads with who the
- * ambassador is, not the payout. Hero keeps the existing photo; everything
- * else favours photography/whitespace over cards and copy. Self-contained
- * (not CMS-driven). Posts to /api/ambassador; leads land in the admin Leads
- * dashboard (Ambassadors tab) and are emailed to Settings → Email recipients.
+ * ambassador is, not the payout. Hero keeps the existing photo; sections use
+ * icon-based cards and a numbered/arrow step flow rather than photography
+ * (no second photo uploaded yet — see the final CTA section comment for
+ * where one would slot in). Self-contained (not CMS-driven). Posts to
+ * /api/ambassador; leads land in the admin Leads dashboard (Ambassadors tab)
+ * and are emailed to Settings → Email recipients.
  */
 export function AmbassadorPage() {
   const [name, setName] = useState("");
@@ -94,6 +173,7 @@ export function AmbassadorPage() {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const errs = {
     name: !name.trim() ? "Please enter your name." : "",
@@ -251,96 +331,122 @@ export function AmbassadorPage() {
         </div>
       </section>
 
-      {/* ── WHO WE'RE LOOKING FOR ───────────────────────────────────────── */}
-      <section className="sec" style={{ maxWidth: "780px", margin: "0 auto", paddingBottom: "72px", textAlign: "center" }}>
-        <h2 style={sectionHeading}>Who we&apos;re looking for</h2>
-        <p className="sub" style={{ maxWidth: "480px", margin: "0 auto 8px" }}>
-          People who love connecting others with great things.
-        </p>
-        <p className="sub" style={{ maxWidth: "540px", margin: "0 auto 8px" }}>
-          You might be a creator, community leader, travel lover, wellness professional, coach,
-          entrepreneur — or simply someone with a great network. You don&apos;t need to be famous.
-        </p>
-        <p className="sub" style={{ maxWidth: "540px", margin: "0 auto 40px" }}>
-          What matters is that you know people, understand what they&apos;re looking for, and have a
-          genuine reason to recommend something.
-        </p>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
-          {COLLAGE.map((c) => (
+      {/* ── WHO WE'RE LOOKING FOR: light icon+hook+description cards ────── */}
+      <section className="sec" style={{ maxWidth: "780px", margin: "0 auto", paddingBottom: "72px" }}>
+        <h2 style={{ ...sectionHeading, textAlign: "center" }}>Who we&apos;re looking for</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginTop: "36px" }}>
+          {WHO.map((w) => (
             <div
-              key={c.label}
+              key={w.title}
               style={{
-                aspectRatio: "1 / 1",
-                borderRadius: "16px",
-                background: "var(--bg)",
+                background: "var(--white)",
                 border: "1px solid var(--border)",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px",
+                borderRadius: "18px",
+                padding: "24px 22px",
               }}
             >
-              <div style={{ fontSize: "28px" }}>{c.emoji}</div>
-              <div style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.5px" }}>{c.label.toUpperCase()}</div>
+              <div style={{ fontSize: "30px", marginBottom: "12px" }}>{w.icon}</div>
+              <h4 style={{ fontFamily: "var(--serif)", fontSize: "17px", fontWeight: 400, marginBottom: "6px" }}>
+                {w.title}
+              </h4>
+              <p style={{ fontSize: "13.5px", color: "var(--orange)", fontStyle: "italic", marginBottom: "8px" }}>
+                {w.hook}
+              </p>
+              <p style={{ fontSize: "13px", color: "var(--text2)", lineHeight: 1.6, margin: 0 }}>{w.body}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── WHY BECOME AN AMBASSADOR: sparse, 3 horizontal pieces ──────── */}
-      <section className="sec" style={{ maxWidth: "780px", margin: "0 auto", paddingBottom: "72px", textAlign: "center" }}>
-        <h2 style={sectionHeading}>Why become an Ambassador?</h2>
-        <p style={{ fontFamily: "var(--serif)", fontSize: "22px", color: "var(--text2)", marginBottom: "48px" }}>
-          Discover more. Share more. Earn more.
-        </p>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "36px", textAlign: "left", maxWidth: "560px", margin: "0 auto" }}>
-          <div>
-            <div style={{ fontFamily: "var(--serif)", fontSize: "28px", color: "var(--orange)", marginBottom: "6px" }}>
-              US$500
+      {/* ── WHY BECOME AN AMBASSADOR: icons + horizontal benefits ──────── */}
+      <section className="sec" style={{ maxWidth: "700px", margin: "0 auto", paddingBottom: "72px" }}>
+        <h2 style={{ ...sectionHeading, textAlign: "center" }}>Why become an Ambassador?</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: "32px", marginTop: "40px" }}>
+          {WHY.map((w) => (
+            <div key={w.title} style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
+              <div
+                style={{
+                  width: "52px",
+                  height: "52px",
+                  minWidth: "52px",
+                  borderRadius: "14px",
+                  background: "var(--bg)",
+                  border: "1px solid var(--border)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "24px",
+                }}
+              >
+                {w.icon}
+              </div>
+              <div>
+                <h4 style={{ fontFamily: "var(--serif)", fontSize: "18px", fontWeight: 400, marginBottom: "6px" }}>
+                  {w.title}
+                </h4>
+                <p style={{ fontSize: "13.5px", color: "var(--text2)", lineHeight: 1.65, margin: 0 }}>{w.body}</p>
+              </div>
             </div>
-            <p style={{ fontSize: "14px", color: "var(--text2)", margin: 0 }}>
-              For every qualifying referral that books and completes an eligible program.
-            </p>
-          </div>
-          <div>
-            <div style={{ fontFamily: "var(--serif)", fontSize: "18px", marginBottom: "6px" }}>
-              Something worth sharing
-            </div>
-            <p style={{ fontSize: "14px", color: "var(--text2)", margin: 0 }}>
-              Access to OutQuest programs, experiences and opportunities you can recommend to your
-              network.
-            </p>
-          </div>
-          <div>
-            <div style={{ fontFamily: "var(--serif)", fontSize: "18px", marginBottom: "6px" }}>
-              A place in the network
-            </div>
-            <p style={{ fontSize: "14px", color: "var(--text2)", margin: 0 }}>
-              Join a selected community of people helping others discover what&apos;s next.
-            </p>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ────────────────────────────────────────────────── */}
-      <section className="sec" style={{ maxWidth: "560px", margin: "0 auto", paddingBottom: "72px", textAlign: "center" }}>
+      {/* ── HOW IT WORKS: numbered circles + connecting arrows ─────────── */}
+      <section className="sec" style={{ maxWidth: "900px", margin: "0 auto", paddingBottom: "72px", textAlign: "center" }}>
         <h2 style={sectionHeading}>How it works</h2>
-        <p className="sub" style={{ marginBottom: "40px" }}>Apply. Get approved. Start sharing.</p>
+        <p className="sub" style={{ marginBottom: "44px" }}>Apply. Get approved. Start sharing.</p>
 
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
           {HOW.map((h, i) => (
-            <div key={h.title} style={{ width: "100%" }}>
-              <div style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "1px", color: "var(--orange)", marginBottom: "6px" }}>
-                {h.title.toUpperCase()}
+            <div key={h.title} style={{ display: "flex", alignItems: "flex-start" }}>
+              <div style={{ width: "150px" }}>
+                <div
+                  style={{
+                    width: "68px",
+                    height: "68px",
+                    borderRadius: "50%",
+                    background: "var(--bg)",
+                    border: "2px solid var(--orange)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "26px",
+                    margin: "0 auto 14px",
+                    position: "relative",
+                  }}
+                >
+                  {h.icon}
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "-8px",
+                      right: "-8px",
+                      width: "24px",
+                      height: "24px",
+                      borderRadius: "50%",
+                      background: "var(--orange)",
+                      color: "#fff",
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {i + 1}
+                  </div>
+                </div>
+                <h4 style={{ fontFamily: "var(--serif)", fontSize: "15px", fontWeight: 400, marginBottom: "4px" }}>
+                  {h.title}
+                </h4>
+                <p style={{ fontSize: "12px", color: "var(--text2)", lineHeight: 1.5, margin: 0, padding: "0 6px" }}>
+                  {h.body}
+                </p>
               </div>
-              <p style={{ fontSize: "14px", color: "var(--text2)", lineHeight: 1.6, marginBottom: i < HOW.length - 1 ? "20px" : "0" }}>
-                {h.body}
-              </p>
               {i < HOW.length - 1 && (
-                <div style={{ fontSize: "18px", color: "var(--border)", marginBottom: "20px" }}>↓</div>
+                <div style={{ fontSize: "22px", color: "var(--border)", marginTop: "22px", padding: "0 6px" }}>
+                  →
+                </div>
               )}
             </div>
           ))}
@@ -372,14 +478,18 @@ export function AmbassadorPage() {
       </section>
 
       {/* ── FINAL BIG IMAGE, full width, overlay CTA ───────────────────── */}
+      {/* NOTE: reuses hero.jpg since it's the only photo uploaded so far.
+          If you upload a second photo (e.g. /ambassador/final.jpg), swap
+          the src below — a different image here would land better than
+          repeating the hero shot. */}
       <section
         style={{
           position: "relative",
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
           marginRight: "calc(50% - 50vw)",
-          height: "520px",
-          marginBottom: "72px",
+          height: "480px",
+          marginBottom: "0",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -412,6 +522,72 @@ export function AmbassadorPage() {
           <p style={{ fontSize: "12.5px", color: "rgba(255,255,255,0.75)", margin: 0 }}>
             Applications are reviewed individually.
           </p>
+        </div>
+      </section>
+
+      {/* ── READY-TO-APPLY CTA + FAQ ────────────────────────────────────── */}
+      <section className="sec" style={{ maxWidth: "700px", margin: "0 auto", padding: "72px 0", textAlign: "center" }}>
+        <h2 style={sectionHeading}>Ready to become an OutQuest Ambassador?</h2>
+        <p style={{ fontFamily: "var(--serif)", fontSize: "19px", marginBottom: "8px" }}>
+          You already know interesting people.
+        </p>
+        <p className="sub" style={{ maxWidth: "460px", margin: "0 auto 24px" }}>
+          Now you can get rewarded for connecting them with something worth doing.
+        </p>
+        <Button style={{ padding: "14px 32px", marginBottom: "14px" }} onClick={scrollToForm}>
+          Apply to become an Ambassador
+        </Button>
+        <p style={{ fontSize: "12.5px", color: "var(--text2)", marginBottom: "56px" }}>
+          US$500 per qualifying referral · No follower minimum · No limit on referrals
+        </p>
+
+        <h3 style={{ fontFamily: "var(--serif)", fontSize: "24px", fontWeight: 400, marginBottom: "24px" }}>
+          Frequently asked questions
+        </h3>
+        <div style={{ textAlign: "left", display: "flex", flexDirection: "column", gap: "10px" }}>
+          {FAQS.map((f, i) => {
+            const open = openFaq === i;
+            return (
+              <div
+                key={f.q}
+                style={{
+                  border: "1px solid var(--border)",
+                  borderRadius: "14px",
+                  overflow: "hidden",
+                  background: "var(--white)",
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpenFaq(open ? null : i)}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "16px 20px",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    fontFamily: "var(--serif)",
+                    fontSize: "15px",
+                    color: "var(--text)",
+                    textAlign: "left",
+                  }}
+                >
+                  {f.q}
+                  <span style={{ fontSize: "16px", color: "var(--orange)", marginLeft: "12px" }}>
+                    {open ? "−" : "+"}
+                  </span>
+                </button>
+                {open && (
+                  <div style={{ padding: "0 20px 18px", fontSize: "13.5px", color: "var(--text2)", lineHeight: 1.65 }}>
+                    {f.a}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </section>
 
