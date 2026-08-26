@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from "./supabase/server";
 export type LeadStatus = "new" | "contacted" | "qualified" | "closed";
 
 /** Which public form produced the lead — drives the admin dashboard tabs. */
-export type LeadType = "deal" | "contact" | "partner" | "quiz";
+export type LeadType = "deal" | "contact" | "partner" | "quiz" | "ambassador";
 
 /** A captured lead — from a deal lead-form, Contact Us, Partner With Us, or the quiz. */
 export interface LeadRow {
