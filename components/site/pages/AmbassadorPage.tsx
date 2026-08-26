@@ -55,37 +55,13 @@ const STRIP: { emoji: string; tag: string; title: string; desc: string }[] = [
   { emoji: "🚀", tag: "BUILD SOMETHING", title: "Build Something", desc: "Business ideas, income streams & entrepreneurship." },
 ];
 
-const WHO: { icon: string; title: string; hook: string; body: string }[] = [
-  {
-    icon: "👥",
-    title: "Community Leaders",
-    hook: "You bring people together.",
-    body: "You run a community, club, membership, group, event series or online space — and people actually listen when you share something.",
-  },
-  {
-    icon: "🧘",
-    title: "Wellness & Fitness Pros",
-    hook: "Your clients already trust your recommendations.",
-    body: "You're a yoga teacher, Pilates instructor, trainer, coach, wellness practitioner or fitness professional with a community around you.",
-  },
-  {
-    icon: "✈️",
-    title: "Travel Connectors",
-    hook: "You're the person people ask where to go.",
-    body: "You travel often, organise trips, know interesting places or naturally become the person friends turn to for ideas.",
-  },
-  {
-    icon: "🎥",
-    title: "Creators & Curators",
-    hook: "You know what's worth discovering.",
-    body: "You create content, run a newsletter, curate recommendations or have built an audience around interesting places, people, ideas or experiences.",
-  },
-  {
-    icon: "🧭",
-    title: "Coaches & Mentors",
-    hook: "People come to you when they're figuring out what's next.",
-    body: "You help people make decisions, change direction, build confidence or navigate their next chapter.",
-  },
+const WHO: { photo: string; label: string; rotate: number }[] = [
+  { photo: "/ambassador/who%20community.jpg", label: "Community", rotate: -3 },
+  { photo: "/ambassador/who%20wellness.jpg", label: "Wellness", rotate: 2 },
+  { photo: "/ambassador/who%20travel.jpg", label: "Travel", rotate: -2 },
+  { photo: "/ambassador/who%20creators.jpg", label: "Creators", rotate: 3 },
+  { photo: "/ambassador/who%20coaches.jpg", label: "Coaches", rotate: -2 },
+  { photo: "/ambassador/who%20students.jpg", label: "Students", rotate: 2 },
 ];
 
 const WHY: { icon: string; title: string; body: string }[] = [
