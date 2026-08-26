@@ -291,7 +291,7 @@ export function AmbassadorPage() {
         }}
       >
         <div>
-         <div>
+        
           <div className="label" style={{ marginBottom: "12px" }}>LEAD THE ADVENTURE</div>
           <h1 style={{ ...sectionHeading, fontSize: "clamp(36px, 4.5vw, 54px)", marginBottom: "20px" }}>
             Be the one who inspires people to go further, try something new and discover
