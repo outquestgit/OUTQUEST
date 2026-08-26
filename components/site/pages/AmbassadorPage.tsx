@@ -47,23 +47,24 @@ const focusProps = {
 };
 
 const WHO: { icon: string; title: string; body: string }[] = [
-  { icon: "🧘", title: "A yoga, Pilates or wellness pro", body: "With a community of clients and students." },
-  { icon: "✈️", title: "A travel enthusiast", body: "With friends who are always planning their next trip." },
-  { icon: "👥", title: "A community leader", body: "Running a group, club, society or online community." },
-  { icon: "🎥", title: "A creator", body: "With an audience that trusts your recommendations." },
-  { icon: "💼", title: "A professional or entrepreneur", body: "With a strong network of ambitious, curious people." },
-  { icon: "🎓", title: "A student or alumni leader", body: "Connected to people looking for international opportunities." },
+  { icon: "🧘", title: "First Movers", body: "You're already in the rooms where interesting people gather." },
+  { icon: "✈️", title: "Trusted Voices", body: "When you recommend something, people actually act on it." },
+  { icon: "👥", title: "Community Builders", body: "You run a group, club, society or online community." },
+  { icon: "🎥", title: "Creators", body: "You have an audience — big or small — that trusts you." },
+  { icon: "🎓", title: "Connectors", body: "You know people looking for their next move, always." },
+  { icon: "💼", title: "The Genuinely Curious", body: "You care about travel, growth and helping others find both." },
 ];
 
-const STEPS: { title: string; body: string }[] = [
-  { title: "Join", body: "Apply to become an OutQuest Ambassador. We review applications individually." },
-  { title: "Share something worth going for", body: "Find an eligible OutQuest Program that makes sense for someone in your network." },
-  { title: "They enquire, book & complete", body: "They submit their details through the OutQuest listing, book within 10 months, and complete the Program." },
-  { title: "You earn US$500", body: "Per qualifying completed booking — no limit on how many referrals you can make." },
+const STEPS: { icon: string; title: string; body: string }[] = [
+  { icon: "📝", title: "Apply", body: "Fill out a super-simple Ambassador application." },
+  { icon: "🔗", title: "Share", body: "Send an eligible OutQuest Program to someone in your network." },
+  { icon: "✅", title: "They Complete It", body: "They enquire, book within 10 months, and finish the Program." },
+  { icon: "💸", title: "You Get Paid", body: "US$500 lands in your pocket. No cap on referrals." },
 ];
 
 /**
- * "Become an Ambassador" page: program pitch + a simple application form.
+ * "Become an Ambassador" page: photo hero + floating stat card, 4-step "how it
+ * works" row, dark "who we want" section, and a simple application form.
  * Self-contained (not CMS-driven) — copy lives here rather than in Settings.
  * Posts to /api/ambassador; leads land in the admin Leads dashboard
  * (Ambassadors tab) and are emailed to the Settings → Email recipients.
@@ -126,77 +127,213 @@ export function AmbassadorPage() {
     }
   };
 
+  const scrollToForm = () => {
+    document.getElementById("ambassador-form-anchor")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <Page id="ambassador">
       <Breadcrumb trail={[{ label: "Home", page: "home" }]} current="Become an Ambassador" />
-      <section className="sec" style={{ maxWidth: "780px", margin: "0 auto", paddingTop: "100px" }}>
-        <div className="label">OutQuest Ambassador Program</div>
-        <h1 className="serif-h" style={{ marginBottom: "16px" }}>
-          Share OutQuest. Earn US$500 when someone you refer goes.
-        </h1>
-        <p className="sub" style={{ marginBottom: "16px", maxWidth: "560px" }}>
-          You don&apos;t need to be an influencer. If you&apos;re part of a great community, have a
-          strong personal network, or simply know people looking for their next adventure, skill
-          or career move — you could become an OutQuest Ambassador.
-        </p>
-        <p className="sub" style={{ marginBottom: "52px", maxWidth: "560px" }}>
-          Refer someone to an eligible OutQuest Program. If they book and complete it, you earn
-          US$500. There&apos;s no limit to how many qualifying referrals you can make.
-        </p>
 
-        <h3 style={{ fontFamily: "var(--serif)", fontSize: "20px", fontWeight: 400, marginBottom: "20px" }}>
-          This isn&apos;t about followers. It&apos;s about who you know.
+      {/* ── HERO: split layout, photo right + floating stat card ───────── */}
+      <section
+        className="sec"
+        style={{
+          maxWidth: "1100px",
+          margin: "0 auto",
+          paddingTop: "80px",
+          paddingBottom: "40px",
+          display: "grid",
+          gridTemplateColumns: "1.1fr 0.9fr",
+          gap: "48px",
+          alignItems: "center",
+        }}
+      >
+        <div>
+          <div className="label" style={{ marginBottom: "16px" }}>
+            OutQuest Ambassador Program
+          </div>
+          <h1 className="serif-h" style={{ marginBottom: "20px", fontSize: "42px", lineHeight: 1.15 }}>
+            Share OutQuest. Earn US$500 when someone you refer goes.
+          </h1>
+          <p className="sub" style={{ marginBottom: "16px", maxWidth: "480px" }}>
+            You don&apos;t need to be an influencer. If you&apos;re part of a great community, have a
+            strong personal network, or simply know people looking for their next adventure, skill or
+            career move — you could become an OutQuest Ambassador.
+          </p>
+          <p className="sub" style={{ marginBottom: "32px", maxWidth: "480px" }}>
+            No limit to how many qualifying referrals you can make.
+          </p>
+          <Button style={{ padding: "14px 32px" }} onClick={scrollToForm}>
+            Apply Now
+          </Button>
+        </div>
+
+        <div style={{ position: "relative" }}>
+          <div
+            style={{
+              borderRadius: "24px",
+              overflow: "hidden",
+              aspectRatio: "4 / 5",
+              boxShadow: "0 20px 50px rgba(0,0,0,0.18)",
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/ambassador/hero.jpg"
+              alt="Friends celebrating together"
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+          </div>
+
+          {/* Floating stat card */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: "-24px",
+              left: "-28px",
+              background: "var(--white)",
+              borderRadius: "16px",
+              padding: "18px 22px",
+              boxShadow: "0 12px 32px rgba(0,0,0,0.16)",
+              transform: "rotate(-4deg)",
+              maxWidth: "220px",
+            }}
+          >
+            <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--text2)", letterSpacing: "0.5px" }}>
+              PER SUCCESSFUL REFERRAL
+            </div>
+            <div style={{ fontFamily: "var(--serif)", fontSize: "30px", color: "var(--orange)" }}>
+              US$500 💸
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="sec" style={{ maxWidth: "780px", margin: "0 auto", paddingTop: "60px" }}>
+        {/* ── HOW IT WORKS: 4-step row ───────────────────────────────── */}
+        <h3 style={{ fontFamily: "var(--serif)", fontSize: "24px", fontWeight: 400, marginBottom: "8px" }}>
+          How it works
         </h3>
+        <p className="sub" style={{ marginBottom: "28px" }}>
+          Four steps, start to finish.
+        </p>
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: "repeat(4, 1fr)",
             gap: "16px",
-            marginBottom: "52px",
+            marginBottom: "64px",
           }}
         >
-          {WHO.map((w) => (
-            <div style={cardStyle} key={w.title}>
-              <div style={{ fontSize: "24px", marginBottom: "10px" }}>{w.icon}</div>
-              <h4 style={{ fontFamily: "var(--serif)", fontSize: "16px", fontWeight: 400, marginBottom: "6px" }}>
-                {w.title}
-              </h4>
-              <p style={{ fontSize: "13px", color: "var(--text2)", lineHeight: 1.5, margin: 0 }}>{w.body}</p>
-            </div>
-          ))}
-        </div>
-        <p className="sub" style={{ marginBottom: "52px", maxWidth: "560px" }}>
-          A trusted network of 200 people can be more valuable than a large audience that doesn&apos;t
-          care. We care more about relevance than reach.
-        </p>
-
-        <h3 style={{ fontFamily: "var(--serif)", fontSize: "20px", fontWeight: 400, marginBottom: "20px" }}>
-          How it works
-        </h3>
-        <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginBottom: "52px" }}>
           {STEPS.map((s, i) => (
-            <div key={s.title} style={{ ...cardStyle, display: "flex", gap: "18px", alignItems: "flex-start" }}>
+            <div key={s.title} style={{ textAlign: "center", position: "relative" }}>
               <div
                 style={{
-                  fontFamily: "var(--serif)",
-                  fontSize: "22px",
-                  color: "var(--orange)",
-                  minWidth: "28px",
+                  width: "72px",
+                  height: "72px",
+                  borderRadius: "50%",
+                  background: "var(--bg)",
+                  border: "1px solid var(--border)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "28px",
+                  margin: "0 auto 12px",
+                  position: "relative",
                 }}
               >
-                {i + 1}
+                {s.icon}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "-6px",
+                    right: "-6px",
+                    width: "24px",
+                    height: "24px",
+                    borderRadius: "50%",
+                    background: "var(--orange)",
+                    color: "#fff",
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {i + 1}
+                </div>
               </div>
-              <div>
-                <h4 style={{ fontFamily: "var(--serif)", fontSize: "16px", fontWeight: 400, marginBottom: "4px" }}>
-                  {s.title}
-                </h4>
-                <p style={{ fontSize: "13px", color: "var(--text2)", lineHeight: 1.5, margin: 0 }}>{s.body}</p>
-              </div>
+              <h4 style={{ fontFamily: "var(--serif)", fontSize: "15px", fontWeight: 400, marginBottom: "4px" }}>
+                {s.title}
+              </h4>
+              <p style={{ fontSize: "12px", color: "var(--text2)", lineHeight: 1.5, margin: 0 }}>{s.body}</p>
             </div>
           ))}
         </div>
 
+        {/* ── WHO WE WANT: dark section ──────────────────────────────── */}
         <div
+          style={{
+            background: "#141414",
+            borderRadius: "24px",
+            padding: "48px 36px",
+            marginBottom: "64px",
+          }}
+        >
+          <h3
+            style={{
+              fontFamily: "var(--serif)",
+              fontSize: "26px",
+              fontWeight: 400,
+              color: "#fff",
+              textAlign: "center",
+              marginBottom: "6px",
+            }}
+          >
+            Who we want as Ambassadors
+          </h3>
+          <p style={{ textAlign: "center", color: "rgba(255,255,255,0.55)", fontSize: "13px", marginBottom: "32px" }}>
+            It&apos;s not about followers. It&apos;s about who you know.
+          </p>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: "24px",
+            }}
+          >
+            {WHO.map((w) => (
+              <div key={w.title} style={{ textAlign: "center" }}>
+                <div
+                  style={{
+                    width: "56px",
+                    height: "56px",
+                    borderRadius: "16px",
+                    background: "rgba(255,255,255,0.08)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "24px",
+                    margin: "0 auto 12px",
+                  }}
+                >
+                  {w.icon}
+                </div>
+                <h4 style={{ color: "#fff", fontSize: "13px", fontWeight: 700, marginBottom: "6px" }}>
+                  {w.title}
+                </h4>
+                <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "12px", lineHeight: 1.5, margin: 0 }}>
+                  {w.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── APPLICATION FORM ───────────────────────────────────────── */}
+        <div
+          id="ambassador-form-anchor"
           style={{
             background: "var(--white)",
             border: "1px solid var(--border)",
@@ -217,9 +354,9 @@ export function AmbassadorPage() {
                 Application received
               </h4>
               <p style={{ fontSize: "14px", color: "var(--text2)", lineHeight: 1.6, margin: 0 }}>
-                Thanks{name.split(" ")[0] ? `, ${name.split(" ")[0]}` : ""} — we review applications
-                based on the relevance of your network. If you&apos;re selected, we&apos;ll be in
-                touch with next steps.
+                Thanks{name.split(" ")[0] ? `, ${name.split(" ")[0]}` : ""} — we review applications based
+                on the relevance of your network. If you&apos;re selected, we&apos;ll be in touch with next
+                steps.
               </p>
             </div>
           ) : (
