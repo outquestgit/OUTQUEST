@@ -387,17 +387,13 @@ export function AmbassadorPage() {
           >
             {WHO.map((w) => (
               <div key={w.title} style={{ textAlign: "center", maxWidth: "280px", margin: "0 auto" }}>
-                <div
+       <div
+                  className="who-emoji"
                   style={{
-                    width: "88px",
-                    height: "88px",
-                    background: "#F2D98D",
-                    clipPath: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "32px",
-                    margin: "0 auto 20px",
+                    fontSize: "60px",
+                    marginBottom: "20px",
+                    display: "inline-block",
+                    transition: "transform 0.25s ease",
                   }}
                 >
                   {w.icon}
@@ -417,11 +413,11 @@ export function AmbassadorPage() {
                 <p style={{ color: "#F2D98D", fontSize: "12.5px", fontStyle: "italic", marginBottom: "10px" }}>
                   {w.hook}
                 </p>
-                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "12.5px", lineHeight: 1.6, marginBottom: "12px" }}>
+                <p style={{ color: "rgba(255,255,255,0.9)", fontSize: "12.5px", lineHeight: 1.6, marginBottom: "12px" }}>
                   {w.body}
                 </p>
-                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "11px", lineHeight: 1.5, margin: 0 }}>
-                  <strong style={{ color: "rgba(255,255,255,0.55)" }}>Think:</strong> {w.think}
+                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "11px", lineHeight: 1.5, margin: 0 }}>
+                  <strong style={{ color: "rgba(255,255,255,0.75)" }}>Think:</strong> {w.think}
                 </p>
               </div>
             ))}
