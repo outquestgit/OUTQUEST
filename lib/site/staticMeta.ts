@@ -17,6 +17,7 @@ export type StaticPageKey =
   | "faq"
   | "contact"
   | "partner"
+  | "ambassador"
   | "privacy"
   | "terms"
   | "quests"
@@ -35,6 +36,7 @@ const PATHS: Record<StaticPageKey, string> = {
   faq: "/faq",
   contact: "/contact",
   partner: "/partner",
+  ambassador: "/ambassador",
   privacy: "/privacy",
   terms: "/tos",
   quests: "/quests",
@@ -127,6 +129,11 @@ export async function staticPageMetadata(key: StaticPageKey): Promise<Metadata> 
     case "partner":
       heroTitle = "Partner With Us";
       heroDescription = clean(settings?.pages.partner.hero.sub);
+      break;
+      case "ambassador":
+      heroTitle = "Become an Ambassador";
+      heroDescription =
+        "Share OutQuest with your network and earn US$500 for every referral who books and completes a Program.";
       break;
     case "privacy":
       heroTitle = clean(settings?.pages.privacy.hero.heading) || "Privacy Policy";
