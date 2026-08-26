@@ -316,7 +316,7 @@ export function AmbassadorPage() {
         <p className="sub" style={{ maxWidth: "480px", margin: "0 auto 48px" }}>
           OutQuest gives you more things worth sharing.
         </p>
-     <div className="about-paths-grid" style={{ maxWidth: "780px" }}>
+     <div className="about-paths-grid" style={{ maxWidth: "980px", gridTemplateColumns: "repeat(4, 1fr)" }}>
           {STRIP.map((s) => (
             <div className="about-path-card" key={s.title}>
               <div>
