@@ -356,7 +356,7 @@ export function AmbassadorPage() {
         <Button style={{ padding: "14px 32px", marginBottom: "48px" }} onClick={scrollToForm}>
           Become an Ambassador
         </Button>
-     <div className="about-paths-grid" style={{ maxWidth: "1140px", gridTemplateColumns: "repeat(4, 1fr)", gap: "28px" }}>
+    <div className="about-paths-grid" style={{ maxWidth: "1320px", gridTemplateColumns: "repeat(4, 1fr)", gap: "20px" }}>
           {STRIP.map((s) => (
             <div className="about-path-card" key={s.title}>
               <div>
