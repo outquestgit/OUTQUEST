@@ -48,7 +48,7 @@ const sectionHeading: CSSProperties = {
   marginBottom: "16px",
 };
 
-cconst STRIP: { emoji: string; tag: string; title: string; desc: string }[] = [
+const STRIP: { emoji: string; tag: string; title: string; desc: string }[] = [
   { emoji: "✈️", tag: "WORK ABROAD", title: "Work Abroad", desc: "Jobs, seasonal work & international opportunities." },
   { emoji: "🌍", tag: "MOVE ABROAD", title: "Move Abroad", desc: "Cities, relocation & life overseas." },
   { emoji: "🎓", tag: "GET CERTIFIED", title: "Get Certified", desc: "Credentials, courses & career-changing skills." },
