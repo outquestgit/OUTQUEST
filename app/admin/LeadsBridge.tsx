@@ -40,10 +40,7 @@ const TABS: { type: LeadType; label: string }[] = [
 ];
 
 // Per-tab column layout for the client-rendered (contact + partner + ambassador + quiz) tables.
-const COLS: Record
-  "contact" | "partner" | "ambassador" | "quiz",
-  { head: string[]; cell: (l: LeadRow) => string[] }
-> = {
+const COLS: Record<"contact" | "partner" | "ambassador" | "quiz", { head: string[]; cell: (l: LeadRow) => string[] }> = {
   contact: {
     head: ["Name", "Email", "Subject", "Status", "Date"],
     cell: (l) => [
