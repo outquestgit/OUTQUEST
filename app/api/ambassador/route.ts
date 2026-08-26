@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabasePublicClient } from "@/lib/supabase/public";
 import { guardForm } from "@/lib/formGuard";
-import { cleanLine, cleanText, cleanEmail, cleanUrl, EMAIL_RE } from "@/lib/sanitize";
+import { cleanLine, cleanText, cleanEmail, EMAIL_RE } from "@/lib/sanitize";
 import { sendLeadAlert } from "@/lib/notify";
 
 export async function POST(req: Request) {
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   const name = cleanLine(body.name, 120);
   const email = cleanEmail(body.email);
   const location = cleanLine(body.location, 200);
-  const socialLink = cleanUrl(body.socialLink);
+ const socialLink = cleanLine(body.socialLink, 300);
   const network = cleanText(body.network, 3000);
   if (!name) return NextResponse.json({ error: "Please enter your name." }, { status: 400 });
   if (!EMAIL_RE.test(email))
