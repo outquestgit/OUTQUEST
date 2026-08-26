@@ -635,4 +635,155 @@ export function AmbassadorPage() {
           </p>
 
           {sent ? (
-            <div style={{ display:
+           {sent ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", padding: "8px 0", textAlign: "center" }}>
+              <div style={{ fontSize: "40px" }}>🎉</div>
+              <h4 style={{ fontFamily: "var(--serif)", fontSize: "18px", fontWeight: 400 }}>
+                Application received.
+              </h4>
+              <p style={{ fontSize: "14px", color: "var(--text2)", lineHeight: 1.6, margin: "0 auto", maxWidth: "400px" }}>
+                Thanks for applying to become an OutQuest Ambassador. We&apos;ll review your
+                application and be in touch if you&apos;re selected.
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                <div>
+                  <label style={labelStyle}>Full Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Jamie Tan"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    {...fieldProps("name")}
+                  />
+                  {touched.name && errs.name && <div style={errStyle}>{errs.name}</div>}
+                </div>
+                <div>
+                  <label style={labelStyle}>Email</label>
+                  <input
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    {...fieldProps("email")}
+                  />
+                  {touched.email && errs.email && <div style={errStyle}>{errs.email}</div>}
+                </div>
+              </div>
+
+              <div>
+                <label style={labelStyle}>City / Country</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Kuala Lumpur, Malaysia"
+                  style={fieldStyle}
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  {...focusProps}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>Which best describes you?</label>
+                <select
+                  style={fieldStyle}
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  {...focusProps}
+                >
+                  <option value="">Select one…</option>
+                  {ROLE_OPTIONS.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label style={labelStyle}>Tell us about your network</label>
+                <textarea
+                  placeholder="Who are the people, communities or groups you could introduce to OutQuest?"
+                  rows={4}
+                  value={network}
+                  onChange={(e) => setNetwork(e.target.value)}
+                  onFocus={focusProps.onFocus}
+                  onBlur={(e) => {
+                    focusProps.onBlur(e);
+                    setTouched((t) => ({ ...t, network: true }));
+                  }}
+                  style={{
+                    ...fieldStyle,
+                    resize: "vertical",
+                    ...(touched.network && errs.network ? { borderColor: "#d9303e" } : {}),
+                  }}
+                ></textarea>
+                {touched.network && errs.network && <div style={errStyle}>{errs.network}</div>}
+              </div>
+
+              <div>
+                <label style={labelStyle}>How would you share OutQuest?</label>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                  {SHARE_OPTIONS.map((opt) => {
+                    const active = shareMethods.includes(opt);
+                    return (
+                      <button
+                        type="button"
+                        key={opt}
+                        onClick={() => toggleShare(opt)}
+                        style={{
+                          padding: "8px 14px",
+                          borderRadius: "999px",
+                          fontSize: "12.5px",
+                          border: `1px solid ${active ? "var(--orange)" : "var(--border)"}`,
+                          background: active ? "var(--orange)" : "var(--bg)",
+                          color: active ? "#fff" : "var(--text2)",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label style={labelStyle}>Why would OutQuest be a good fit for your network?</label>
+                <textarea
+                  placeholder="Optional — but it helps us understand the fit."
+                  rows={3}
+                  value={whyFit}
+                  onChange={(e) => setWhyFit(e.target.value)}
+                  style={fieldStyle}
+                  {...focusProps}
+                ></textarea>
+              </div>
+
+              <div>
+                <label style={labelStyle}>Anything else you&apos;d like us to know?</label>
+                <textarea
+                  placeholder="Optional"
+                  rows={2}
+                  value={extra}
+                  onChange={(e) => setExtra(e.target.value)}
+                  style={fieldStyle}
+                  {...focusProps}
+                ></textarea>
+              </div>
+
+              {error && <div style={{ color: "#d9303e", fontSize: "13px" }}>{error}</div>}
+              <Button
+                style={{ alignSelf: "center", padding: "14px 40px", opacity: sending ? 0.7 : 1 }}
+                onClick={send}
+                disabled={sending}
+              >
+                {sending ? "Submitting…" : "Submit Application"}
+              </Button>
+            </div>
+          )}
+        </div>
+      </section>
+    </Page>
+  );
+}
