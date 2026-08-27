@@ -18,6 +18,7 @@ const STATIC_PATHS = [
   "/faq",
   "/contact",
   "/partner",
+  "/ambassador",
   "/privacy",
   "/tos",
   "/abroad",
