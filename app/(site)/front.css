@@ -233,6 +233,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 a{text-decoration:none;color:inherit;}
 .page{display:none;animation:pageFadeIn 0.4s var(--ease-out) both;}.page.active{display:block;}
 @keyframes pageFadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.mq-nav-icon{font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
 
 /* NAV — full pill wrapping logo + links + CTA */
