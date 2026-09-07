@@ -129,7 +129,7 @@ export function Nav({ nav = DEFAULT_NAV }: { nav?: NavConfig }) {
         </div>
         <div className="nav-right">
           <button className="mq-nav-btn" id="mq-nav-btn" onClick={() => openMyQuests()}>
-            <MapIcon className="mq-nav-icon" /> My Quests{" "}
+                       <span className="mq-nav-icon">🗺️</span> My Quests{" "}
             <span className={count > 0 ? "mq-badge show" : "mq-badge"} id="mq-nav-badge">
               {count}
             </span>
