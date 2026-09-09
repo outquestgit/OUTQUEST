@@ -41,10 +41,10 @@ export const heroColumn2: GsqCard[] = [
 /** "Why OutQuest" three cells. */
 export interface WhyCell {
   emoji: string;
+  image?: string;
   title: string;
   body: string;
 }
-
 export const whyCells: WhyCell[] = [
   { emoji: "🚪", title: "Unlock New Paths", body: "Explore life-changing opportunities you didn't know were possible — or this easy to start." },
   { emoji: "🗺️", title: "We Give You The Roadmap", body: "We hand you a clear overview of the side quest + everything you need to get started: the best programs, tools, resources, and step-by-step guidance." },
