@@ -49,6 +49,18 @@ const grad = (p: JournalPost) => p.card_gradient || p.hero_bg || FALLBACK_GRADIE
 const heroGrad = (p: JournalPost) => p.hero_bg || p.card_gradient || FALLBACK_GRADIENT;
 const icon = (p: JournalPost) => p.emoji || FALLBACK_EMOJI;
 
+export function journalCategorySlug(category: string): string {
+  return category
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function journalCategoryPath(category: string | null | undefined): string | null {
+  const name = (category ?? "").trim();
+  return name ? `/journal/category/${journalCategorySlug(name)}` : null;
+}
 /** DB post → Journal-index grid card (matches the static `journalGrid` shape). */
 export function postToGridCard(p: JournalPost): JournalGridCard {
   return {
