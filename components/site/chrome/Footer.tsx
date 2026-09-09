@@ -6,9 +6,10 @@ import type { FooterConfig } from "@/lib/site/chromeConfig";
 import { DEFAULT_FOOTER, DEFAULT_FOOTER_STYLE } from "@/lib/site/chromeConfig";
 import { navigateTo, internalHref } from "@/lib/site/runtime";
 import { AppLink } from "@/components/site/ui/AppLink";
+import type { ReactElement } from "react";
 import { InstagramIcon, TikTokIcon, XIcon, LinkedInIcon, SubstackIcon } from "./SocialIcons";
 
-const SOCIAL_ICON_MAP: Record<string, () => JSX.Element> = {
+const SOCIAL_ICON_MAP: Record<string, () => ReactElement> = {
   "📷": InstagramIcon,
   "♪": TikTokIcon,
   "✕": XIcon,
