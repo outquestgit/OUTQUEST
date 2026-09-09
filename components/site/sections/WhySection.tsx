@@ -1,6 +1,6 @@
 import type { HomepageConfig } from "@/lib/site/data/homepage";
 
-/** "Why OutQuest" — heading + a grid of emoji/title/body cells. */
+/** "Why OutQuest" — heading + a grid of numbered/title/body cells. */
 export function WhySection({ why }: { why: HomepageConfig["why"] }) {
   return (
     <section className="why-section">
@@ -21,7 +21,7 @@ export function WhySection({ why }: { why: HomepageConfig["why"] }) {
       <div className="why-grid">
         {why.cells.map((cell, i) => (
           <div className="why-cell" key={`${cell.title}-${i}`}>
-            <span className="why-emoji">{cell.emoji}</span>
+            <span className="why-badge">{i + 1}</span>
             <h3>{cell.title}</h3>
             <p>{cell.body}</p>
           </div>
