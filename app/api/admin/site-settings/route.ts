@@ -670,4 +670,4 @@ function cleanQuiz(v: unknown): QuizConfig {
       headline: str(intro.headline) || D.intro.headline,
       subline: str(intro.subline),
       startCta: str(intro.startCta) || D.intro.startCta,
-      slug: str(intro.slug) ||
+           slug: str(intro.slug) || D.intro.slug,
