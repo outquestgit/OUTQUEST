@@ -19,7 +19,7 @@ export function WhySection({ why }: { why: HomepageConfig["why"] }) {
           {why.heading}
         </h2>
       </div>
-          <div className="why-grid">
+      <div className="why-grid">
         {why.cells.map((cell, i) => (
           <div className="why-cell" key={`${cell.title}-${i}`}>
             <div className="why-media">
@@ -32,8 +32,6 @@ export function WhySection({ why }: { why: HomepageConfig["why"] }) {
             <h3>{cell.title}</h3>
             <p>{cell.body}</p>
           </div>
-        ))}
-      </div>
         ))}
       </div>
     </section>
