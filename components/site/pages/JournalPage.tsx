@@ -59,7 +59,14 @@ export function JournalPage({
   };
   return (
     <Page id="journal" active>
-     <Breadcrumb trail={[{ label: "Home", page: "home" }]} current={breadcrumbCurrent} />
+     <Breadcrumb
+  trail={
+    breadcrumbCurrent === "Journal"
+      ? [{ label: "Home", page: "home" }]
+      : [{ label: "Home", page: "home" }, { label: "Journal", page: "journal" }]
+  }
+  current={breadcrumbCurrent}
+/>
       <div
         style={{
           background: "var(--bg2)",
