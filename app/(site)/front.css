@@ -407,7 +407,7 @@ h2.serif-h{font-size:clamp(26px,3.5vw,42px);}
 .why-cell:hover{transform:translateY(-6px);}
 .why-media{height:110px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:24px;}
 .why-emoji{font-size:52px;display:block;filter:drop-shadow(0 10px 16px rgba(20,16,10,0.22));transition:transform 0.3s var(--ease-spring);}
-.why-image{width:auto;max-width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 14px 22px rgba(20,16,10,0.18));transition:transform 0.3s var(--ease-spring);}
+.why-image{width:auto;max-width:140px;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 14px 22px rgba(20,16,10,0.18));transition:transform 0.3s var(--ease-spring);}
 .why-cell:hover .why-emoji,.why-cell:hover .why-image{transform:scale(1.08) rotate(-2deg);}
 .why-cell h3{font-size:20px;font-weight:400;margin-bottom:10px;font-family:var(--serif);letter-spacing:0;color:#161412;}
 .why-cell p{font-size:14px;line-height:1.7;color:#4a4438;}
