@@ -266,11 +266,12 @@ function cleanHomepage(v: unknown): HomepageConfig {
       cards1: heroCards(h.cards1),
       cards2: heroCards(h.cards2),
     },
-    why: {
+        why: {
       heading: str(why.heading),
       cells: arrOf<WhyCell>(why.cells)
-        .map((c) => ({ emoji: str(c?.emoji), title: str(c?.title), body: str(c?.body) }))
-        .filter((c) => c.title || c.body || c.emoji),
+        .map((c) => ({ emoji: str(c?.emoji), image: str(c?.image), title: str(c?.title), body: str(c?.body) }))
+        .filter((c) => c.title || c.body || c.emoji || c.image),
+    },
     },
     whoUsesUs: {
       title: str(wus.title),
