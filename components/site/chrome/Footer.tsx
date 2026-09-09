@@ -6,27 +6,36 @@ import type { FooterConfig } from "@/lib/site/chromeConfig";
 import { DEFAULT_FOOTER, DEFAULT_FOOTER_STYLE } from "@/lib/site/chromeConfig";
 import { navigateTo, internalHref } from "@/lib/site/runtime";
 import { AppLink } from "@/components/site/ui/AppLink";
+import { InstagramIcon, TikTokIcon, XIcon, LinkedInIcon, SubstackIcon } from "./SocialIcons";
 
-/** Renders the social glyph row — each glyph links out when a URL is set. */
+const SOCIAL_ICON_MAP: Record<string, () => JSX.Element> = {
+  "📷": InstagramIcon,
+  "♪": TikTokIcon,
+  "✕": XIcon,
+  "in": LinkedInIcon,
+  "S": SubstackIcon,
+};
+
 function SocialRow({ socials, urls }: { socials: string[]; urls: string[] }) {
   return (
     <div className="si">
-      {socials.map((icon, i) =>
-        urls[i] ? (
+      {socials.map((icon, i) => {
+        const Icon = SOCIAL_ICON_MAP[icon];
+        const content = Icon ? <Icon /> : icon;
+        return urls[i] ? (
           <a className="sb" key={i} href={urls[i]} target="_blank" rel="noreferrer">
-            {icon}
+            {content}
           </a>
         ) : (
           <div className="sb" key={i}>
-            {icon}
+            {content}
           </div>
-        )
-      )}
+        );
+      })}
     </div>
   );
 }
 
-/** Site footer: brand blurb + social row, link columns, and the bottom bar. */
 export function Footer({ footer = DEFAULT_FOOTER }: { footer?: FooterConfig }) {
   const copyright = footer.copyright.replace(/\{year\}/g, String(new Date().getFullYear()));
   const socials = footer.socials ?? [];
@@ -37,8 +46,6 @@ export function Footer({ footer = DEFAULT_FOOTER }: { footer?: FooterConfig }) {
   if (style.bgColor) footerStyle.background = style.bgColor;
   if (style.textColor) footerStyle.color = style.textColor;
 
-  // The `.ft-top` grid is 5 tracks (brand + 4 columns) by default; the layout
-  // preset overrides how many tracks it uses.
   const topStyle: CSSProperties = {};
   if (style.layout === "centered") {
     topStyle.gridTemplateColumns = "1fr";
@@ -52,9 +59,6 @@ export function Footer({ footer = DEFAULT_FOOTER }: { footer?: FooterConfig }) {
 
   return (
     <footer className={style.textColor ? "ft-custom-text" : undefined} style={footerStyle}>
-      {/* Footer text colours are hardcoded in the stylesheet, so a custom colour
-          needs a scoped override (hex-validated server-side). The column-label
-          and wordmark accent stay orange on purpose. */}
       {style.textColor && (
         <style>{`footer.ft-custom-text .ft-logo,footer.ft-custom-text .ft-desc,footer.ft-custom-text a,footer.ft-custom-text .ft-bot p{color:${style.textColor}}`}</style>
       )}
