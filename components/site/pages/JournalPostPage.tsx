@@ -3,7 +3,7 @@
 import { getImageProps } from "next/image";
 import { useRouter } from "next/navigation";
 import { showPage } from "@/lib/site/runtime";
-import type { BlogPostData } from "@/lib/site/journalMapping";
+import { journalCategoryPath, type BlogPostData } from "@/lib/site/journalMapping";
 
 function optimisedBg(src: string, width: number, height: number): React.CSSProperties {
   const { props } = getImageProps({ src, width, height, quality: 80, alt: "" });
@@ -52,7 +52,16 @@ export function JournalPostPage({ post }: { post: BlogPostData }) {
         <div className="blog-hero-img" style={heroStyle}>
           {post.featuredImage ? "" : post.heroIcon}
         </div>
-        <div className="blog-tag">{post.tag}</div>
+       <div
+  className="blog-tag"
+  style={{ cursor: post.tag ? "pointer" : undefined }}
+  onClick={() => {
+    const path = journalCategoryPath(post.tag);
+    if (path) router.push(path);
+  }}
+>
+  {post.tag}
+</div>
         <h1 className="blog-title">{post.title}</h1>
         <div className="blog-meta">
           <span>{post.author}</span>
@@ -76,7 +85,17 @@ export function JournalPostPage({ post }: { post: BlogPostData }) {
                       {r.image ? "" : r.icon}
                     </div>
                   </div>
-                  <div className="jg-tag">{r.tag}</div>
+                 <div
+  className="jg-tag"
+  style={{ cursor: r.tag ? "pointer" : undefined }}
+  onClick={(e) => {
+    e.stopPropagation();
+    const path = journalCategoryPath(r.tag);
+    if (path) router.push(path);
+  }}
+>
+  {r.tag}
+</div>
                   <div className="jg-title">{r.title}</div>
                 </div>
               ))}
