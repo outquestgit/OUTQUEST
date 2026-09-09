@@ -670,4 +670,98 @@ function cleanQuiz(v: unknown): QuizConfig {
       headline: str(intro.headline) || D.intro.headline,
       subline: str(intro.subline),
       startCta: str(intro.startCta) || D.intro.startCta,
-           slug: str(intro.slug) || D.intro.slug,
+      slug: str(intro.slug) || D.intro.slug,
+    },
+    questions,
+    settings: {
+      status: st.status === "draft" ? "draft" : "published",
+      showOnHomepage: st.showOnHomepage !== false,
+      showOnQuests: st.showOnQuests !== false,
+      progression: st.progression === "all" || st.progression === "snap" ? st.progression : "one",
+      resultsDisplay: st.resultsDisplay === "top" || st.resultsDisplay === "all" ? st.resultsDisplay : "top3",
+      collectContact: st.collectContact !== false,
+      contactHeadline: str(st.contactHeadline) || D.settings.contactHeadline,
+      contactSubline: str(st.contactSubline) || D.settings.contactSubline,
+      contactCta: str(st.contactCta) || D.settings.contactCta,
+    },
+  };
+}
+
+/** Validate/normalize the site-wide SEO defaults. */
+function cleanSeoDefaults(v: unknown): SeoDefaults {
+  const s = (v ?? {}) as Partial<SeoDefaults>;
+  return {
+    titlePattern: str(s.titlePattern),
+    metaDescription: str(s.metaDescription),
+    defaultOgImage: str(s.defaultOgImage),
+    noindex: bool(s.noindex),
+  };
+}
+
+/** Validate/normalize the public site config (General + Global Copy). */
+function cleanSiteConfig(v: unknown): SiteConfig {
+  const s = (v ?? {}) as Partial<SiteConfig>;
+  const g = (s.general ?? {}) as Partial<SiteConfig["general"]>;
+  const c = (s.globalCopy ?? {}) as Partial<SiteConfig["globalCopy"]>;
+  return {
+    general: {
+      siteName: str(g.siteName),
+      siteUrl: str(g.siteUrl),
+      timezone: str(g.timezone),
+    },
+    globalCopy: {
+      questModalHeading: str(c.questModalHeading),
+      questModalSubtext: str(c.questModalSubtext),
+      mqEmptyHeading: str(c.mqEmptyHeading),
+      mqEmptyBody: str(c.mqEmptyBody),
+      mqEmptyCta: str(c.mqEmptyCta),
+      mqFooter: str(c.mqFooter),
+      compareHeading: str(c.compareHeading),
+      compareSubtext: str(c.compareSubtext),
+    },
+  };
+}
+
+/**
+ * Save the PUBLIC site settings (`site_settings` row, id = 1). Each admin
+ * editor PUTs only the section(s) it owns (e.g. `{ homepage: ... }` or
+ * `{ nav: ... }`), so only keys present in the body are cleaned and written —
+ * omitted keys keep their existing stored value. `pages` is merged key-by-key
+ * (see `mergePages`) since several editors share that one column.
+ */
+export async function PUT(req: Request) {
+  const auth = await requireAdminApi();
+  if ("error" in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
+  const { sb } = auth;
+
+  const body = await req.json().catch(() => ({}));
+  const payload: Record<string, unknown> = { id: 1 };
+
+  if (body.nav !== undefined) payload.nav = cleanNav(body.nav);
+  if (body.footer !== undefined) payload.footer = cleanFooter(body.footer);
+  if (body.homepage !== undefined) payload.homepage = cleanHomepage(body.homepage);
+  if (body.quiz !== undefined) payload.quiz = cleanQuiz(body.quiz);
+  if (body.seo !== undefined) payload.seo = cleanSeoDefaults(body.seo);
+  if (body.settings !== undefined) payload.settings = cleanSiteConfig(body.settings);
+  if (body.page_seo !== undefined && body.page_seo && typeof body.page_seo === "object") {
+    payload.page_seo = body.page_seo;
+  }
+
+  if (body.pages !== undefined) {
+    const { data: existing } = await sb
+      .from("site_settings")
+      .select("pages")
+      .eq("id", 1)
+      .maybeSingle();
+    const existingPages = (existing?.pages ?? {}) as Record<string, unknown>;
+    payload.pages = mergePages(body.pages, existingPages);
+  }
+
+  const { error } = await sb.from("site_settings").upsert(payload, { onConflict: "id" });
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  revalidateTag(SITE_SETTINGS_TAG, { expire: 0 });
+  revalidatePath("/", "layout");
+
+  return NextResponse.json({ ok: true });
+}
