@@ -265,11 +265,12 @@ export function HomepagePage({
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "10px" }}>
             {why.cells.map((c, i) => (
               <RowCard key={i}>
-                <div className="pcms-field-grid" style={{ alignItems: "flex-end" }}>
+                              <div className="pcms-field-grid" style={{ alignItems: "flex-end" }}>
                   <Inp label="Emoji" value={c.emoji} onChange={(v) => patch("why", { cells: upd(why.cells, i, { emoji: v }) })} flex="0 0 80px" />
                   <Inp label="Heading" value={c.title} onChange={(v) => patch("why", { cells: upd(why.cells, i, { title: v }) })} />
                   <RemoveBtn onClick={() => patch("why", { cells: rm(why.cells, i) })} />
                 </div>
+                <ImageField label="Image (replaces emoji)" value={c.image ?? ""} onChange={(v) => patch("why", { cells: upd(why.cells, i, { image: v }) })} />
                 <Inp label="Body" value={c.body} onChange={(v) => patch("why", { cells: upd(why.cells, i, { body: v }) })} area />
               </RowCard>
             ))}
