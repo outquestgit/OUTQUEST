@@ -266,13 +266,12 @@ function cleanHomepage(v: unknown): HomepageConfig {
       cards1: heroCards(h.cards1),
       cards2: heroCards(h.cards2),
     },
-         why: {
+    why: {
       heading: str(why.heading),
       cells: arrOf<WhyCell>(why.cells)
         .map((c) => ({ emoji: str(c?.emoji), image: str(c?.image), title: str(c?.title), body: str(c?.body) }))
         .filter((c) => c.title || c.body || c.emoji || c.image),
     },
-    whoUsesUs: {
     whoUsesUs: {
       title: str(wus.title),
       subtitle: str(wus.subtitle),
@@ -671,107 +670,4 @@ function cleanQuiz(v: unknown): QuizConfig {
       headline: str(intro.headline) || D.intro.headline,
       subline: str(intro.subline),
       startCta: str(intro.startCta) || D.intro.startCta,
-      slug: str(intro.slug) || D.intro.slug,
-    },
-    questions,
-        settings: {
-      status: st.status === "draft" ? "draft" : "published",
-      showOnHomepage: st.showOnHomepage !== false,
-      showOnQuests: st.showOnQuests !== false,
-      progression: st.progression === "all" || st.progression === "snap" ? st.progression : "one",
-      resultsDisplay: st.resultsDisplay === "top" || st.resultsDisplay === "all" ? st.resultsDisplay : "top3",
-      collectContact: st.collectContact !== false,
-      contactHeadline: str(st.contactHeadline) || D.settings.contactHeadline,
-      contactSubline: str(st.contactSubline) || D.settings.contactSubline,
-      contactCta: str(st.contactCta) || D.settings.contactCta,
-    },
-  };
-}
-
-/** Validate/normalize the site-wide SEO defaults. */
-function cleanSeo(v: unknown): SeoDefaults {
-  const s = (v ?? {}) as Partial<SeoDefaults>;
-  return {
-    titlePattern: str(s.titlePattern).slice(0, 200),
-    metaDescription: str(s.metaDescription).slice(0, 320),
-    defaultOgImage: str(s.defaultOgImage).slice(0, 500),
-    noindex: bool(s.noindex),
-  };
-}
-
-/** Validate/normalize the public site config (General + Global Copy). */
-function cleanSiteConfig(v: unknown): SiteConfig {
-  const s = (v ?? {}) as Partial<SiteConfig>;
-  const g = (s.general ?? {}) as Partial<SiteConfig["general"]>;
-  const c = (s.globalCopy ?? {}) as Partial<SiteConfig["globalCopy"]>;
-  const cut = (x: unknown, n: number) => str(x).slice(0, n);
-  return {
-    general: {
-      siteName: cut(g.siteName, 120),
-      siteUrl: cut(g.siteUrl, 300),
-      timezone: cut(g.timezone, 80),
-    },
-    globalCopy: {
-      questModalHeading: cut(c.questModalHeading, 200),
-      questModalSubtext: cut(c.questModalSubtext, 500),
-      mqEmptyHeading: cut(c.mqEmptyHeading, 200),
-      mqEmptyBody: cut(c.mqEmptyBody, 500),
-      mqEmptyCta: cut(c.mqEmptyCta, 120),
-      mqFooter: cut(c.mqFooter, 300),
-      compareHeading: cut(c.compareHeading, 200),
-      compareSubtext: cut(c.compareSubtext, 500),
-    },
-  };
-}
-
-/** Save the site nav + footer + homepage + pages + quiz + seo (single-row upsert). */
-export async function PUT(req: Request) {
-  const auth = await requireAdminApi();
-  if ("error" in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
-  const { sb } = auth;
-
-  const body = await req.json().catch(() => ({}));
-  const payload: Record<string, unknown> = { id: 1 };
-  if (body.nav !== undefined) payload.nav = cleanNav(body.nav);
-  if (body.footer !== undefined) payload.footer = cleanFooter(body.footer);
-  if (body.homepage !== undefined) payload.homepage = cleanHomepage(body.homepage);
-  if (body.quiz !== undefined) payload.quiz = cleanQuiz(body.quiz);
-  if (body.seo !== undefined) payload.seo = cleanSeo(body.seo);
-  if (body.settings !== undefined) payload.settings = cleanSiteConfig(body.settings);
-
-  if (body.page_seo !== undefined) {
-    // Merge into existing page_seo so saving one page never wipes others.
-    const { data: seoRow } = await sb.from("site_settings").select("page_seo").eq("id", 1).maybeSingle();
-    const existingPageSeo = ((seoRow as { page_seo?: unknown } | null)?.page_seo ?? {}) as Record<string, unknown>;
-    payload.page_seo = { ...existingPageSeo, ...body.page_seo };
-  }
-
-
-  if (body.pages !== undefined) {
-    // Merge into existing pages so a single-page save can't blank the others.
-    const { data } = await sb.from("site_settings").select("pages").eq("id", 1).maybeSingle();
-    const existing = ((data as { pages?: unknown } | null)?.pages ?? {}) as Record<string, unknown>;
-    payload.pages = mergePages(body.pages, existing);
-  }
-
-  const { error } = await sb.from("site_settings").upsert(payload, { onConflict: "id" });
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  // Invalidate the cached settings data immediately…
-  revalidateTag(SITE_SETTINGS_TAG, { expire: 0 });
-  // …and the front route cache, so the change shows on the next load instead of
-  // being served stale-while-revalidate. Settings drive the whole `(site)` tree
-  // (nav/footer + every page), so revalidate the layout, not a single path.
-  revalidatePath("/", "layout");
-  
-  try {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://joinoutquest.com";
-    await fetch(`${siteUrl}/api/indexnow`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ urls: [`${siteUrl}/`] }),
-    });
-  } catch { /* non-critical, never block the save */ }
-
-  return NextResponse.json({ ok: true });
-}
+      slug: str(intro.slug) ||
