@@ -8,7 +8,7 @@ import { Breadcrumb } from "../cards/Breadcrumb";
 import { Pagination } from "../cards/Pagination";
 import { journalGrid, type JournalGridCard } from "@/lib/site/data/journal";
 import type { JournalPageConfig } from "@/lib/site/data/pages";
-import type { JournalFeatured } from "@/lib/site/journalMapping";
+import { journalCategoryPath, type JournalFeatured } from "@/lib/site/journalMapping";
 import { openBlogPost } from "@/lib/site/runtime";
 
 function optimisedBg(src: string, width: number, height: number): React.CSSProperties {
@@ -30,14 +30,22 @@ export function JournalPage({
   featured,
   grid,
   hero,
+  breadcrumbCurrent = "Journal",
 }: {
   featured: JournalFeatured | null;
   grid: JournalGridCard[];
   hero: JournalPageConfig;
+  breadcrumbCurrent?: string;
 }) {
   const router = useRouter();
   const open = (card: { post: string; href?: string | null }) =>
     card.href ? router.push(card.href) : openBlogPost(card.post);
+
+  const openCategory = (e: React.MouseEvent, tag: string) => {
+    e.stopPropagation();
+    const path = journalCategoryPath(tag);
+    if (path) router.push(path);
+  };
 
   const PER_PAGE = 12;
   const [page, setPage] = useState(1);
@@ -51,7 +59,7 @@ export function JournalPage({
   };
   return (
     <Page id="journal" active>
-      <Breadcrumb trail={[{ label: "Home", page: "home" }]} current="Journal" />
+     <Breadcrumb trail={[{ label: "Home", page: "home" }]} current={breadcrumbCurrent} />
       <div
         style={{
           background: "var(--bg2)",
@@ -69,7 +77,13 @@ export function JournalPage({
           {featured && (
             <div className="journal-featured">
               <div className="jf-left">
-                <div className="jf-tag">{featured.tag}</div>
+                <div
+  className="jf-tag"
+  style={{ cursor: featured.tag ? "pointer" : undefined }}
+  onClick={(e) => openCategory(e, featured.tag)}
+>
+  {featured.tag}
+</div>
                 <div className="jf-title" onClick={() => open(featured)}>{featured.title}</div>
                 <p className="jf-desc">{featured.desc}</p>
                 <span className="jf-readmore" onClick={() => open(featured)}>Read more</span>
@@ -92,7 +106,13 @@ export function JournalPage({
                   {card.image ? "" : card.emoji}
                 </div>
               </div>
-              <div className="jg-tag">{card.tag}</div>
+              <div
+  className="jg-tag"
+  style={{ cursor: card.tag ? "pointer" : undefined }}
+  onClick={(e) => openCategory(e, card.tag)}
+>
+  {card.tag}
+</div>
               <div className="jg-title">{card.title}</div>
             </div>
           ))}
