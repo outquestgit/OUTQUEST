@@ -1,6 +1,7 @@
+import Image from "next/image";
 import type { HomepageConfig } from "@/lib/site/data/homepage";
 
-/** "Why OutQuest" — heading + a grid of emoji/title/body cells. */
+/** "Why OutQuest" — heading + a row of image/title/body cells (no card boxes). */
 export function WhySection({ why }: { why: HomepageConfig["why"] }) {
   return (
     <section className="why-section">
@@ -21,7 +22,11 @@ export function WhySection({ why }: { why: HomepageConfig["why"] }) {
       <div className="why-grid">
         {why.cells.map((cell, i) => (
           <div className="why-cell" key={`${cell.title}-${i}`}>
-            <span className="why-emoji">{cell.emoji}</span>
+            {cell.image ? (
+              <Image className="why-image" src={cell.image} alt="" width={220} height={220} />
+            ) : (
+              <span className="why-emoji">{cell.emoji}</span>
+            )}
             <h3>{cell.title}</h3>
             <p>{cell.body}</p>
           </div>
