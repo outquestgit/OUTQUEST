@@ -19,17 +19,21 @@ export function WhySection({ why }: { why: HomepageConfig["why"] }) {
           {why.heading}
         </h2>
       </div>
-      <div className="why-grid">
+          <div className="why-grid">
         {why.cells.map((cell, i) => (
           <div className="why-cell" key={`${cell.title}-${i}`}>
-            {cell.image ? (
-              <Image className="why-image" src={cell.image} alt="" width={220} height={220} />
-            ) : (
-              <span className="why-emoji">{cell.emoji}</span>
-            )}
+            <div className="why-media">
+              {cell.image ? (
+                <Image className="why-image" src={cell.image} alt="" width={160} height={160} />
+              ) : (
+                <span className="why-emoji">{cell.emoji}</span>
+              )}
+            </div>
             <h3>{cell.title}</h3>
             <p>{cell.body}</p>
           </div>
+        ))}
+      </div>
         ))}
       </div>
     </section>
